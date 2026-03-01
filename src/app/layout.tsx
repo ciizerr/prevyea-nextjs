@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${nunito.variable} font-sans antialiased bg-white dark:bg-neutral-950 text-neutral-950 dark:text-neutral-50 min-h-screen`}>
+      <body className={`${nunito.variable} font-sans antialiased bg-zinc-50 dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-50 min-h-screen`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -1,65 +1,85 @@
-import { Search } from "lucide-react";
-import GradualBlur from "@/components/reactbits/GradualBlur";
-import BlurText from "@/components/reactbits/BlurText";
+import { Search, Sparkles, Terminal } from "lucide-react";
+import Typewriter from "@/components/reactbits/Typewriter";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 
-export default function Hero() {
+interface HeroProps {
+    themeColor?: string;
+}
+
+export default function Hero({ themeColor }: HeroProps) {
     return (
-        <section className="w-full py-20 md:py-32 px-4 relative overflow-hidden flex flex-col items-center justify-center text-center">
-            {/* Subtle Background Gradients */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/10 dark:bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
+        <section className="w-full relative overflow-hidden flex flex-col items-center justify-center text-center pt-24 pb-16 md:pt-32 md:pb-32 px-4 selection:bg-zinc-800 selection:text-emerald-400">
+            {/* Darker, moodier background glow for the "CLI / Spotlight" feel */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-[1200px] overflow-hidden -z-10 pointer-events-none">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-zinc-400/10 dark:bg-zinc-600/10 blur-[150px] rounded-full mix-blend-screen dark:mix-blend-screen" />
 
-            <div className="max-w-4xl mx-auto space-y-8 relative z-10">
-                <BlurText
-                    text="The Ultimate Archive for Patna University Vocational PYQs."
-                    delay={150}
-                    animateBy="words"
-                    direction="top"
-                    className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] text-zinc-900 dark:text-white"
-                />
+                {/* Subtle Floating Graphics (Mocked with decorative shapes) */}
+                <div className="hidden md:block absolute top-[15%] left-[10%] w-32 h-40 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl rotate-12 opacity-50 backdrop-blur-3xl" />
+                <div className="hidden md:block absolute top-[30%] right-[10%] w-24 h-32 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl -rotate-12 opacity-40 backdrop-blur-3xl" />
+            </div>
 
-                <p className="text-lg md:text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-                    Skip the hunt for scattered notebooks. Find semester-wise past papers, official syllabi, and notes for BCA, B.Sc. IT, and more.
-                </p>
+            <div className="max-w-4xl mx-auto space-y-12 relative z-10 w-full mt-4 md:mt-10">
+                {/* Typewriter Header Sequence */}
+                <div className="space-y-4 max-w-3xl mx-auto h-[180px] sm:h-[150px] md:h-[220px] flex flex-col justify-end">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] text-zinc-900 dark:text-zinc-100">
+                        <Typewriter
+                            phrases={[
+                                "Looking for 2023 BCA papers?",
+                                "Need Operating System notes?",
+                                "Lost your syllabus?",
+                                "Tired of begging seniors?",
+                                "Want B.Sc. IT PYQs fast?"
+                            ]}
+                            typingSpeed={50}
+                            deletingSpeed={30}
+                            delayBetweenPhrases={2500}
+                            cursorClassName="text-emerald-500 animate-pulse font-normal opacity-80"
+                            cursorColor={themeColor}
+                        />
+                    </h1>
+                </div>
 
-                <div className="w-full max-w-2xl mx-auto mt-10">
-                    <div className="relative group flex items-center shadow-lg dark:shadow-none rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-2 focus-within:ring-2 focus-within:ring-blue-500/50 transition-all">
-                        <div className="pl-4 pr-2">
-                            <Search className="h-5 w-5 text-zinc-400" />
+                {/* Sleek Command-Line / Spotlight Search */}
+                <div className="w-full max-w-2xl mx-auto mt-6 relative group">
+                    {/* Glowing under-shadow */}
+                    <div className="absolute -inset-1 bg-gradient-to-r from-zinc-500/30 to-zinc-400/30 dark:from-zinc-500/20 dark:to-zinc-600/20 rounded-2xl blur-lg transition duration-500 group-focus-within:opacity-100 group-focus-within:from-emerald-500/30 group-focus-within:to-indigo-500/30 opacity-70"></div>
+
+                    <div className="relative flex items-center shadow-xl rounded-2xl bg-white dark:bg-zinc-950/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 p-1 sm:p-2 transition-all overflow-hidden group-focus-within:border-zinc-300 dark:group-focus-within:border-zinc-600">
+                        <div className="pl-4 pr-2 flex items-center shrink-0">
+                            <Terminal className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
                         </div>
                         <input
                             type="text"
-                            placeholder="Search 'BCA Semester 3 PYQ', 'C++ Notes', 'Patna Science College syllabus'..."
-                            className="flex-1 bg-transparent border-none outline-none text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400/80 text-base py-3 min-w-0"
+                            placeholder="Type to search..."
+                            className="flex-1 bg-transparent border-none outline-none text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400/80 dark:placeholder:text-zinc-600 font-mono text-sm sm:text-base py-3 sm:py-4 min-w-0"
+                            autoComplete="off"
+                            spellCheck="false"
                         />
+                        <div className="hidden sm:flex items-center gap-1 pr-3 opacity-60 pointer-events-none shrink-0">
+                            <kbd className="font-mono text-[10px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded text-zinc-500 dark:text-zinc-400">Ctrl</kbd>
+                            <span className="text-zinc-400 text-xs">+</span>
+                            <kbd className="font-mono text-[10px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded text-zinc-500 dark:text-zinc-400">K</kbd>
+                        </div>
                         <ClickSpark
-                            sparkColor="#fff"
-                            sparkSize={10}
+                            sparkColor="#10b981"
+                            sparkSize={8}
                             sparkRadius={15}
-                            sparkCount={8}
-                            duration={400}
+                            sparkCount={6}
+                            duration={300}
+                            className="shrink-0 pl-1"
                         >
-                            <button className="hidden sm:block bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-semibold px-6 py-3 rounded-xl transition-colors whitespace-nowrap ml-2 cursor-pointer">
-                                Search Library
+                            <button className="flex bg-zinc-100 active:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:active:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-medium px-4 py-3 sm:px-6 sm:py-3 rounded-xl transition-all whitespace-nowrap cursor-pointer items-center justify-center">
+                                <Search className="h-4 w-4 sm:hidden" />
+                                <span className="hidden sm:inline">Search</span>
+                                <Sparkles className="h-3.5 w-3.5 ml-1.5 text-zinc-400 hidden sm:inline" />
                             </button>
                         </ClickSpark>
                     </div>
-                    <ClickSpark className="relative sm:hidden w-full mt-3">
-                        <button className="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-semibold px-6 py-3 rounded-xl cursor-pointer">
-                            Search
-                        </button>
-                    </ClickSpark>
                 </div>
-            </div>
 
-            {/* Gradual blur transition to next section */}
-            <div className="absolute bottom-0 left-0 w-full h-32 z-20 pointer-events-none">
-                <GradualBlur
-                    position="bottom"
-                    height="100%"
-                    strength={5}
-                    className="w-full"
-                />
+                <p className="text-sm font-medium text-zinc-500 dark:text-zinc-500 mt-4 max-w-xl mx-auto tracking-wide uppercase">
+                    Stop searching. Start Studying.
+                </p>
             </div>
         </section>
     );
