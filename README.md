@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PU Digital Library 📚✨
 
-## Getting Started
+Welcome to the **PU Digital Library**, an interactive and modern resource hub designed to revolutionize the way students learn, discover, and excel. Built with a focus on premium aesthetics and engaging user experiences, this platform bridges the gap between traditional learning and modern digital convenience.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Dynamic Hero Section**: Features an interactive typewriter effect to capture attention immediately.
+- **Struggle vs. Solution**: A relatable comparison highlighting how the digital library solves common student challenges like finding past year papers, notes, and roadmaps.
+- **Interactive Sneak Peek**: Experience a "Bento Box" style layout showcasing our core offerings (PYQs, Notes, Roadmaps, Projects) with engaging hover animations.
+- **Wall of Fame**: A competitive leaderboard recognizing top contributors and active students.
+- **Live Stats Dashboard**: Real-time insights into library usage, downloads, and active users, emphasizing community engagement.
+- **Stunning UI/UX**: Built with fluid animations (Framer Motion, GSAP), beautiful gradients, and a responsive design that works flawlessly across all devices.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/) & [GSAP](https://gsap.com/)
+- **UI Components**: [Radix UI](https://www.radix-ui.com/) & custom modern React components
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🏃‍♂️ Getting Started
 
-## Learn More
+### Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+Make sure you have [Node.js](https://nodejs.org/) (v18 or later) and your preferred package manager (`npm`, `yarn`, `pnpm`, or `bun`) installed.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/prevyea.git
+   cd prevyea
+   ```
 
-## Deploy on Vercel
+2. Install dependencies:
+   ```bash
+   npm install
+   # or yarn / pnpm / bun install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Start the development server:
+   ```bash
+   npm run dev
+   # or yarn dev / pnpm dev / bun dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application in action.
+
+## 🤝 How to Contribute
+
+We welcome and appreciate contributions from the community! Whether you want to fix a bug, add a new feature, provide study materials, or improve documentation, here's how you can get started:
+
+1. **Fork the Repository**: Click the "Fork" button at the top right of the github page to create your own copy of the project.
+2. **Create a Branch**: Create a new branch for your feature or bugfix:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Make Changes**: Implement your changes. Ensure your code follows the existing style, conventions, and formatting.
+4. **Test Your Changes**: Run the development server and test your changes locally to ensure everything works as expected.
+5. **Commit Your Changes**: Write clear, descriptive commit messages:
+   ```bash
+   git commit -m "feat: add new feature XYZ"
+   ```
+6. **Push to Your Fork**:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+7. **Submit a Pull Request**: Go to the original repository and open a Pull Request against the `master` (or main) branch. Provide a detailed description of your changes, what issue they solve, and attach any relevant screenshots or recordings.
+
+### Contribution Guidelines
+- **Issues First**: Before starting work on a major feature or significant change, please check the existing issues or create a new issue to discuss your proposed changes with the maintainers.
+- **Code Style**: We use modern React patterns and Tailwind CSS. Please keep your code clean, readable, and properly modularized.
+- **Animations**: If adding new UI elements, consider adding subtle interaction animations (hover states, entry animations) to maintain the premium feel of the app, but avoid over-animating.
+
+## 📄 License
+
+This project is open-source and available under the terms of the MIT License.
