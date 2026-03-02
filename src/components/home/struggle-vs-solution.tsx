@@ -34,22 +34,44 @@ export default function StruggleVsSolution() {
                         </div>
 
                         {/* Fake Chat Interface */}
-                        <div className="flex-1 mt-16 space-y-4 overflow-hidden relative opacity-70 flex flex-col">
+                        <div className="flex-1 mt-16 gap-3 overflow-hidden relative opacity-85 flex flex-col pr-2 pb-4">
                             {/* Chat bubbles */}
-                            <div className="bg-white dark:bg-zinc-900 p-3 rounded-2xl rounded-tl-sm shadow-sm border border-zinc-200 dark:border-zinc-800 max-w-[85%] self-start text-sm text-zinc-700 dark:text-zinc-300">
-                                Bro anyone have 2022 OOPs PYQ?? Need immediately! 😭
+                            <div className="flex gap-2 max-w-[90%] self-start">
+                                <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-xs font-bold text-blue-600 dark:text-blue-400 shrink-0">
+                                    A
+                                </div>
+                                <div className="bg-white dark:bg-zinc-900 p-3 rounded-2xl rounded-tl-none shadow-sm border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300">
+                                    <p className="text-xs font-bold text-blue-600 dark:text-blue-400 mb-1">Adi.</p>
+                                    Bro anyone have 2022 OOPs PYQ?? Need immediately! 😭
+                                </div>
                             </div>
-                            <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-2xl rounded-tr-sm shadow-sm border border-red-200 dark:border-red-800/50 max-w-[85%] self-end text-sm text-red-900 dark:text-red-200">
-                                Check the pinned messages
+
+                            <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-2xl rounded-tr-none shadow-sm border border-red-200 dark:border-red-800/50 max-w-[85%] self-end text-sm text-red-900 dark:text-red-200">
+                                Lmao, Check the pinned messages.
                             </div>
-                            <div className="bg-white dark:bg-zinc-900 p-3 rounded-2xl rounded-tl-sm shadow-sm border border-zinc-200 dark:border-zinc-800 max-w-[85%] self-start text-sm text-zinc-700 dark:text-zinc-300">
-                                The drive link in pinned is expired bro 💀
+
+                            <div className="flex gap-2 max-w-[90%] self-start">
+                                <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-800 flex items-center justify-center text-xs font-bold text-amber-600 dark:text-amber-400 shrink-0">
+                                    Ci
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <div className="bg-white dark:bg-zinc-900 p-3 rounded-2xl rounded-tl-none shadow-sm border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300">
+                                        <p className="text-xs font-bold text-amber-600 dark:text-amber-400 mb-1">Ciizerr</p>
+                                        The drive link in pinned is expired bro. Lol 💀
+                                    </div>
+                                    <div className="bg-white dark:bg-zinc-900 p-3 rounded-2xl rounded-l-md shadow-sm border border-zinc-200 dark:border-zinc-800 text-sm text-zinc-700 dark:text-zinc-300 flex items-center gap-3">
+                                        <div className="p-2 bg-red-50 dark:bg-red-900/20 rounded-md">
+                                            <FileDown className="h-5 w-5 text-red-500" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-red-500 font-medium line-through">notes_final_v2.pdf</span>
+                                            <span className="text-[10px] text-zinc-500">File not found / Link Expired</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="bg-white dark:bg-zinc-900 p-3 rounded-2xl rounded-tl-sm shadow-sm border border-zinc-200 dark:border-zinc-800 max-w-[85%] self-start text-sm text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
-                                <FileDown className="h-4 w-4 text-zinc-400" />
-                                <span className="text-blue-500 underline line-through">notes_final_v2.pdf</span>
-                            </div>
-                            <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-2xl rounded-tr-sm shadow-sm border border-red-200 dark:border-red-800/50 max-w-[85%] self-end text-sm text-red-900 dark:text-red-200">
+
+                            <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-2xl rounded-tr-none shadow-sm border border-red-200 dark:border-red-800/50 max-w-[85%] self-end text-sm text-red-900 dark:text-red-200">
                                 Ask seniors tomorrow I guess 🤷‍♂️
                             </div>
                         </div>

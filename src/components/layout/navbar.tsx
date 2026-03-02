@@ -1,6 +1,5 @@
 import { Library, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { ThemeToggle } from "@/components/theme-toggle";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 
 export default function Navbar() {
@@ -32,9 +31,6 @@ export default function Navbar() {
 
                         {/* Right: Actions */}
                         <div className="flex items-center gap-3 md:gap-4">
-                            <div className="hidden sm:block">
-                                <ThemeToggle />
-                            </div>
 
                             <div className="flex items-center gap-2">
                                 <Link href="#" className="hidden sm:block text-sm font-bold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-4 py-2 transition-colors">
