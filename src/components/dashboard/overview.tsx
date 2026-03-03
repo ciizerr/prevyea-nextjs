@@ -1,9 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { FileDown, FolderOpen, Heart, TrendingUp, Clock, FileText, ChevronRight } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import { UploadModal } from "./upload-modal";
 
 export function DashboardOverview() {
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
             {/* Welcome Banner */}
@@ -101,13 +105,19 @@ export function DashboardOverview() {
                         Upload your previous year papers and notes to help juniors and climb the Wall of Fame.
                     </p>
                     <ClickSpark className="w-full">
-                        <button className="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-bold py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                        <button
+                            onClick={() => setIsUploadModalOpen(true)}
+                            className="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-bold py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                        >
                             Upload Document
                             <ChevronRight className="h-4 w-4" />
                         </button>
                     </ClickSpark>
                 </div>
             </div>
+
+            {/* Hidden Modals */}
+            <UploadModal isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} />
         </div>
     );
 }

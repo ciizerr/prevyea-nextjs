@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FolderOpen, BookOpen, Settings, Library, LogOut, PanelLeftClose, PanelLeftOpen, X, Megaphone } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
+import { LayoutDashboard, FolderOpen, BookOpen, Settings, Library, LogOut, LogIn, PanelLeftClose, PanelLeftOpen, X, Megaphone } from "lucide-react";
 
 interface SidebarProps {
     isOpen: boolean;
@@ -13,14 +14,18 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: SidebarProps) {
     const pathname = usePathname();
+    const { status } = useSession();
+    const isLoggedIn = status === "authenticated";
 
-    const links = [
-        { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
-        { name: "The Vault (PYQs)", href: "/vault", icon: FolderOpen },
-        { name: "Syllabus", href: "/syllabus", icon: BookOpen },
-        { name: "Notice Board", href: "/notice", icon: Megaphone },
-        { name: "Settings", href: "/settings", icon: Settings },
+    const allLinks = [
+        { name: "Overview", href: "/dashboard", icon: LayoutDashboard, public: false },
+        { name: "The Vault (PYQs)", href: "/vault", icon: FolderOpen, public: true },
+        { name: "Syllabus", href: "/syllabus", icon: BookOpen, public: true },
+        { name: "Notice Board", href: "/notice", icon: Megaphone, public: true },
+        { name: "Settings", href: "/settings", icon: Settings, public: false },
     ];
+
+    const links = allLinks.filter((link) => isLoggedIn || link.public);
 
     return (
         <aside
@@ -36,11 +41,9 @@ export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: Sideb
                     <div className="bg-blue-600 p-2 rounded-xl group-hover:bg-blue-500 transition-colors shrink-0">
                         <Library className="h-5 w-5 text-white" />
                     </div>
-                    {/* Only hide text on Desktop Collapsed. Show on mobile always. */}
                     {(isOpen || isMobileOpen) && <span className="font-bold text-xl tracking-tight text-zinc-900 dark:text-zinc-50 whitespace-nowrap overflow-hidden">PU Library</span>}
                 </Link>
 
-                {/* Mobile Close Button */}
                 {isMobileOpen && (
                     <button
                         onClick={onMobileClose}
@@ -60,7 +63,7 @@ export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: Sideb
                             key={link.name}
                             href={link.href}
                             onClick={() => {
-                                if (isMobileOpen) onMobileClose(); // auto close on mobile nav
+                                if (isMobileOpen) onMobileClose();
                             }}
                             title={!isOpen && !isMobileOpen ? link.name : undefined}
                             className={`w-full flex items-center py-2.5 rounded-xl text-sm font-semibold transition-all group ${isOpen || isMobileOpen ? "px-3 gap-3" : "justify-center"
@@ -86,15 +89,30 @@ export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: Sideb
                     {isOpen ? <PanelLeftClose className="h-5 w-5 shrink-0" /> : <PanelLeftOpen className="h-5 w-5 shrink-0" />}
                     {isOpen && <span>Collapse</span>}
                 </button>
-                <button
-                    title={!isOpen && !isMobileOpen ? "Logout" : undefined}
-                    className={`flex items-center py-2.5 rounded-xl text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all ${isOpen || isMobileOpen ? "w-full px-3 gap-3" : "justify-center w-12"
-                        }`}
-                >
-                    <LogOut className="h-5 w-5 shrink-0" />
-                    {(isOpen || isMobileOpen) && <span className="block">Logout</span>}
-                </button>
+
+                {isLoggedIn ? (
+                    <button
+                        onClick={() => signOut({ callbackUrl: "/login" })}
+                        title={!isOpen && !isMobileOpen ? "Logout" : undefined}
+                        className={`flex items-center py-2.5 rounded-xl text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all ${isOpen || isMobileOpen ? "w-full px-3 gap-3" : "justify-center w-12"
+                            }`}
+                    >
+                        <LogOut className="h-5 w-5 shrink-0" />
+                        {(isOpen || isMobileOpen) && <span className="block">Logout</span>}
+                    </button>
+                ) : (
+                    <Link
+                        href="/login"
+                        title={!isOpen && !isMobileOpen ? "Login" : undefined}
+                        className={`flex items-center py-2.5 rounded-xl text-sm font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all ${isOpen || isMobileOpen ? "w-full px-3 gap-3" : "justify-center w-12"
+                            }`}
+                    >
+                        <LogIn className="h-5 w-5 shrink-0" />
+                        {(isOpen || isMobileOpen) && <span className="block">Login</span>}
+                    </Link>
+                )}
             </div>
         </aside>
     );
 }
+
