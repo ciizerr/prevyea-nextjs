@@ -5,6 +5,12 @@ import { text, integer, sqliteTable } from "drizzle-orm/sqlite-core";
 export const courses = sqliteTable("courses", {
     id: text("id").primaryKey(), // We will use UUIDs
     name: text("name").notNull().unique(), // e.g., "BCA", "B.Sc IT"
+    totalSemesters: integer("total_semesters").default(6).notNull(),
+});
+
+export const colleges = sqliteTable("colleges", {
+    id: text("id").primaryKey(), // We will use UUIDs
+    name: text("name").notNull().unique(), // e.g., "Panjab University"
 });
 
 export const subjects = sqliteTable("subjects", {
@@ -12,6 +18,12 @@ export const subjects = sqliteTable("subjects", {
     name: text("name").notNull(), // e.g., "Operating Systems"
     courseId: text("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
     semester: text("semester").notNull(), // e.g., "Sem 3"
+});
+
+// Many-to-Many Join Table: Colleges <-> Courses
+export const collegeCourses = sqliteTable("college_courses", {
+    collegeId: text("college_id").notNull().references(() => colleges.id, { onDelete: "cascade" }),
+    courseId: text("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
 });
 
 // Users Table
@@ -24,7 +36,8 @@ export const users = sqliteTable("users", {
     image: text("image"),
     role: text("role", { enum: ["ADMIN", "MODERATOR", "REVIEWER", "USER"] }).default("USER"),
     course: text("course"), // e.g., "BCA", "B.Sc IT"
-    semester: text("semester"),
+    session: text("session"),
+    collegeId: text("college_id").references(() => colleges.id, { onDelete: "set null" }),
     createdAt: integer("created_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
 });
 
@@ -99,9 +112,35 @@ export const verificationTokens = sqliteTable("verificationToken", {
 // Relationships
 import { relations } from "drizzle-orm";
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
     pyqs: many(pyqs),
     roleApplications: many(roleApplications),
+    college: one(colleges, {
+        fields: [users.collegeId],
+        references: [colleges.id],
+    }),
+}));
+
+export const collegesRelations = relations(colleges, ({ many }) => ({
+    users: many(users),
+    collegeCourses: many(collegeCourses),
+}));
+
+export const coursesRelations = relations(courses, ({ many }) => ({
+    collegeCourses: many(collegeCourses),
+    subjects: many(subjects),
+    pyqs: many(pyqs),
+}));
+
+export const collegeCoursesRelations = relations(collegeCourses, ({ one }) => ({
+    college: one(colleges, {
+        fields: [collegeCourses.collegeId],
+        references: [colleges.id]
+    }),
+    course: one(courses, {
+        fields: [collegeCourses.courseId],
+        references: [courses.id]
+    }),
 }));
 
 export const pyqsRelations = relations(pyqs, ({ one }) => ({

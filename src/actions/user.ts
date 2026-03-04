@@ -11,10 +11,11 @@ export async function completeOnboardingAction(formData: FormData) {
         if (!session?.user?.id) throw new Error("Unauthorized");
 
         const username = formData.get("username") as string;
+        const collegeId = formData.get("collegeId") as string;
         const courseId = formData.get("courseId") as string;
-        const semester = formData.get("semester") as string;
+        const sessionPayload = formData.get("session") as string;
 
-        if (!username || !courseId || !semester) {
+        if (!username || !courseId || !sessionPayload || !collegeId) {
             throw new Error("Missing required fields.");
         }
 
@@ -46,8 +47,9 @@ export async function completeOnboardingAction(formData: FormData) {
         await db.update(users)
             .set({
                 username: username.toLowerCase(),
+                collegeId: collegeId,
                 course: courseId,
-                semester
+                session: sessionPayload
             })
             .where(eq(users.id, session.user.id));
 
@@ -79,7 +81,8 @@ export async function getUserProfileAction() {
                 image: user.image ?? "",
                 role: user.role ?? "USER",
                 course: user.course ?? "",
-                semester: user.semester ?? "",
+                session: user.session ?? "",
+                collegeId: user.collegeId ?? "",
             }
         };
     } catch (error) {
@@ -96,7 +99,8 @@ export async function updateProfileAction(formData: FormData) {
         const name = formData.get("name") as string;
         const image = formData.get("image") as string;
         const course = formData.get("course") as string;
-        const semester = formData.get("semester") as string;
+        const sessionPayload = formData.get("session") as string;
+        const collegeId = formData.get("collegeId") as string;
 
         if (!name?.trim()) {
             throw new Error("Name is required.");
@@ -107,7 +111,8 @@ export async function updateProfileAction(formData: FormData) {
                 name: name.trim(),
                 image: image?.trim() || null,
                 course: course || null,
-                semester: semester || null,
+                session: sessionPayload || null,
+                collegeId: collegeId || null,
             })
             .where(eq(users.id, session.user.id));
 
@@ -115,6 +120,41 @@ export async function updateProfileAction(formData: FormData) {
     } catch (error) {
         console.error("Update Profile Error:", error);
         return { success: false, error: error instanceof Error ? error.message : "Failed to update profile." };
+    }
+}
+
+export async function deleteAccountAction() {
+    try {
+        const session = await auth();
+        if (!session?.user?.id) throw new Error("Unauthorized");
+
+        const userId = session.user.id;
+
+        // 1. Preserve user-contributed content by setting foreign keys to null
+        // Assuming pyqs and notices have uploaderId / authorId
+        // We will need to import these schemas in the action if not already present
+        const { pyqs, notices, accounts, sessions, roleApplications } = await import("@/db/schema");
+
+        await db.update(pyqs)
+            .set({ uploaderId: null })
+            .where(eq(pyqs.uploaderId, userId));
+
+        await db.update(notices)
+            .set({ authorId: null })
+            .where(eq(notices.authorId, userId));
+
+        // 2. Cascade delete dependent records first
+        await db.delete(accounts).where(eq(accounts.userId, userId));
+        await db.delete(sessions).where(eq(sessions.userId, userId));
+        await db.delete(roleApplications).where(eq(roleApplications.userId, userId));
+
+        // 3. Delete the user record
+        await db.delete(users).where(eq(users.id, userId));
+
+        return { success: true, message: "Account deleted successfully." };
+    } catch (error) {
+        console.error("Delete Account Error:", error);
+        return { success: false, error: error instanceof Error ? error.message : "Failed to delete account." };
     }
 }
 

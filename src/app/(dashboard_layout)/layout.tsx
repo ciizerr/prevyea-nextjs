@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
-import { Menu, Bell } from "lucide-react";
+import { Menu } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -52,14 +52,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
                     {/* Mobile Header Actions */}
                     <div className="flex items-center gap-3">
-                        <button className="p-2 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800 rounded-full transition-colors relative">
-                            <Bell className="h-5 w-5" />
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-black"></span>
-                        </button>
-
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-emerald-500 text-white flex items-center justify-center font-bold text-xs shadow-sm cursor-pointer hover:opacity-90 transition-opacity">
-                            PU
-                        </div>
+                        {/* We use a simplified Header without its own outer header wrapper for mobile */}
+                        <Header isMobile />
                     </div>
                 </div>
 

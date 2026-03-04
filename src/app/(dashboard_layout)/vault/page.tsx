@@ -1,63 +1,136 @@
 "use client";
 
-import { useState } from "react";
-import { Search, FolderOpen, ChevronRight, CheckCircle2, FileText, Download, Clock, User, BookOpen, X, Share2, ZoomIn, ChevronDown, ChevronUp, LayoutGrid, List } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, FolderOpen, ChevronRight, CheckCircle2, FileText, Download, Clock, User, BookOpen, X, LayoutGrid, List, Loader2 } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import { getCoursesAction, getSubjectsAction, getFilesAction } from "@/actions/curriculum";
 
-const courses = [
-    { id: "bca", name: "BCA" },
-    { id: "bscit", name: "B.Sc IT" },
-    { id: "bba", name: "BBA" }
-];
+type CourseType = {
+    id: string;
+    name: string;
+    totalSemesters: number;
+    collegeId: string | null;
+};
 
-const semesters = ["Sem 1", "Sem 2", "Sem 3", "Sem 4", "Sem 5", "Sem 6"];
-
-// Mock Vault data mapped by Subject
-const mockVault = {
-    "Operating Systems": [
-        { id: 101, year: "2023", type: "End Sem", author: "Aman K.", downloads: 840, date: "Jan 12, 2024" },
-        { id: 102, year: "2022", type: "End Sem", author: "Admin", downloads: 1250, date: "Dec 05, 2023" },
-        { id: 103, year: "2021", type: "Online Format", author: "Priya S.", downloads: 420, date: "Nov 20, 2022" },
-        { id: 104, year: "2019", type: "Mid Sem", author: "Admin", downloads: 93, date: "Oct 15, 2020" }
-    ],
-    "Database Management Systems": [
-        { id: 201, year: "2023", type: "End Sem", author: "Admin", downloads: 1024, date: "Feb 02, 2024" },
-        { id: 202, year: "2022", type: "End Sem", author: "Rahul C.", downloads: 876, date: "Jan 18, 2023" },
-        { id: 203, year: "2020", type: "Mid Sem", author: "Admin", downloads: 310, date: "Dec 10, 2021" }
-    ],
-    "Data Structures in C": [
-        { id: 301, year: "2024", type: "Mid Sem", author: "Admin", downloads: 210, date: "Mar 15, 2024" },
-        { id: 302, year: "2023", type: "End Sem", author: "Aman K.", downloads: 1540, date: "Jan 22, 2024" },
-        { id: 303, year: "2022", type: "End Sem", author: "Admin", downloads: 920, date: "Feb 05, 2023" }
-    ],
-    "Computer Networks": [
-        { id: 401, year: "2023", type: "End Sem", author: "Priya S.", downloads: 650, date: "Jan 30, 2024" },
-        { id: 402, year: "2021", type: "Mid Sem", author: "Admin", downloads: 220, date: "Nov 12, 2022" }
-    ]
+type SubjectType = {
+    id: string;
+    name: string;
+    semester: string;
 };
 
 type Paper = {
-    id: number;
-    year: string;
+    id: string;
+    year: number;
+    title: string;
     type: string;
     author: string;
-    downloads: number;
+    downloads: number | null;
+    views: number | null;
     date: string;
+    viewLink: string;
+    downloadLink: string;
 };
 
 export default function VaultPage() {
     const [searchQuery, setSearchQuery] = useState("");
-    const [activeCourse, setActiveCourse] = useState("bca");
-    const [activeSem, setActiveSem] = useState("Sem 3");
-    const [activeSubject, setActiveSubject] = useState("Operating Systems");
+    const [activeCourseId, setActiveCourseId] = useState<string>("");
+    const [activeSem, setActiveSem] = useState<string>("");
+    const [activeSubjectId, setActiveSubjectId] = useState<string>("");
+
     const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-    const availableSubjects = Object.keys(mockVault).filter(subject =>
-        subject.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // Dynamic Data States
+    const [dbCourses, setDbCourses] = useState<CourseType[]>([]);
+    const [dbSubjects, setDbSubjects] = useState<SubjectType[]>([]);
+    const [papers, setPapers] = useState<Paper[]>([]);
 
-    const papers = mockVault[activeSubject as keyof typeof mockVault] || [];
+    // Loading States
+    const [loadingCourses, setLoadingCourses] = useState(true);
+    const [loadingSubjects, setLoadingSubjects] = useState(false);
+    const [loadingPapers, setLoadingPapers] = useState(false);
+
+    // Initial Fetch for Courses
+    useEffect(() => {
+        async function fetchInitialData() {
+            const res = await getCoursesAction();
+            if (res.success && res.data) {
+                // Remove duplicates that might arise from Many-to-Many joins fetching identically named courses across colleges
+                const allCourses = res.data as CourseType[];
+                const uniqueCourses = Array.from(new Map(allCourses.map(c => [c.id, c])).values());
+                setDbCourses(uniqueCourses);
+                if (uniqueCourses.length > 0) {
+                    setActiveCourseId(uniqueCourses[0].id);
+                    setActiveSem("Sem 1");
+                }
+            }
+            setLoadingCourses(false);
+        }
+        fetchInitialData();
+    }, []);
+
+    // Fetch Subjects when Course or Sem changes
+    useEffect(() => {
+        async function fetchSubjects() {
+            if (!activeCourseId || !activeSem) return;
+            setLoadingSubjects(true);
+            setDbSubjects([]);
+            setActiveSubjectId("");
+            setPapers([]);
+
+            const res = await getSubjectsAction(activeCourseId, activeSem);
+            if (res.success && res.data) {
+                const fetchedSubjects = res.data as SubjectType[];
+                setDbSubjects(fetchedSubjects);
+                if (fetchedSubjects.length > 0) {
+                    setActiveSubjectId(fetchedSubjects[0].id);
+                }
+            }
+            setLoadingSubjects(false);
+        }
+        fetchSubjects();
+    }, [activeCourseId, activeSem]);
+
+    // Fetch Files when Subject changes
+    useEffect(() => {
+        async function fetchFiles() {
+            if (!activeSubjectId) {
+                setPapers([]);
+                return;
+            }
+            setLoadingPapers(true);
+            const res = await getFilesAction(activeSubjectId, ["PYQ", "Notes"]);
+            if (res.success && res.data) {
+                const formattedPapers: Paper[] = res.data.map((p: {
+                    id: string; title: string; type: string; year: number; uploaderId: string | null; downloads: number | null; views: number | null; createdAt: Date | null; viewLink: string; downloadLink: string;
+                }) => ({
+                    id: p.id,
+                    title: p.title,
+                    type: p.type,
+                    year: p.year,
+                    author: p.uploaderId ? "Student" : "Admin", // Fallback for now unless we join users
+                    downloads: p.downloads,
+                    views: p.views,
+                    date: p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) : "Unknown Date",
+                    viewLink: p.viewLink,
+                    downloadLink: p.downloadLink
+                }));
+                setPapers(formattedPapers);
+            }
+            setLoadingPapers(false);
+        }
+        fetchFiles();
+    }, [activeSubjectId]);
+
+    const activeCourse = dbCourses.find(c => c.id === activeCourseId);
+
+    // Compute semesters range
+    const maxSems = activeCourse?.totalSemesters || 6;
+    const computedSemesters = Array.from({ length: maxSems }, (_, i) => `Sem ${i + 1}`);
+
+    const availableSubjects = dbSubjects.filter(subject =>
+        subject.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
@@ -73,12 +146,14 @@ export default function VaultPage() {
                     {/* Course Selection */}
                     <div className="space-y-3 mb-8">
                         <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest pl-2">Degree</p>
-                        <div className="flex gap-2 bg-zinc-100 dark:bg-zinc-950 p-1 rounded-xl">
-                            {courses.map(c => (
+                        <div className="flex gap-2 bg-zinc-100 dark:bg-zinc-950 p-1 rounded-xl flex-wrap">
+                            {loadingCourses ? (
+                                <div className="p-4 flex items-center justify-center w-full"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
+                            ) : dbCourses.map(c => (
                                 <button
                                     key={c.id}
-                                    onClick={() => setActiveCourse(c.id)}
-                                    className={`flex-1 py-1.5 rounded-lg text-sm font-semibold transition-all ${activeCourse === c.id
+                                    onClick={() => { setActiveCourseId(c.id); setActiveSem("Sem 1"); }}
+                                    className={`flex-1 py-1.5 px-3 whitespace-nowrap rounded-lg text-sm font-semibold transition-all ${activeCourseId === c.id
                                         ? "bg-white text-blue-600 dark:bg-zinc-800 dark:text-blue-400 shadow-sm"
                                         : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
                                         }`}
@@ -92,8 +167,8 @@ export default function VaultPage() {
                     {/* Semester Selection */}
                     <div className="space-y-3 mb-8">
                         <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest pl-2">Semester</p>
-                        <div className="grid grid-cols-2 gap-2">
-                            {semesters.map(sem => (
+                        <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto custom-scrollbar pr-2">
+                            {computedSemesters.map(sem => (
                                 <button
                                     key={sem}
                                     onClick={() => setActiveSem(sem)}
@@ -127,21 +202,25 @@ export default function VaultPage() {
 
                     {/* Subjects in active semester */}
                     <div className="space-y-3">
-                        <div className="space-y-1 h-[250px] overflow-y-auto pr-2 custom-scrollbar">
-                            {availableSubjects.map(subject => (
+                        <div className="space-y-1 h-[250px] overflow-y-auto pr-2 custom-scrollbar relative">
+                            {loadingSubjects ? (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+                                </div>
+                            ) : availableSubjects.map(subject => (
                                 <button
-                                    key={subject}
-                                    onClick={() => setActiveSubject(subject)}
-                                    className={`w-full py-2.5 px-3 rounded-xl text-sm transition-all text-left flex items-center gap-2 ${activeSubject === subject
+                                    key={subject.id}
+                                    onClick={() => setActiveSubjectId(subject.id)}
+                                    className={`w-full py-2.5 px-3 rounded-xl text-sm transition-all text-left flex items-center gap-2 ${activeSubjectId === subject.id
                                         ? "bg-zinc-900 text-white font-bold dark:bg-white dark:text-zinc-900 shadow-md"
                                         : "bg-transparent text-zinc-600 font-medium hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
                                         }`}
                                 >
-                                    <BookOpen className={`h-4 w-4 shrink-0 ${activeSubject === subject ? "text-blue-400 dark:text-blue-600" : "text-zinc-400"}`} />
-                                    <span className="truncate">{subject}</span>
+                                    <BookOpen className={`h-4 w-4 shrink-0 ${activeSubjectId === subject.id ? "text-blue-400 dark:text-blue-600" : "text-zinc-400"}`} />
+                                    <span className="truncate" title={subject.name}>{subject.name}</span>
                                 </button>
                             ))}
-                            {availableSubjects.length === 0 && (
+                            {!loadingSubjects && availableSubjects.length === 0 && (
                                 <div className="text-center py-6 text-sm text-zinc-500">
                                     No subjects found.
                                 </div>
@@ -160,7 +239,7 @@ export default function VaultPage() {
                     <div className="relative z-10 flex-1">
                         <div className="flex flex-wrap items-center gap-3 mb-8">
                             <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold uppercase tracking-wider rounded-lg border border-zinc-200 dark:border-zinc-700">
-                                {courses.find(c => c.id === activeCourse)?.name || activeCourse}
+                                {activeCourse?.name || "Select Course"}
                             </span>
                             <ChevronRight className="h-4 w-4 text-zinc-400" />
                             <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold uppercase tracking-wider rounded-lg border border-zinc-200 dark:border-zinc-700">
@@ -171,10 +250,10 @@ export default function VaultPage() {
                         <div className="flex items-start justify-between mb-8 sm:mb-10">
                             <div>
                                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-zinc-900 dark:text-white mb-2 tracking-tight">
-                                    {activeSubject}
+                                    {dbSubjects.find(s => s.id === activeSubjectId)?.name || "Vault"}
                                 </h1>
                                 <p className="text-base sm:text-lg text-zinc-500 dark:text-zinc-400 font-medium max-w-xl">
-                                    {papers.length} verified past papers available for download. Select a year below.
+                                    {loadingPapers ? "Locating verified resources..." : `${papers.length} verified past papers available for download.`}
                                 </p>
                             </div>
 
@@ -198,8 +277,13 @@ export default function VaultPage() {
                         </div>
 
                         {/* Papers Layout (Grid or List) */}
-                        <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5" : "flex flex-col space-y-4"}>
-                            {papers.length > 0 ? (
+                        <div className={`relative min-h-[300px] ${viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5" : "flex flex-col space-y-4"}`}>
+                            {loadingPapers ? (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-zinc-400">
+                                    <Loader2 className="h-8 w-8 animate-spin" />
+                                    <span className="font-semibold">Loading documents...</span>
+                                </div>
+                            ) : papers.length > 0 ? (
                                 papers.map((paper) => (
                                     <div
                                         key={paper.id}
@@ -207,36 +291,36 @@ export default function VaultPage() {
                                     >
                                         <div className={viewMode === "list" ? "flex items-center gap-5 flex-1" : ""}>
                                             {/* File Icon */}
-                                            <div className={`p-3 bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-sm border border-zinc-200 dark:border-zinc-800 group-hover:scale-110 transition-transform ${viewMode === "grid" ? "rounded-xl mb-4 w-min" : "rounded-2xl shrink-0"}`}>
-                                                <FileText className="h-6 w-6" />
+                                            <div className={`p-3 bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-sm border border-zinc-200 dark:border-zinc-800 group-hover:scale-110 transition-transform flex items-center justify-center ${viewMode === "grid" ? "rounded-xl mb-4 w-12 h-12" : "rounded-2xl shrink-0 h-14 w-14"}`}>
+                                                <FileText className={`${viewMode === "grid" ? "h-6 w-6" : "h-7 w-7"}`} />
                                             </div>
 
                                             {/* Info block */}
-                                            <div className="flex-1">
+                                            <div className="flex-1 w-full overflow-hidden">
                                                 <div className={`flex ${viewMode === "grid" ? "justify-between" : "items-center gap-3"} mb-1`}>
                                                     <div className="flex items-baseline gap-2">
-                                                        <h3 className={`${viewMode === "grid" ? "text-3xl" : "text-2xl"} font-black text-zinc-900 dark:text-white tracking-tight`}>
+                                                        <h3 className={`${viewMode === "grid" ? "text-3xl" : "text-2xl"} font-black text-zinc-900 dark:text-white tracking-tight leading-none`}>
                                                             {paper.year}
                                                         </h3>
-                                                        <span className="text-sm font-semibold text-zinc-500 hidden sm:inline">PYQ</span>
+                                                        <span className="text-sm font-semibold text-zinc-500 hidden sm:inline truncate">{paper.title}</span>
                                                     </div>
 
                                                     {viewMode === "grid" && (
-                                                        <span className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 text-xs font-bold px-2.5 py-1 rounded-md h-min">
+                                                        <span className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 text-xs font-bold px-2.5 py-1 rounded-md h-min shrink-0">
                                                             {paper.type}
                                                         </span>
                                                     )}
                                                 </div>
 
                                                 {/* Meta data */}
-                                                <div className={`flex items-center text-xs text-zinc-500 dark:text-zinc-400 ${viewMode === "grid" ? "justify-between border-t border-zinc-200 dark:border-zinc-800/60 pt-4 mt-8" : "gap-4 sm:gap-6"}`}>
+                                                <div className={`flex items-center text-xs text-zinc-500 dark:text-zinc-400 ${viewMode === "grid" ? "justify-between border-t border-zinc-200 dark:border-zinc-800/60 pt-4 mt-6" : "gap-4 sm:gap-6"}`}>
                                                     {viewMode === "list" && (
                                                         <span className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 text-xs font-bold px-2 py-0.5 rounded text-[10px] uppercase">
                                                             {paper.type}
                                                         </span>
                                                     )}
                                                     <div className="flex items-center gap-1.5 font-medium">
-                                                        <User className="h-3.5 w-3.5" /> <span className="hidden sm:inline">{paper.author}</span>
+                                                        <User className="h-3.5 w-3.5" /> <span className="hidden sm:inline truncate max-w-[80px]">{paper.author}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1.5 font-medium">
                                                         <Clock className="h-3.5 w-3.5" /> <span className="hidden sm:inline">{paper.date}</span>
@@ -252,7 +336,7 @@ export default function VaultPage() {
                                                     className={`w-full ${viewMode === "list" ? "sm:w-auto px-6" : ""} py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors active:scale-95 shadow-md shadow-blue-600/20`}
                                                 >
                                                     <FileText className="h-4 w-4" />
-                                                    View Document
+                                                    View Form
                                                 </button>
                                             </ClickSpark>
                                         </div>
@@ -263,9 +347,9 @@ export default function VaultPage() {
                                     <div className="p-4 bg-zinc-200/50 dark:bg-zinc-800/50 rounded-full mb-4">
                                         <FileText className="h-8 w-8 text-zinc-400" />
                                     </div>
-                                    <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">No papers uploaded yet</h3>
+                                    <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">No documents available</h3>
                                     <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm mb-6">
-                                        We are actively sourcing papers for this subject. If you have valid PYQs, please upload them!
+                                        We are actively sourcing resources for {dbSubjects.find(s => s.id === activeSubjectId)?.name || "this subject"}.
                                     </p>
                                     <button className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2 rounded-xl font-bold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shadow-sm">
                                         Upload a Paper
@@ -289,33 +373,17 @@ export default function VaultPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 line-clamp-1 max-w-[150px] sm:max-w-md">
-                                        {activeSubject} - {selectedPaper.year}.pdf
+                                        {selectedPaper.title}
                                     </h3>
-                                    <p className="text-xs text-zinc-500 font-medium">Verified by: {selectedPaper.author} • {selectedPaper.downloads} Downloads</p>
+                                    <p className="text-xs text-zinc-500 font-medium">Verified Source • {selectedPaper.downloads || 0} Downloads</p>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-3 sm:gap-6">
-                                <div className="hidden md:flex items-center gap-3 border-r border-zinc-200 dark:border-zinc-800 pr-6 text-zinc-600 dark:text-zinc-400">
-                                    <button className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors tooltip" aria-label="Previous Page">
-                                        <ChevronUp className="h-5 w-5" />
-                                    </button>
-                                    <span className="text-sm font-mono font-semibold">1 / 4</span>
-                                    <button className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors tooltip" aria-label="Next Page">
-                                        <ChevronDown className="h-5 w-5" />
-                                    </button>
-                                    <div className="w-px h-5 bg-zinc-200 dark:bg-zinc-800 mx-1"></div>
-                                    <button className="hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors tooltip" aria-label="Zoom In">
-                                        <ZoomIn className="h-5 w-5" />
-                                    </button>
-                                </div>
                                 <div className="flex items-center gap-3">
-                                    <button className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-zinc-600 bg-zinc-100 hover:bg-zinc-200 dark:text-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors">
-                                        <Share2 className="h-4 w-4" /> Share
-                                    </button>
-                                    <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20 transition-all active:scale-95">
+                                    <a href={selectedPaper.downloadLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20 transition-all active:scale-95">
                                         <Download className="h-4 w-4" /> Download
-                                    </button>
+                                    </a>
                                     <button
                                         onClick={() => setSelectedPaper(null)}
                                         className="p-2 ml-1 rounded-full text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 transition-colors"
@@ -327,85 +395,12 @@ export default function VaultPage() {
                         </div>
 
                         {/* Interactive Viewer Body */}
-                        <div className="flex-1 overflow-y-auto relative bg-zinc-300/50 dark:bg-neutral-950 flex flex-col items-center py-8 px-4 sm:px-8 space-y-8 custom-scrollbar scroll-smooth">
-
-                            {/* Page 1 */}
-                            <div className="w-full max-w-3xl bg-white shadow-2xl rounded-sm aspect-[1/1.4] p-8 sm:p-12 md:p-16 relative mx-auto shrink-0 select-text">
-                                <div className="w-full h-full flex flex-col text-black">
-                                    <div className="text-center border-b-2 border-black/80 pb-4 mb-8">
-                                        <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-widest uppercase">Patna University</h1>
-                                        <h2 className="text-lg sm:text-xl font-bold mt-2">{courses.find(c => c.id === activeCourse)?.name.toUpperCase()} ({activeSem}) Examination, {selectedPaper.year}</h2>
-                                        <h3 className="font-bold mt-1 text-sm sm:text-base">Subject: {activeSubject}</h3>
-                                    </div>
-                                    <div className="flex justify-between text-sm sm:text-base font-bold mb-10">
-                                        <span>Time : 3 Hours</span>
-                                        <span>Full Marks : 70</span>
-                                    </div>
-                                    <div className="space-y-8 font-serif text-sm sm:text-base">
-                                        <p className="font-bold italic text-black/80">Candidates are required to give their answers in their own words as far as practicable. Answer any FIVE questions.</p>
-
-                                        <div className="flex gap-4">
-                                            <span className="font-bold">1.</span>
-                                            <div className="space-y-3">
-                                                <p>(a) Fully explain the core concepts of {activeSubject}. Discuss its primary advantages and disadvantages.</p>
-                                                <p>(b) Differentiate between the modern implementations and classical approaches regarding this subject matter.</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex gap-4">
-                                            <span className="font-bold">2.</span>
-                                            <div className="space-y-3">
-                                                <p>Write a detailed note on the architecture of {activeSubject} systems. Draw well-labeled diagrams where necessary to substantiate your answer.</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex gap-4">
-                                            <span className="font-bold">3.</span>
-                                            <div className="space-y-3">
-                                                <p>Explain the significance of error-handling and exception protocols. Provide two concrete real-world use cases.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Page 2 */}
-                            <div className="w-full max-w-3xl bg-white shadow-2xl rounded-sm aspect-[1/1.4] p-8 sm:p-12 md:p-16 relative mx-auto shrink-0 select-text">
-                                <div className="w-full h-full flex flex-col text-black font-serif text-sm sm:text-base">
-                                    <div className="flex justify-between text-xs font-bold text-black/50 mb-10">
-                                        <span>{activeSubject}</span>
-                                        <span>Page 2</span>
-                                    </div>
-                                    <div className="space-y-8">
-                                        <div className="flex gap-4">
-                                            <span className="font-bold">4.</span>
-                                            <div className="space-y-3">
-                                                <p>Define the following terms concisely:</p>
-                                                <ul className="list-[lower-roman] pl-6 space-y-2 font-medium">
-                                                    <li>Throughput scaling</li>
-                                                    <li>Latency bottlenecks</li>
-                                                    <li>Concurrency overhead</li>
-                                                    <li>Redundancy models</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex gap-4">
-                                            <span className="font-bold">5.</span>
-                                            <div className="space-y-3">
-                                                <p>A system exhibits sequential degradation under peak load. Propose an algorithmic solution to mitigate this behavior utilizing the caching techniques you studied.</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex gap-4">
-                                            <span className="font-bold">6.</span>
-                                            <div className="space-y-3">
-                                                <p>Distinguish between synchronous and asynchronous transmission protocols. Which is superior for real-time streaming data?</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div className="flex-1 w-full bg-black/5 relative overflow-hidden">
+                            <iframe
+                                src={selectedPaper.viewLink}
+                                className="w-full h-full border-none"
+                                allow="autoplay"
+                            />
                         </div>
                     </div>
                 </div>

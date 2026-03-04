@@ -2,7 +2,6 @@
 
 import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
-import { redirect } from "next/navigation"; // Changed import from next/dist/client/components/redirect to next/navigation
 
 export async function loginAction(formData: FormData) {
     try {

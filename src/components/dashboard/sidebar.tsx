@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { LayoutDashboard, FolderOpen, BookOpen, Settings, Library, LogOut, LogIn, PanelLeftClose, PanelLeftOpen, X, Megaphone } from "lucide-react";
+import { LayoutDashboard, FolderOpen, BookOpen, Settings, Library, LogOut, LogIn, PanelLeftClose, PanelLeftOpen, X, Megaphone, ShieldCheck, Building2 } from "lucide-react";
 
 interface SidebarProps {
     isOpen: boolean;
@@ -14,16 +14,30 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: SidebarProps) {
     const pathname = usePathname();
-    const { status } = useSession();
+    const { data: session, status } = useSession();
     const isLoggedIn = status === "authenticated";
+    // @ts-expect-error - NextAuth session typings
+    const userRole = session?.user?.role;
 
     const allLinks = [
         { name: "Overview", href: "/dashboard", icon: LayoutDashboard, public: false },
         { name: "The Vault (PYQs)", href: "/vault", icon: FolderOpen, public: true },
         { name: "Syllabus", href: "/syllabus", icon: BookOpen, public: true },
         { name: "Notice Board", href: "/notice", icon: Megaphone, public: true },
-        { name: "Settings", href: "/settings", icon: Settings, public: false },
     ];
+
+    // Conditionally add Verification tab
+    if (isLoggedIn && (userRole === "ADMIN" || userRole === "MODERATOR" || userRole === "REVIEWER")) {
+        allLinks.push({ name: "Verification", href: "/verification", icon: ShieldCheck, public: false });
+    }
+
+    // Conditionally add Management tab (Admins only)
+    if (isLoggedIn && userRole === "ADMIN") {
+        allLinks.push({ name: "Management", href: "/management", icon: Building2, public: false });
+    }
+
+    // Always add Settings at the end
+    allLinks.push({ name: "Settings", href: "/settings", icon: Settings, public: false });
 
     const links = allLinks.filter((link) => isLoggedIn || link.public);
 

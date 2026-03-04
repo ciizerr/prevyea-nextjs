@@ -48,6 +48,7 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
                 {/* Profile Header Card */}
                 <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-8 shadow-sm flex flex-col md:flex-row items-center md:items-start gap-8">
                     {userProfile.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={userProfile.image} alt={username} className="w-32 h-32 rounded-full border-4 border-zinc-100 dark:border-zinc-800 object-cover shadow-sm bg-zinc-100" referrerPolicy="no-referrer" />
                     ) : (
                         <div className="w-32 h-32 rounded-full border-4 border-zinc-100 dark:border-zinc-800 flex items-center justify-center bg-blue-100 dark:bg-blue-500/10 text-blue-600 dark:text-blue-500 shadow-sm">
@@ -68,7 +69,7 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
                             </div>
                             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300">
                                 <GraduationCap className="w-4 h-4 text-emerald-500" />
-                                {userProfile.course || "No Course"} • {userProfile.semester || "No Sem"}
+                                {userProfile.course || "No Course"} • {userProfile.session || "No Session"}
                             </div>
                         </div>
 

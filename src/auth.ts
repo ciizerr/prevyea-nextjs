@@ -52,11 +52,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 });
 
                 if (dbUser) {
+                    // Auto-assign ADMIN role based on environment variable
+                    if (dbUser.email && process.env.ADMIN_EMAIL && dbUser.email === process.env.ADMIN_EMAIL) {
+                        if (dbUser.role !== "ADMIN") {
+                            await db.update(users).set({ role: "ADMIN" }).where(eq(users.id, dbUser.id));
+                            dbUser.role = "ADMIN";
+                        }
+                    }
+
                     token.id = dbUser.id;
                     token.role = dbUser.role;
                     token.username = dbUser.username;
                     token.course = dbUser.course;
-                    token.semester = dbUser.semester;
+                    token.session = dbUser.session;
+                    token.collegeId = dbUser.collegeId;
                 }
             }
             return token;
@@ -72,8 +81,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.username = token.username;
                 // @ts-expect-error - Adding custom course property to NextAuth session user
                 session.user.course = token.course;
-                // @ts-expect-error - Adding custom semester property to NextAuth session user
-                session.user.semester = token.semester;
+                // @ts-expect-error - Adding custom session property to NextAuth session user
+                session.user.session = token.session;
+                // @ts-expect-error - Adding custom collegeId property to NextAuth session user
+                session.user.collegeId = token.collegeId;
             }
             return session;
         }

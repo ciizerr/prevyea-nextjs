@@ -24,7 +24,7 @@ interface UserProfile {
     image: string;
     role: string;
     course: string;
-    semester: string;
+    session: string;
 }
 
 interface RolesTabProps {

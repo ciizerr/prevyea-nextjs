@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getCoursesAction } from "@/actions/curriculum";
+import { getCollegesAction } from "@/actions/management";
 import { completeOnboardingAction } from "@/actions/user";
 
 export default function OnboardingModal() {
@@ -16,19 +17,27 @@ export default function OnboardingModal() {
     const [dismissed, setDismissed] = useState(false);
 
     // Dynamic Curriculum State
-    const [courses, setCourses] = useState<{ id: string; name: string }[]>([]);
+    const [courses, setCourses] = useState<{ id: string; name: string; collegeId: string | null }[]>([]);
+    const [colleges, setColleges] = useState<{ id: string; name: string }[]>([]);
+
+    const [selectedCollegeId, setSelectedCollegeId] = useState("");
     const [selectedCourseId, setSelectedCourseId] = useState("");
-    const [selectedSemester, setSelectedSemester] = useState("");
+    const [selectedSession, setSelectedSession] = useState("");
 
     // Determine if modal should show
     const isLoggedIn = sessionStatus === "authenticated";
     const needsOnboarding = isLoggedIn && !(session?.user as Record<string, unknown> | undefined)?.username;
 
-    // Fetch Courses when modal shows
+    // Fetch Curriculum when modal shows
     useEffect(() => {
         if (needsOnboarding && !dismissed) {
-            getCoursesAction().then((res) => {
-                if (res.success && res.data) setCourses(res.data);
+            Promise.all([getCoursesAction(), getCollegesAction()]).then(([coursesRes, collegesRes]) => {
+                if (coursesRes.success && coursesRes.data) {
+                    setCourses(coursesRes.data as { id: string; name: string; collegeId: string; totalSemesters: number }[]);
+                }
+                if (collegesRes.success && collegesRes.data) {
+                    setColleges(collegesRes.data);
+                }
             });
         }
     }, [needsOnboarding, dismissed]);
@@ -99,11 +108,30 @@ export default function OnboardingModal() {
 
                     <div className="border-t border-zinc-100 dark:border-zinc-800/60 my-6"></div>
 
-                    {/* Academic details */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 mb-2">
                             <GraduationCap className="h-4 w-4 text-emerald-500" />
                             <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">Academic Details</h3>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">College</label>
+                            <select
+                                name="collegeId"
+                                required
+                                value={selectedCollegeId}
+                                onChange={(e) => {
+                                    setSelectedCollegeId(e.target.value);
+                                    setSelectedCourseId(""); // Reset course
+                                    setSelectedSession(""); // Reset sem
+                                }}
+                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
+                            >
+                                <option value="" disabled>Select College</option>
+                                {colleges.map((college) => (
+                                    <option key={college.id} value={college.id}>{college.name}</option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -113,29 +141,31 @@ export default function OnboardingModal() {
                                     name="courseId"
                                     required
                                     value={selectedCourseId}
-                                    onChange={(e) => setSelectedCourseId(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
+                                    onChange={(e) => {
+                                        setSelectedCourseId(e.target.value);
+                                        setSelectedSession("");
+                                    }}
+                                    disabled={!selectedCollegeId}
+                                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none disabled:opacity-50"
                                 >
-                                    <option value="" disabled>Select Course</option>
-                                    {courses.map((course) => (
+                                    <option value="" disabled>{selectedCollegeId ? "Select Course" : "Select College First"}</option>
+                                    {courses.filter(c => c.collegeId === selectedCollegeId).map((course) => (
                                         <option key={course.id} value={course.id}>{course.name}</option>
                                     ))}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">Semester</label>
-                                <select
-                                    name="semester"
+                                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">Session</label>
+                                <input
+                                    name="session"
+                                    type="text"
                                     required
-                                    value={selectedSemester}
-                                    onChange={(e) => setSelectedSemester(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
-                                >
-                                    <option value="" disabled>Select Sem</option>
-                                    {Array.from({ length: 8 }).map((_, i) => (
-                                        <option key={i} value={`Sem ${i + 1}`}>Sem {i + 1}</option>
-                                    ))}
-                                </select>
+                                    value={selectedSession}
+                                    onChange={(e) => setSelectedSession(e.target.value)}
+                                    placeholder="e.g. 2023-2027"
+                                    disabled={!selectedCourseId}
+                                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50"
+                                />
                             </div>
                         </div>
                     </div>

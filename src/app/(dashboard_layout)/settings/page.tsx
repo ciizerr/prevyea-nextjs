@@ -5,6 +5,7 @@ import { User, Shield, Bell, Key, Image as ImageIcon, CheckCircle2, Briefcase, X
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getUserProfileAction, updateProfileAction } from "@/actions/user";
 import { getCoursesAction } from "@/actions/curriculum";
+import { getCollegesAction } from "@/actions/management";
 import { getMyApplicationsAction } from "@/actions/roles";
 import RolesTab, { type RoleApp } from "@/components/settings/roles-tab";
 import AppearanceTab from "@/components/settings/appearance-tab";
@@ -19,13 +20,15 @@ interface UserProfile {
     image: string;
     role: string;
     course: string;
-    semester: string;
+    session: string;
+    collegeId: string;
 }
 
 export default function SettingsPage() {
     const [activeTab, setActiveTab] = useState("profile");
     const [profile, setProfile] = useState<UserProfile | null>(null);
-    const [courses, setCourses] = useState<{ id: string; name: string }[]>([]);
+    const [courses, setCourses] = useState<{ id: string; name: string; collegeId: string | null }[]>([]);
+    const [colleges, setColleges] = useState<{ id: string; name: string }[]>([]);
     const [loading, setLoading] = useState(true);
     const [isPending, startTransition] = useTransition();
     const [status, setStatus] = useState<{ success: boolean; message: string } | null>(null);
@@ -38,14 +41,16 @@ export default function SettingsPage() {
     const [name, setName] = useState("");
     const [imageUrl, setImageUrl] = useState("");
     const [selectedCourse, setSelectedCourse] = useState("");
-    const [selectedSemester, setSelectedSemester] = useState("");
+    const [selectedSession, setSelectedSession] = useState("");
+    const [selectedCollege, setSelectedCollege] = useState("");
 
     useEffect(() => {
         async function load() {
-            const [profileRes, coursesRes, rolesRes] = await Promise.all([
+            const [profileRes, coursesRes, rolesRes, collegesRes] = await Promise.all([
                 getUserProfileAction(),
                 getCoursesAction(),
                 getMyApplicationsAction(),
+                getCollegesAction(),
             ]);
             if (profileRes.success && profileRes.data) {
                 const p = profileRes.data as UserProfile;
@@ -53,13 +58,17 @@ export default function SettingsPage() {
                 setName(p.name || "");
                 setImageUrl(p.image || "");
                 setSelectedCourse(p.course || "");
-                setSelectedSemester(p.semester || "");
+                setSelectedSession(p.session || "");
+                setSelectedCollege(p.collegeId || "");
             }
             if (coursesRes.success && coursesRes.data) {
-                setCourses(coursesRes.data);
+                setCourses(coursesRes.data as { id: string; name: string; collegeId: string | null }[]);
             }
             if (rolesRes.success && rolesRes.data) {
                 setRoleApps(rolesRes.data as RoleApp[]);
+            }
+            if (collegesRes.success && collegesRes.data) {
+                setColleges(collegesRes.data);
             }
             setLoading(false);
         }
@@ -69,16 +78,18 @@ export default function SettingsPage() {
     const handleSave = () => {
         setStatus(null);
         startTransition(async () => {
-            const result = await updateProfileAction({
-                name,
-                image: imageUrl,
-                course: selectedCourse,
-                semester: selectedSemester,
-            });
+            const formData = new FormData();
+            formData.append("name", name);
+            if (imageUrl) formData.append("image", imageUrl);
+            if (selectedCourse) formData.append("course", selectedCourse);
+            if (selectedSession) formData.append("session", selectedSession);
+            if (selectedCollege) formData.append("collegeId", selectedCollege);
+
+            const result = await updateProfileAction(formData);
             if (result.success) {
                 setStatus({ success: true, message: "Profile updated successfully!" });
                 setShowUrlInput(false);
-                if (profile) setProfile({ ...profile, name, image: imageUrl, course: selectedCourse, semester: selectedSemester });
+                if (profile) setProfile({ ...profile, name, image: imageUrl, course: selectedCourse, session: selectedSession, collegeId: selectedCollege });
             } else {
                 setStatus({ success: false, message: result.error || "Failed to update profile." });
             }
@@ -90,7 +101,8 @@ export default function SettingsPage() {
             setName(profile.name || "");
             setImageUrl(profile.image || "");
             setSelectedCourse(profile.course || "");
-            setSelectedSemester(profile.semester || "");
+            setSelectedSession(profile.session || "");
+            setSelectedCollege(profile.collegeId || "");
             setShowUrlInput(false);
         }
         setStatus(null);
@@ -246,32 +258,51 @@ export default function SettingsPage() {
                                         <p className="text-xs text-zinc-500">Username is permanent and cannot be changed.</p>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Course</label>
+                                            <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">College / University</label>
                                             <select
-                                                value={selectedCourse}
-                                                onChange={(e) => setSelectedCourse(e.target.value)}
+                                                value={selectedCollege}
+                                                onChange={(e) => {
+                                                    setSelectedCollege(e.target.value);
+                                                    setSelectedCourse(""); // Reset course when college changes
+                                                    setSelectedSession("");
+                                                }}
                                                 className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium appearance-none"
                                             >
-                                                <option value="">Select Course</option>
-                                                {courses.map((c) => (
+                                                <option value="">Select College</option>
+                                                {colleges.map((c) => (
                                                     <option key={c.id} value={c.id}>{c.name}</option>
                                                 ))}
                                             </select>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Semester</label>
+                                            <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Course</label>
                                             <select
-                                                value={selectedSemester}
-                                                onChange={(e) => setSelectedSemester(e.target.value)}
-                                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium appearance-none"
+                                                value={selectedCourse}
+                                                onChange={(e) => {
+                                                    setSelectedCourse(e.target.value);
+                                                    setSelectedSession(""); // Reset session when course changes
+                                                }}
+                                                disabled={!selectedCollege}
+                                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium appearance-none disabled:opacity-50"
                                             >
-                                                <option value="">Select Semester</option>
-                                                {Array.from({ length: 8 }).map((_, i) => (
-                                                    <option key={i} value={`Sem ${i + 1}`}>Sem {i + 1}</option>
+                                                <option value="">{selectedCollege ? "Select Course" : "Select College First"}</option>
+                                                {courses.filter(c => c.collegeId === selectedCollege).map((c) => (
+                                                    <option key={c.id} value={c.id}>{c.name}</option>
                                                 ))}
                                             </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Session</label>
+                                            <input
+                                                type="text"
+                                                value={selectedSession}
+                                                onChange={(e) => setSelectedSession(e.target.value)}
+                                                disabled={!selectedCourse}
+                                                placeholder="e.g. 2023-2027"
+                                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium disabled:opacity-50"
+                                            />
                                         </div>
                                     </div>
 

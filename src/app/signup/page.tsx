@@ -3,13 +3,35 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { Library, ArrowRight, Github, X } from "lucide-react";
+import { useEffect } from "react";
 import { loginWithGoogle, loginWithGithub } from "@/actions/auth";
+import { getCoursesAction } from "@/actions/curriculum";
+import { getCollegesAction } from "@/actions/management";
 import BlurText from "@/components/reactbits/BlurText";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 
 export default function SignUpPage() {
     const [error, setError] = useState<string | undefined>("");
     const [isPending, startTransition] = useTransition();
+
+    // Dynamic Curriculum State
+    const [courses, setCourses] = useState<{ id: string; name: string; collegeId: string | null }[]>([]);
+    const [colleges, setColleges] = useState<{ id: string; name: string }[]>([]);
+
+    const [selectedCollegeId, setSelectedCollegeId] = useState("");
+    const [selectedCourseId, setSelectedCourseId] = useState("");
+    const [selectedSession, setSelectedSession] = useState("");
+
+    useEffect(() => {
+        Promise.all([getCoursesAction(), getCollegesAction()]).then(([coursesRes, collegesRes]) => {
+            if (coursesRes.success && coursesRes.data) {
+                setCourses(coursesRes.data as { id: string; name: string; collegeId: string; totalSemesters: number }[]);
+            }
+            if (collegesRes.success && collegesRes.data) {
+                setColleges(collegesRes.data);
+            }
+        });
+    }, []);
 
     const onSubmit = async (formData: FormData) => {
         setError("");
@@ -207,6 +229,67 @@ export default function SignUpPage() {
                                     className="appearance-none block w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-medium sm:text-sm"
                                     placeholder="aman@example.com"
                                 />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                                    College
+                                </label>
+                                <select
+                                    name="collegeId"
+                                    required
+                                    value={selectedCollegeId}
+                                    onChange={(e) => {
+                                        setSelectedCollegeId(e.target.value);
+                                        setSelectedCourseId("");
+                                        setSelectedSession("");
+                                    }}
+                                    className="appearance-none block w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-medium sm:text-sm"
+                                >
+                                    <option value="" disabled>Select College</option>
+                                    {colleges.map((c) => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                                        Course
+                                    </label>
+                                    <select
+                                        name="courseId"
+                                        required
+                                        value={selectedCourseId}
+                                        onChange={(e) => {
+                                            setSelectedCourseId(e.target.value);
+                                            setSelectedSession("");
+                                        }}
+                                        disabled={!selectedCollegeId}
+                                        className="appearance-none block w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-medium sm:text-sm disabled:opacity-50"
+                                    >
+                                        <option value="" disabled>{selectedCollegeId ? "Select Course" : "Select College First"}</option>
+                                        {courses.filter(c => c.collegeId === selectedCollegeId).map((c) => (
+                                            <option key={c.id} value={c.id}>{c.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-1.5">
+                                        Session
+                                    </label>
+                                    <input
+                                        name="session"
+                                        type="text"
+                                        required
+                                        value={selectedSession}
+                                        onChange={(e) => setSelectedSession(e.target.value)}
+                                        placeholder="e.g. 2023-2027"
+                                        disabled={!selectedCourseId}
+                                        className="appearance-none block w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-medium sm:text-sm disabled:opacity-50"
+                                    />
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
