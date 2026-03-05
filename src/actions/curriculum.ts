@@ -101,8 +101,12 @@ export async function incrementDownloadAction(pyqId: string) {
 export async function fetchMarkdownContent(url: string) {
     try {
         if (!url) return { success: false, error: "No URL provided" };
-        const res = await fetch(url);
+        const res = await fetch(url, {
+            cache: "no-store",
+            next: { revalidate: 0 },
+        });
         if (!res.ok) {
+            console.error(`Markdown fetch failed: ${res.status} ${res.statusText} for URL: ${url}`);
             return { success: false, error: `Failed to fetch: ${res.status}` };
         }
         const text = await res.text();
