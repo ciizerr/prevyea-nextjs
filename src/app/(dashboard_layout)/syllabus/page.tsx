@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { GraduationCap, ChevronRight, CheckCircle2, FileText, Download, BookOpen, Loader2 } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
-import { getCoursesAction, getSubjectsAction, getFilesAction, fetchMarkdownContent } from "@/actions/curriculum";
+import { getCoursesAction, getSubjectsAction, getFilesAction } from "@/actions/curriculum";
 import PDFViewer from "@/components/pdf-viewer";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -120,15 +120,23 @@ export default function SyllabusPage() {
 
     const isMarkdown = syllabusFile?.viewLink.endsWith(".md") || syllabusFile?.downloadLink.endsWith(".md");
 
-    // Fetch markdown content via server action (avoids CORS issues on LAN/mobile)
+    // Fetch markdown content directly from Cloudinary (supports CORS)
     useEffect(() => {
         async function loadMarkdown() {
             if (syllabusFile && isMarkdown) {
                 setLoadingMarkdown(true);
-                const res = await fetchMarkdownContent(syllabusFile.viewLink);
-                if (res.success && res.data) {
-                    setMarkdownContent(res.data);
-                } else {
+                try {
+                    const url = syllabusFile.downloadLink || syllabusFile.viewLink;
+                    const res = await fetch(url);
+                    if (res.ok) {
+                        const text = await res.text();
+                        setMarkdownContent(text);
+                    } else {
+                        console.error(`Markdown fetch failed: ${res.status} ${res.statusText}`);
+                        setMarkdownContent("Failed to load markdown content.");
+                    }
+                } catch (error) {
+                    console.error("Markdown fetch error:", error);
                     setMarkdownContent("Failed to load markdown content.");
                 }
                 setLoadingMarkdown(false);
