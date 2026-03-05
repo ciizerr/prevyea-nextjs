@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import { User, Shield, Bell, Key, Image as ImageIcon, CheckCircle2, Briefcase, XCircle, Loader2, Link2, Camera, Trash2 } from "lucide-react";
+import { User, Shield, Bell, Key, Image as ImageIcon, CheckCircle2, Briefcase, XCircle, Loader2, Link2, Camera, Trash2, Instagram, MessageSquare, Github } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getUserProfileAction, updateProfileAction } from "@/actions/user";
 import { getCoursesAction } from "@/actions/curriculum";
@@ -22,6 +22,11 @@ interface UserProfile {
     course: string;
     session: string;
     collegeId: string;
+    instagram?: string;
+    discord?: string;
+    github?: string;
+    notifyPyqs: boolean;
+    notifyNotices: boolean;
 }
 
 export default function SettingsPage() {
@@ -43,6 +48,9 @@ export default function SettingsPage() {
     const [selectedCourse, setSelectedCourse] = useState("");
     const [selectedSession, setSelectedSession] = useState("");
     const [selectedCollege, setSelectedCollege] = useState("");
+    const [instagram, setInstagram] = useState("");
+    const [discord, setDiscord] = useState("");
+    const [github, setGithub] = useState("");
 
     useEffect(() => {
         async function load() {
@@ -60,6 +68,9 @@ export default function SettingsPage() {
                 setSelectedCourse(p.course || "");
                 setSelectedSession(p.session || "");
                 setSelectedCollege(p.collegeId || "");
+                setInstagram(p.instagram || "");
+                setDiscord(p.discord || "");
+                setGithub(p.github || "");
             }
             if (coursesRes.success && coursesRes.data) {
                 setCourses(coursesRes.data as { id: string; name: string; collegeId: string | null }[]);
@@ -84,12 +95,18 @@ export default function SettingsPage() {
             if (selectedCourse) formData.append("course", selectedCourse);
             if (selectedSession) formData.append("session", selectedSession);
             if (selectedCollege) formData.append("collegeId", selectedCollege);
+            if (instagram) formData.append("instagram", instagram);
+            if (discord) formData.append("discord", discord);
+            if (github) formData.append("github", github);
 
             const result = await updateProfileAction(formData);
             if (result.success) {
                 setStatus({ success: true, message: "Profile updated successfully!" });
                 setShowUrlInput(false);
-                if (profile) setProfile({ ...profile, name, image: imageUrl, course: selectedCourse, session: selectedSession, collegeId: selectedCollege });
+                if (profile) setProfile({
+                    ...profile, name, image: imageUrl, course: selectedCourse, session: selectedSession, collegeId: selectedCollege,
+                    instagram, discord, github
+                });
             } else {
                 setStatus({ success: false, message: result.error || "Failed to update profile." });
             }
@@ -103,6 +120,9 @@ export default function SettingsPage() {
             setSelectedCourse(profile.course || "");
             setSelectedSession(profile.session || "");
             setSelectedCollege(profile.collegeId || "");
+            setInstagram(profile.instagram || "");
+            setDiscord(profile.discord || "");
+            setGithub(profile.github || "");
             setShowUrlInput(false);
         }
         setStatus(null);
@@ -319,6 +339,64 @@ export default function SettingsPage() {
                                         </div>
                                         <p className="text-xs text-zinc-500">Roles are assigned by admins. Apply via the Roles & Permissions tab.</p>
                                     </div>
+
+                                    {/* Social Links */}
+                                    <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800/60 mt-6 space-y-6">
+                                        <div>
+                                            <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-1">Social Links</h3>
+                                            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Add your social media handles to display on your public profile.</p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Instagram</label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                        <Instagram className="h-4 w-4 text-pink-500" />
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        value={instagram}
+                                                        onChange={(e) => setInstagram(e.target.value)}
+                                                        placeholder="username"
+                                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Discord</label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                        <MessageSquare className="h-4 w-4 text-indigo-500" />
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        value={discord}
+                                                        onChange={(e) => setDiscord(e.target.value)}
+                                                        placeholder="username"
+                                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">GitHub</label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                        <Github className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        value={github}
+                                                        onChange={(e) => setGithub(e.target.value)}
+                                                        placeholder="username"
+                                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -338,8 +416,11 @@ export default function SettingsPage() {
                         )}
 
                         {/* NOTIFICATIONS SETTINGS */}
-                        {!loading && activeTab === "notifications" && (
-                            <NotificationsTab />
+                        {!loading && activeTab === "notifications" && profile && (
+                            <NotificationsTab
+                                initialPyqs={profile.notifyPyqs}
+                                initialNotices={profile.notifyNotices}
+                            />
                         )}
 
                         {/* SECURITY TAB */}

@@ -183,11 +183,11 @@ export default function RolesTab({ profile, roleApps, setRoleApps }: RolesTabPro
                             {/* Application Form */}
                             {isFormOpen && (
                                 <div className="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-800/60 animate-in fade-in slide-in-from-top-2 duration-300">
-                                    <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">Why should you be accepted as a {roleDef.title}?</label>
+                                    <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">Tell us about yourself and why you want to be a {roleDef.title}:</label>
                                     <textarea
                                         value={applyReason}
                                         onChange={(e) => setApplyReason(e.target.value)}
-                                        placeholder="Tell us about your motivation, relevant experience, and how you can contribute to the PU Library community..."
+                                        placeholder="Do you have deep knowledge related to your courses? Do you agree not to review files that are not under your course or your specific knowledge? Please explain."
                                         rows={4}
                                         autoFocus
                                         className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium text-sm resize-none"

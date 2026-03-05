@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 import { GraduationCap, ChevronRight, CheckCircle2, FileText, Download, BookOpen, Loader2 } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
-import { getCoursesAction, getSubjectsAction, getFilesAction } from "@/actions/curriculum";
+import { getCoursesAction, getSubjectsAction, getFilesAction, fetchMarkdownContent } from "@/actions/curriculum";
+import PDFViewer from "@/components/pdf-viewer";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type CourseType = {
     id: string;
@@ -39,6 +42,11 @@ export default function SyllabusPage() {
     const [loadingCourses, setLoadingCourses] = useState(true);
     const [loadingSubjects, setLoadingSubjects] = useState(false);
     const [loadingSyllabus, setLoadingSyllabus] = useState(false);
+    const [downloadingPdf, setDownloadingPdf] = useState(false);
+
+    // Markdown state
+    const [markdownContent, setMarkdownContent] = useState<string | null>(null);
+    const [loadingMarkdown, setLoadingMarkdown] = useState(false);
 
     // Initial Fetch for Courses
     useEffect(() => {
@@ -85,18 +93,22 @@ export default function SyllabusPage() {
         async function fetchSyllabus() {
             if (!activeSubjectId) {
                 setSyllabusFile(null);
+                setMarkdownContent(null);
                 return;
             }
             setLoadingSyllabus(true);
+            setMarkdownContent(null);
+
             const res = await getFilesAction(activeSubjectId, ["Syllabus"]);
             if (res.success && res.data && res.data.length > 0) {
-                // Pick the first syllabus uploaded
-                const file = res.data[0];
+                // Find .md if available (prefer it), otherwise take the first
+                const targetFile = res.data.find(f => f.viewLink.endsWith(".md") || f.downloadLink.endsWith(".md")) || res.data[0];
+
                 setSyllabusFile({
-                    id: file.id,
-                    title: file.title,
-                    viewLink: file.viewLink,
-                    downloadLink: file.downloadLink
+                    id: targetFile.id,
+                    title: targetFile.title,
+                    viewLink: targetFile.viewLink,
+                    downloadLink: targetFile.downloadLink
                 });
             } else {
                 setSyllabusFile(null);
@@ -105,6 +117,108 @@ export default function SyllabusPage() {
         }
         fetchSyllabus();
     }, [activeSubjectId]);
+
+    const isMarkdown = syllabusFile?.viewLink.endsWith(".md") || syllabusFile?.downloadLink.endsWith(".md");
+
+    // Fetch markdown content via server action (avoids CORS issues on LAN/mobile)
+    useEffect(() => {
+        async function loadMarkdown() {
+            if (syllabusFile && isMarkdown) {
+                setLoadingMarkdown(true);
+                const res = await fetchMarkdownContent(syllabusFile.viewLink);
+                if (res.success && res.data) {
+                    setMarkdownContent(res.data);
+                } else {
+                    setMarkdownContent("Failed to load markdown content.");
+                }
+                setLoadingMarkdown(false);
+            }
+        }
+        loadMarkdown();
+    }, [syllabusFile, isMarkdown]);
+
+    const handleDownloadPdf = () => {
+        if (!isMarkdown || !syllabusFile) return;
+
+        const mdElement = document.getElementById("markdown-content");
+        if (!mdElement) return;
+
+        setDownloadingPdf(true);
+        try {
+            const subjectName = dbSubjects.find(s => s.id === activeSubjectId)?.name || 'Syllabus';
+
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            document.body.appendChild(iframe);
+
+            const iframeDoc = iframe.contentWindow?.document;
+            if (!iframeDoc) throw new Error("Could not create iframe");
+
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${subjectName}</title>
+                    <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #000; padding: 2cm; line-height: 1.6; }
+                        h1, h2, h3, h4 { color: #000; margin-top: 24px; margin-bottom: 16px; font-weight: 600; }
+                        h1 { font-size: 2em; border-bottom: 1px solid #ccc; padding-bottom: 0.3em; margin-top: 0; }
+                        h2 { font-size: 1.5em; border-bottom: 1px solid #ccc; padding-bottom: 0.3em; margin-top: 32px; }
+                        p { margin-bottom: 16px; font-size: 12pt; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 11pt; }
+                        th, td { border: 1px solid #000; padding: 8px 12px; text-align: left; }
+                        th { font-weight: 600; }
+                        ul, ol { margin-bottom: 16px; padding-left: 32px; font-size: 12pt; }
+                        li { margin-bottom: 8px; }
+                        a { color: #000; text-decoration: underline; }
+                        blockquote { border-left: 4px solid #ccc; padding-left: 16px; color: #333; font-style: italic; margin: 0 0 16px 0; }
+                        code { font-family: monospace; font-size: 0.9em; }
+                        pre { padding: 16px; border: 1px solid #ccc; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }
+                        .print-header { text-align: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #000; }
+                        .metadata { font-size: 11pt; color: #555; }
+                        @media print {
+                            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                            @page { margin: 1cm; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-header">
+                        <h1>${subjectName}</h1>
+                        <div class="metadata">
+                            <strong>Course:</strong> ${activeCourse?.name || ''} | <strong>Semester:</strong> ${activeSem}
+                        </div>
+                    </div>
+                    ${mdElement.innerHTML}
+                </body>
+                </html>
+            `);
+            iframeDoc.close();
+
+            iframe.onload = () => {
+                try {
+                    iframe.contentWindow?.focus();
+                    iframe.contentWindow?.print();
+                } catch (e) {
+                    console.error("Print failed:", e);
+                } finally {
+                    setTimeout(() => {
+                        document.body.removeChild(iframe);
+                        setDownloadingPdf(false);
+                    }, 1000);
+                }
+            };
+        } catch (error) {
+            console.error("Failed to generate PDF", error);
+            alert("Failed to initialize print window.");
+            setDownloadingPdf(false);
+        }
+    };
 
     const activeCourse = dbCourses.find(c => c.id === activeCourseId);
     const maxSems = activeCourse?.totalSemesters || 6;
@@ -223,34 +337,56 @@ export default function SyllabusPage() {
 
                             {syllabusFile && (
                                 <ClickSpark className="shrink-0 w-full sm:w-auto">
-                                    <a
-                                        href={syllabusFile.downloadLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20"
-                                    >
-                                        <Download className="h-4 w-4" />
-                                        Download PDF
-                                    </a>
+                                    {isMarkdown ? (
+                                        <button
+                                            onClick={handleDownloadPdf}
+                                            disabled={downloadingPdf || loadingMarkdown}
+                                            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20 disabled:opacity-50"
+                                        >
+                                            {downloadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                                            {downloadingPdf ? "Generating..." : "Download PDF"}
+                                        </button>
+                                    ) : (
+                                        <a
+                                            href={syllabusFile.downloadLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20"
+                                        >
+                                            <Download className="h-4 w-4" />
+                                            Download PDF
+                                        </a>
+                                    )}
                                 </ClickSpark>
                             )}
                         </div>
 
                         {/* Interactive Viewer Body */}
-                        <div className="flex-1 w-full bg-black/5 dark:bg-black/20 rounded-2xl relative overflow-hidden flex flex-col items-center justify-center border border-zinc-200 dark:border-zinc-800/60 mt-2">
+                        <div className={`flex-1 w-full rounded-2xl relative overflow-hidden flex flex-col items-center justify-center border mt-2 ${!syllabusFile || isMarkdown ? 'bg-transparent border-transparent overflow-y-auto min-h-[400px]' : 'bg-black/5 dark:bg-black/20 border-zinc-200 dark:border-zinc-800/60'}`}>
                             {loadingSyllabus ? (
                                 <div className="flex flex-col items-center justify-center gap-4 text-zinc-400">
                                     <Loader2 className="h-8 w-8 animate-spin" />
                                     <span className="font-semibold text-sm">Loading document...</span>
                                 </div>
                             ) : syllabusFile ? (
-                                <iframe
-                                    src={syllabusFile.viewLink}
-                                    className="w-full h-full border-none"
-                                    allow="autoplay"
-                                />
+                                isMarkdown ? (
+                                    <div className="w-full h-full max-w-4xl mx-auto text-left flex flex-col justify-start items-start">
+                                        {loadingMarkdown ? (
+                                            <div className="w-full flex-1 flex flex-col items-center justify-center gap-4 text-zinc-400 py-20">
+                                                <Loader2 className="h-8 w-8 animate-spin" />
+                                                <span className="font-semibold text-sm">Loading markdown...</span>
+                                            </div>
+                                        ) : (
+                                            <div id="markdown-content" className="w-full h-full flex-1 bg-white dark:bg-zinc-950 p-6 sm:p-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 prose prose-zinc dark:prose-invert prose-sm sm:prose-base max-w-none shadow-sm h-full max-h-[calc(100vh-250px)] overflow-y-auto">
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent || ""}</ReactMarkdown>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <PDFViewer url={syllabusFile.viewLink} />
+                                )
                             ) : (
-                                <div className="flex flex-col items-center justify-center px-6 text-center">
+                                <div className="flex flex-col items-center justify-center px-6 text-center border shadow-sm border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl w-full h-full py-20 bg-zinc-50/50 dark:bg-zinc-950/50">
                                     <div className="p-4 bg-zinc-200/50 dark:bg-zinc-800/50 rounded-full mb-4">
                                         <FileText className="h-8 w-8 text-zinc-400" />
                                     </div>

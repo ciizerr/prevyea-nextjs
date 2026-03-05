@@ -1,5 +1,6 @@
 import { Trophy, Medal, Upload, Award } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import Link from "next/link";
 
 const LEADERBOARD_DATA = [
     { rank: 1, name: "Rahul S.", course: "BCA Sem 5", uploads: 42, points: 1250, recent: "Uploaded 2023 OS Paper" },
@@ -84,10 +85,10 @@ export default function WallOfFame() {
                         Upload your old notes or past papers and claim your spot.
                     </p>
                     <ClickSpark className="w-full sm:w-auto">
-                        <button className="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 font-bold py-4 px-8 rounded-full shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer">
+                        <Link href="/vault" className="w-full sm:w-auto inline-flex bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 font-bold py-4 px-8 rounded-full shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer">
                             <Upload className="h-5 w-5" />
                             Contribute Material
-                        </button>
+                        </Link>
                     </ClickSpark>
                 </div>
             </div>

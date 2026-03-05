@@ -1,43 +1,44 @@
 "use client";
 
-import { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { useState, useTransition } from "react";
+import { CheckCircle2, Loader2 } from "lucide-react";
+import { updateNotificationPrefsAction } from "@/actions/user";
 
 // ─── Constants ─────────────────────────────────────────────────────
 
 const NOTIFICATION_OPTIONS = [
-    { key: "pyq_uploads", label: "New PYQ Uploads", description: "Get notified when someone uploads a new past paper for your course.", defaultOn: true },
+    { key: "pyq_uploads", label: "New Document Uploads", description: "Get notified when someone uploads a new past paper or notes for your selected course.", defaultOn: true },
     { key: "announcements", label: "Community Announcements", description: "Receive updates about exams, events, and library maintenance.", defaultOn: true },
-    { key: "marketing", label: "Marketing Emails", description: "Occasional promotional emails and offers.", defaultOn: false },
 ];
 
 // ─── Main Component ────────────────────────────────────────────────
 
-export default function NotificationsTab() {
-    const [prefs, setPrefs] = useState<Record<string, boolean>>(() => {
-        if (typeof window === "undefined") return {};
-        try {
-            const stored = localStorage.getItem("notification_prefs");
-            if (stored) return JSON.parse(stored);
-        } catch { /* ignore */ }
-        const defaults: Record<string, boolean> = {};
-        NOTIFICATION_OPTIONS.forEach((o) => { defaults[o.key] = o.defaultOn; });
-        return defaults;
+export default function NotificationsTab({ initialPyqs, initialNotices }: { initialPyqs: boolean, initialNotices: boolean }) {
+    const [prefs, setPrefs] = useState<Record<string, boolean>>({
+        pyq_uploads: initialPyqs,
+        announcements: initialNotices
     });
+
+    const [isPending, startTransition] = useTransition();
 
     const toggle = (key: string) => {
         setPrefs((prev) => {
             const next = { ...prev, [key]: !prev[key] };
-            localStorage.setItem("notification_prefs", JSON.stringify(next));
+            startTransition(async () => {
+                await updateNotificationPrefsAction(next.pyq_uploads, next.announcements);
+            });
             return next;
         });
     };
 
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
-            <div>
-                <h1 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">Notifications</h1>
-                <p className="text-zinc-500 dark:text-zinc-400 font-medium">Choose what you want to be notified about.</p>
+            <div className="flex justify-between items-start">
+                <div>
+                    <h1 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">Notifications</h1>
+                    <p className="text-zinc-500 dark:text-zinc-400 font-medium">Choose what you want to be notified about.</p>
+                </div>
+                {isPending && <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />}
             </div>
 
             <div className="space-y-4 max-w-2xl">
@@ -63,7 +64,7 @@ export default function NotificationsTab() {
                     );
                 })}
             </div>
-            <p className="text-xs text-zinc-500 font-medium">Notification preferences are saved to your browser.</p>
+            <p className="text-xs text-zinc-500 font-medium">Notification preferences are instantly saved to your profile and span across all your devices.</p>
         </div>
     );
 }

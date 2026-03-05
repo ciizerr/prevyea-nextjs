@@ -1,9 +1,9 @@
 "use server";
 
 import { db } from "@/db";
-import { roleApplications, users } from "@/db/schema";
+import { roleApplications, users, notifications } from "@/db/schema";
 import { auth } from "@/auth";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray, desc } from "drizzle-orm";
 
 export async function getMyApplicationsAction() {
     try {
@@ -13,7 +13,8 @@ export async function getMyApplicationsAction() {
         const apps = await db
             .select()
             .from(roleApplications)
-            .where(eq(roleApplications.userId, session.user.id));
+            .where(eq(roleApplications.userId, session.user.id))
+            .orderBy(desc(roleApplications.createdAt));
 
         return { success: true, data: apps };
     } catch (error) {
@@ -73,6 +74,24 @@ export async function applyForRoleAction(formData: FormData) {
             role,
             reason: reason.trim(),
         });
+
+        // Notify Admins/Moderators
+        const admins = await db.query.users.findMany({
+            where: inArray(users.role, ["ADMIN", "MODERATOR"])
+        });
+
+        if (admins.length > 0) {
+            await db.insert(notifications).values(
+                admins.map(admin => ({
+                    id: crypto.randomUUID(),
+                    userId: admin.id,
+                    title: "New Role Application",
+                    message: `${currentUser?.name || "A user"} has applied for the ${role} role.`,
+                    read: false,
+                    link: "/verification"
+                }))
+            );
+        }
 
         return { success: true, message: "Application submitted successfully!" };
     } catch (error) {

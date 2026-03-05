@@ -13,18 +13,18 @@ export default function Navbar() {
                             <div className="bg-blue-600 p-2 rounded-xl group-hover:bg-blue-500 transition-colors">
                                 <Library className="h-5 w-5 text-white" />
                             </div>
-                            <span className="font-bold text-xl tracking-tight text-zinc-900 dark:text-zinc-50">PU Library</span>
+                            <span className="font-bold text-xl tracking-tight text-zinc-900 dark:text-zinc-50">PU Digital Library</span>
                         </Link>
 
                         {/* Center: Navigation Links */}
                         <div className="hidden md:flex items-center gap-1">
-                            <Link href="#" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-4 py-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all">
+                            <Link href="/vault" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-4 py-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all">
                                 Browse
                             </Link>
-                            <Link href="#" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-4 py-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all">
+                            <Link href="/syllabus" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-4 py-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all">
                                 Syllabus
                             </Link>
-                            <Link href="#" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-4 py-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all">
+                            <Link href="/vault" className="text-sm font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-4 py-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-all">
                                 Contribute
                             </Link>
                         </div>
@@ -33,12 +33,9 @@ export default function Navbar() {
                         <div className="flex items-center gap-3 md:gap-4">
 
                             <div className="flex items-center gap-2">
-                                <Link href="#" className="hidden sm:block text-sm font-bold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 px-4 py-2 transition-colors">
-                                    Log In
-                                </Link>
                                 <ClickSpark className="relative inline-flex">
-                                    <Link href="#" className="group text-sm font-bold bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 px-5 py-2.5 rounded-full shadow-lg transition-all flex items-center gap-1.5">
-                                        Sign Up
+                                    <Link href="/login" className="group text-sm font-bold bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 px-5 py-2.5 rounded-full shadow-lg transition-all flex items-center gap-1.5">
+                                        Sign In
                                         <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                                     </Link>
                                 </ClickSpark>

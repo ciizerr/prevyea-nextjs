@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, FolderOpen, ChevronRight, CheckCircle2, FileText, Download, Clock, User, BookOpen, X, LayoutGrid, List, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Search, FolderOpen, ChevronRight, CheckCircle2, FileText, Clock, User, BookOpen, X, LayoutGrid, List, Loader2, Upload } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
-import { getCoursesAction, getSubjectsAction, getFilesAction } from "@/actions/curriculum";
+import { getCoursesAction, getSubjectsAction, getFilesAction, incrementDownloadAction } from "@/actions/curriculum";
+import PDFViewer from "@/components/pdf-viewer";
+import { UploadModal } from "@/components/dashboard/upload-modal";
 
 type CourseType = {
     id: string;
@@ -24,6 +27,7 @@ type Paper = {
     title: string;
     type: string;
     author: string;
+    authorUsername: string | null;
     downloads: number | null;
     views: number | null;
     date: string;
@@ -37,18 +41,20 @@ export default function VaultPage() {
     const [activeSem, setActiveSem] = useState<string>("");
     const [activeSubjectId, setActiveSubjectId] = useState<string>("");
 
-    const [selectedPaper, setSelectedPaper] = useState<Paper | null>(null);
+    const [selectedPaperIndex, setSelectedPaperIndex] = useState<number | null>(null);
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
     // Dynamic Data States
     const [dbCourses, setDbCourses] = useState<CourseType[]>([]);
     const [dbSubjects, setDbSubjects] = useState<SubjectType[]>([]);
     const [papers, setPapers] = useState<Paper[]>([]);
+    const selectedPaper = selectedPaperIndex !== null ? papers[selectedPaperIndex] : null;
 
     // Loading States
     const [loadingCourses, setLoadingCourses] = useState(true);
     const [loadingSubjects, setLoadingSubjects] = useState(false);
     const [loadingPapers, setLoadingPapers] = useState(false);
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
     // Initial Fetch for Courses
     useEffect(() => {
@@ -102,19 +108,40 @@ export default function VaultPage() {
             const res = await getFilesAction(activeSubjectId, ["PYQ", "Notes"]);
             if (res.success && res.data) {
                 const formattedPapers: Paper[] = res.data.map((p: {
-                    id: string; title: string; type: string; year: number; uploaderId: string | null; downloads: number | null; views: number | null; createdAt: Date | null; viewLink: string; downloadLink: string;
-                }) => ({
-                    id: p.id,
-                    title: p.title,
-                    type: p.type,
-                    year: p.year,
-                    author: p.uploaderId ? "Student" : "Admin", // Fallback for now unless we join users
-                    downloads: p.downloads,
-                    views: p.views,
-                    date: p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) : "Unknown Date",
-                    viewLink: p.viewLink,
-                    downloadLink: p.downloadLink
-                }));
+                    id: string; title: string; type: string; year: number; uploaderId: string | null; uploaderName: string | null; uploaderUsername: string | null; downloads: number | null; views: number | null; createdAt: Date | null; viewLink: string; downloadLink: string;
+                }) => {
+                    // createdAt may arrive as a JS Date, a Unix-seconds integer, or a SQLite
+                    // text timestamp string ("YYYY-MM-DD HH:MM:SS") depending on the driver.
+                    const parseDate = (raw: unknown): string => {
+                        if (!raw) return "Unknown Date";
+                        let d: Date;
+                        if (raw instanceof Date) {
+                            d = raw;
+                        } else if (typeof raw === "string") {
+                            // SQLite CURRENT_TIMESTAMP → "2024-03-04 07:39:57" — add T+Z for ISO parsing
+                            d = new Date(raw.replace(" ", "T") + (raw.includes("Z") ? "" : "Z"));
+                        } else {
+                            // Assume Unix seconds integer
+                            d = new Date(Number(raw) * 1000);
+                        }
+                        if (isNaN(d.getTime())) return "Unknown Date";
+                        return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" });
+                    };
+                    const dateStr = parseDate(p.createdAt);
+                    return {
+                        id: p.id,
+                        title: p.title,
+                        type: p.type,
+                        year: p.year,
+                        author: p.uploaderName || (p.uploaderId ? "Anonymous Student" : "Admin"),
+                        authorUsername: p.uploaderUsername ?? null,
+                        downloads: p.downloads,
+                        views: p.views,
+                        date: dateStr,
+                        viewLink: p.viewLink,
+                        downloadLink: p.downloadLink,
+                    };
+                });
                 setPapers(formattedPapers);
             }
             setLoadingPapers(false);
@@ -320,7 +347,18 @@ export default function VaultPage() {
                                                         </span>
                                                     )}
                                                     <div className="flex items-center gap-1.5 font-medium">
-                                                        <User className="h-3.5 w-3.5" /> <span className="hidden sm:inline truncate max-w-[80px]">{paper.author}</span>
+                                                        <User className="h-3.5 w-3.5" />
+                                                        {paper.authorUsername ? (
+                                                            <Link
+                                                                href={`/u/${paper.authorUsername}`}
+                                                                className="hidden sm:inline truncate max-w-[80px] hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-colors"
+                                                                onClick={e => e.stopPropagation()}
+                                                            >
+                                                                {paper.author}
+                                                            </Link>
+                                                        ) : (
+                                                            <span className="hidden sm:inline truncate max-w-[80px]">{paper.author}</span>
+                                                        )}
                                                     </div>
                                                     <div className="flex items-center gap-1.5 font-medium">
                                                         <Clock className="h-3.5 w-3.5" /> <span className="hidden sm:inline">{paper.date}</span>
@@ -332,7 +370,7 @@ export default function VaultPage() {
                                         <div className={`${viewMode === "grid" ? "mt-4" : "shrink-0 w-full sm:w-auto mt-4 sm:mt-0"}`}>
                                             <ClickSpark className="w-full sm:w-auto">
                                                 <button
-                                                    onClick={() => setSelectedPaper(paper)}
+                                                    onClick={() => setSelectedPaperIndex(papers.indexOf(paper))}
                                                     className={`w-full ${viewMode === "list" ? "sm:w-auto px-6" : ""} py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors active:scale-95 shadow-md shadow-blue-600/20`}
                                                 >
                                                     <FileText className="h-4 w-4" />
@@ -351,7 +389,11 @@ export default function VaultPage() {
                                     <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm mb-6">
                                         We are actively sourcing resources for {dbSubjects.find(s => s.id === activeSubjectId)?.name || "this subject"}.
                                     </p>
-                                    <button className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2 rounded-xl font-bold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shadow-sm">
+                                    <button
+                                        onClick={() => setIsUploadModalOpen(true)}
+                                        className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2 rounded-xl font-bold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors shadow-sm flex items-center gap-2"
+                                    >
+                                        <Upload className="w-4 h-4" />
                                         Upload a Paper
                                     </button>
                                 </div>
@@ -362,7 +404,7 @@ export default function VaultPage() {
             </div>
 
             {/* PDF Viewer Modal Overlay */}
-            {selectedPaper && (
+            {selectedPaper && selectedPaperIndex !== null && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
                     <div className="w-full max-w-5xl h-full max-h-[90vh] bg-zinc-200 dark:bg-zinc-950 rounded-2xl md:rounded-3xl border border-zinc-300 dark:border-zinc-800 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
                         {/* Toolbar */}
@@ -373,38 +415,47 @@ export default function VaultPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 line-clamp-1 max-w-[150px] sm:max-w-md">
-                                        {selectedPaper.title}
+                                        {selectedPaper.title} · {selectedPaper.year}
                                     </h3>
                                     <p className="text-xs text-zinc-500 font-medium">Verified Source • {selectedPaper.downloads || 0} Downloads</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 sm:gap-6">
-                                <div className="flex items-center gap-3">
-                                    <a href={selectedPaper.downloadLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20 transition-all active:scale-95">
-                                        <Download className="h-4 w-4" /> Download
-                                    </a>
-                                    <button
-                                        onClick={() => setSelectedPaper(null)}
-                                        className="p-2 ml-1 rounded-full text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 transition-colors"
-                                    >
-                                        <X className="h-6 w-6" />
-                                    </button>
-                                </div>
-                            </div>
+                            <button
+                                onClick={() => setSelectedPaperIndex(null)}
+                                className="p-2 rounded-full text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 transition-colors"
+                            >
+                                <X className="h-6 w-6" />
+                            </button>
                         </div>
 
                         {/* Interactive Viewer Body */}
                         <div className="flex-1 w-full bg-black/5 relative overflow-hidden">
-                            <iframe
-                                src={selectedPaper.viewLink}
-                                className="w-full h-full border-none"
-                                allow="autoplay"
+                            <PDFViewer
+                                url={selectedPaper.viewLink}
+                                downloadUrl={selectedPaper.downloadLink}
+                                onDownload={() => {
+                                    // Optimistically update local state
+                                    setPapers(prev => prev.map((p, i) =>
+                                        i === selectedPaperIndex
+                                            ? { ...p, downloads: (p.downloads ?? 0) + 1 }
+                                            : p
+                                    ));
+                                    // Persist counter to DB (fire-and-forget)
+                                    incrementDownloadAction(selectedPaper.id);
+                                }}
+                                fileLabel={`${selectedPaper.title} · ${selectedPaper.year} (${selectedPaperIndex + 1} / ${papers.length})`}
+                                onPrevFile={() => setSelectedPaperIndex(i => i !== null ? Math.max(0, i - 1) : 0)}
+                                onNextFile={() => setSelectedPaperIndex(i => i !== null ? Math.min(papers.length - 1, i + 1) : 0)}
+                                hasPrev={selectedPaperIndex > 0}
+                                hasNext={selectedPaperIndex < papers.length - 1}
                             />
                         </div>
                     </div>
                 </div>
             )}
+
+            <UploadModal isOpen={isUploadModalOpen} onClose={() => setIsUploadModalOpen(false)} />
         </div>
     );
 }

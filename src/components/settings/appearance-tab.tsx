@@ -60,7 +60,7 @@ export default function AppearanceTab() {
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div>
                 <h1 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">Appearance</h1>
-                <p className="text-zinc-500 dark:text-zinc-400 font-medium">Customize how the PU library looks on your device.</p>
+                <p className="text-zinc-500 dark:text-zinc-400 font-medium">Customize how the PU Digital Library looks on your device.</p>
             </div>
 
             <div className="space-y-6">
@@ -75,8 +75,8 @@ export default function AppearanceTab() {
                                     key={opt.key}
                                     onClick={() => setTheme(opt.key)}
                                     className={`border-2 rounded-2xl p-4 cursor-pointer transition-all duration-200 text-left ${opt.cardBg} ${isActive
-                                            ? "border-indigo-500 shadow-sm shadow-indigo-500/10"
-                                            : "border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50"
+                                        ? "border-indigo-500 shadow-sm shadow-indigo-500/10"
+                                        : "border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50"
                                         }`}
                                 >
                                     {opt.preview}
@@ -86,8 +86,8 @@ export default function AppearanceTab() {
                                             <span className={`text-sm font-bold ${opt.labelColor}`}>{opt.label}</span>
                                         </div>
                                         <div className={`w-4 h-4 rounded-full flex items-center justify-center transition-all ${isActive
-                                                ? "bg-indigo-500"
-                                                : "border border-zinc-300 dark:border-zinc-600"
+                                            ? "bg-indigo-500"
+                                            : "border border-zinc-300 dark:border-zinc-600"
                                             }`}>
                                             {isActive && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                                         </div>

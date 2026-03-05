@@ -1,12 +1,32 @@
+"use client";
+
 import { Search, Sparkles, Terminal } from "lucide-react";
 import Typewriter from "@/components/reactbits/Typewriter";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface HeroProps {
     themeColor?: string;
 }
 
 export default function Hero({ themeColor }: HeroProps) {
+    const [query, setQuery] = useState("");
+    const router = useRouter();
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        const sq = query.trim();
+        if (sq) {
+            // Check if user is searching for syllabus specifically
+            if (sq.toLowerCase().includes("syllabus")) {
+                router.push(`/syllabus?search=${encodeURIComponent(sq)}`);
+            } else {
+                router.push(`/vault?search=${encodeURIComponent(sq)}`);
+            }
+        }
+    };
+
     return (
         <section className="w-full relative overflow-hidden flex flex-col items-center justify-center text-center pt-24 pb-16 md:pt-32 md:pb-32 px-4 selection:bg-zinc-800 selection:text-emerald-400">
             {/* Darker, moodier background glow for the "CLI / Spotlight" feel */}
@@ -44,21 +64,22 @@ export default function Hero({ themeColor }: HeroProps) {
                     {/* Glowing under-shadow */}
                     <div className="absolute -inset-1 bg-gradient-to-r from-zinc-500/30 to-zinc-400/30 dark:from-zinc-500/20 dark:to-zinc-600/20 rounded-2xl blur-lg transition duration-500 group-focus-within:opacity-100 group-focus-within:from-emerald-500/30 group-focus-within:to-indigo-500/30 opacity-70"></div>
 
-                    <div className="relative flex items-center shadow-xl rounded-2xl bg-white dark:bg-zinc-950/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 p-1 sm:p-2 transition-all overflow-hidden group-focus-within:border-zinc-300 dark:group-focus-within:border-zinc-600">
+                    <form onSubmit={handleSearch} className="relative flex items-center shadow-xl rounded-2xl bg-white dark:bg-zinc-950/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 p-1 sm:p-2 transition-all overflow-hidden group-focus-within:border-zinc-300 dark:group-focus-within:border-zinc-600">
                         <div className="pl-4 pr-2 flex items-center shrink-0">
                             <Terminal className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
                         </div>
                         <input
                             type="text"
-                            placeholder="Type to search..."
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Search BCA, Sem 4, OS notes..."
                             className="flex-1 bg-transparent border-none outline-none text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400/80 dark:placeholder:text-zinc-600 font-mono text-sm sm:text-base py-3 sm:py-4 min-w-0"
                             autoComplete="off"
                             spellCheck="false"
                         />
                         <div className="hidden sm:flex items-center gap-1 pr-3 opacity-60 pointer-events-none shrink-0">
-                            <kbd className="font-mono text-[10px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded text-zinc-500 dark:text-zinc-400">Ctrl</kbd>
-                            <span className="text-zinc-400 text-xs">+</span>
-                            <kbd className="font-mono text-[10px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded text-zinc-500 dark:text-zinc-400">K</kbd>
+                            <kbd className="font-mono text-[10px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded text-zinc-500 dark:text-zinc-400">Enter</kbd>
+                            <span className="text-zinc-400 text-[10px] ml-0.5">↵</span>
                         </div>
                         <ClickSpark
                             sparkColor="#10b981"
@@ -68,13 +89,13 @@ export default function Hero({ themeColor }: HeroProps) {
                             duration={300}
                             className="shrink-0 pl-1"
                         >
-                            <button className="flex bg-zinc-100 active:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:active:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-medium px-4 py-3 sm:px-6 sm:py-3 rounded-xl transition-all whitespace-nowrap cursor-pointer items-center justify-center">
+                            <button type="submit" className="flex bg-zinc-100 active:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:active:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-medium px-4 py-3 sm:px-6 sm:py-3 rounded-xl transition-all whitespace-nowrap cursor-pointer items-center justify-center">
                                 <Search className="h-4 w-4 sm:hidden" />
                                 <span className="hidden sm:inline">Search</span>
                                 <Sparkles className="h-3.5 w-3.5 ml-1.5 text-zinc-400 hidden sm:inline" />
                             </button>
                         </ClickSpark>
-                    </div>
+                    </form>
                 </div>
 
                 <p className="text-sm font-medium text-zinc-500 dark:text-zinc-500 mt-4 max-w-xl mx-auto tracking-wide uppercase">

@@ -47,7 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         >
                             <Menu className="h-5 w-5" />
                         </button>
-                        <span className="font-bold text-lg tracking-tight text-zinc-900 dark:text-zinc-50">PU Library</span>
+                        <span className="font-bold text-lg tracking-tight text-zinc-900 dark:text-zinc-50">PU Digital Library</span>
                     </div>
 
                     {/* Mobile Header Actions */}

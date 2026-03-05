@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Lock, FileText, ChevronDown, ChevronUp, ZoomIn, Download, Share2 } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import Link from "next/link";
 
 export default function SneakPeek() {
     const [isHovering, setIsHovering] = useState(false);
@@ -123,9 +124,9 @@ export default function SneakPeek() {
                                     Join the library to view all 14 pages, access the answer key, and download the PDF.
                                 </p>
                                 <ClickSpark className="w-full">
-                                    <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer">
-                                        Sign Up Free
-                                    </button>
+                                    <Link href="/login" className="w-full block bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all cursor-pointer">
+                                        Sign In
+                                    </Link>
                                 </ClickSpark>
                                 <p className="text-xs text-zinc-500 mt-4">Takes less than 30 seconds.</p>
                             </div>

@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { courses, subjects, colleges, users, collegeCourses } from "@/db/schema";
 import { auth } from "@/auth";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 async function checkAdminAccess() {
@@ -185,3 +185,90 @@ export async function deleteSubjectAction(id: string) {
         return { success: false, error: "Failed to delete subject" };
     }
 }
+
+// ─── File Management ────────────────────────────────────────────────────────
+
+export async function getFilesForManagementAction() {
+    try {
+        await checkAdminAccess();
+        const { pyqs, users, subjects, courses } = await import("@/db/schema");
+        const result = await db
+            .select({
+                id: pyqs.id,
+                title: pyqs.title,
+                type: pyqs.type,
+                year: pyqs.year,
+                status: pyqs.status,
+                viewLink: pyqs.viewLink,
+                uploaderName: users.name,
+                subjectName: subjects.name,
+                courseName: courses.name,
+                semester: pyqs.semester,
+                createdAt: pyqs.createdAt,
+            })
+            .from(pyqs)
+            .leftJoin(users, eq(pyqs.uploaderId, users.id))
+            .leftJoin(subjects, eq(pyqs.subjectId, subjects.id))
+            .leftJoin(courses, eq(pyqs.courseId, courses.id))
+            .orderBy(desc(pyqs.createdAt));
+        return { success: true, data: result };
+    } catch (error) {
+        console.error("Get Files Error:", error);
+        return { success: false, error: "Failed to fetch files" };
+    }
+}
+
+export async function deleteFileAction(id: string) {
+    try {
+        await checkAdminAccess();
+        if (!id) throw new Error("File ID is required");
+
+        const { pyqs } = await import("@/db/schema");
+
+        // Fetch the record first so we have the Cloudinary public_id (stored in driveId)
+        const [record] = await db.select({ driveId: pyqs.driveId }).from(pyqs).where(eq(pyqs.id, id));
+
+        // Delete from Cloudinary if we have a public_id
+        let cloudinaryWarning: string | null = null;
+        if (record?.driveId) {
+            try {
+                const cloudinary = (await import("cloudinary")).v2;
+                cloudinary.config({ secure: true });
+                const result = await cloudinary.uploader.destroy(record.driveId, { resource_type: "raw" });
+                if (result.result !== "ok" && result.result !== "not found") {
+                    cloudinaryWarning = `Cloudinary: ${result.result}`;
+                }
+            } catch (err) {
+                // Don't block DB deletion if Cloudinary is unreachable
+                cloudinaryWarning = "Cloudinary deletion failed — file may still exist on CDN";
+                console.error("Cloudinary delete error:", err);
+            }
+        }
+
+        // Delete from DB
+        await db.delete(pyqs).where(eq(pyqs.id, id));
+        revalidatePath("/management");
+        revalidatePath("/vault");
+        revalidatePath("/syllabus");
+        return { success: true, warning: cloudinaryWarning };
+    } catch (error) {
+        console.error("Delete File Error:", error);
+        return { success: false, error: "Failed to delete file" };
+    }
+}
+
+export async function updateFileTitleAction(id: string, title: string) {
+    try {
+        await checkAdminAccess();
+        if (!id || !title?.trim()) throw new Error("ID and title are required");
+        const { pyqs } = await import("@/db/schema");
+        await db.update(pyqs).set({ title: title.trim() }).where(eq(pyqs.id, id));
+        revalidatePath("/management");
+        revalidatePath("/vault");
+        return { success: true };
+    } catch (error) {
+        console.error("Update File Error:", error);
+        return { success: false, error: "Failed to update file" };
+    }
+}
+

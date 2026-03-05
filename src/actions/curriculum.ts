@@ -1,12 +1,11 @@
 "use server";
 
 import { db } from "@/db";
-import { courses, subjects, collegeCourses, pyqs } from "@/db/schema";
-import { eq, and, inArray, desc } from "drizzle-orm";
+import { courses, subjects, collegeCourses, pyqs, users } from "@/db/schema";
+import { eq, and, inArray, desc, sql } from "drizzle-orm";
 
 export async function getCoursesAction() {
     try {
-        // Return structured dataset flattening Course x College associations for frontend components 
         const allCourses = await db.select({
             id: courses.id,
             name: courses.name,
@@ -26,7 +25,7 @@ export async function getCoursesAction() {
 export async function getSubjectsAction(courseId: string, semester: string) {
     try {
         if (!courseId || !semester) {
-            return { success: true, data: [] }; // Return empty if prerequisites missing
+            return { success: true, data: [] };
         }
 
         const validSubjects = await db
@@ -61,11 +60,14 @@ export async function getFilesAction(subjectId: string, types: ("PYQ" | "Notes" 
                 viewLink: pyqs.viewLink,
                 downloadLink: pyqs.downloadLink,
                 uploaderId: pyqs.uploaderId,
+                uploaderName: users.name,
+                uploaderUsername: users.username,
                 views: pyqs.views,
                 downloads: pyqs.downloads,
                 createdAt: pyqs.createdAt,
             })
             .from(pyqs)
+            .leftJoin(users, eq(pyqs.uploaderId, users.id))
             .where(
                 and(
                     eq(pyqs.subjectId, subjectId),
@@ -79,5 +81,34 @@ export async function getFilesAction(subjectId: string, types: ("PYQ" | "Notes" 
     } catch (error) {
         console.error("Failed to fetch files:", error);
         return { success: false, error: "Failed to fetch files" };
+    }
+}
+
+export async function incrementDownloadAction(pyqId: string) {
+    try {
+        if (!pyqId) return { success: false };
+        await db
+            .update(pyqs)
+            .set({ downloads: sql`${pyqs.downloads} + 1` })
+            .where(eq(pyqs.id, pyqId));
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to increment download count:", error);
+        return { success: false };
+    }
+}
+
+export async function fetchMarkdownContent(url: string) {
+    try {
+        if (!url) return { success: false, error: "No URL provided" };
+        const res = await fetch(url);
+        if (!res.ok) {
+            return { success: false, error: `Failed to fetch: ${res.status}` };
+        }
+        const text = await res.text();
+        return { success: true, data: text };
+    } catch (error) {
+        console.error("Failed to fetch markdown content:", error);
+        return { success: false, error: "Failed to fetch markdown content" };
     }
 }

@@ -1,5 +1,6 @@
 import { MessageCircle, FileDown, FolderOpen, ChevronRight, Check } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import Link from "next/link";
 
 export default function StruggleVsSolution() {
     return (
@@ -123,10 +124,10 @@ export default function StruggleVsSolution() {
 
                             <div className="mt-6 md:mt-auto pt-4 relative">
                                 <ClickSpark className="w-full">
-                                    <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                                    <Link href="/vault" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95">
                                         Open Vault
                                         <ChevronRight className="h-5 w-5" />
-                                    </button>
+                                    </Link>
                                 </ClickSpark>
                             </div>
                         </div>

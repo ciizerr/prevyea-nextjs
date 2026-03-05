@@ -38,7 +38,12 @@ export const users = sqliteTable("users", {
     course: text("course"), // e.g., "BCA", "B.Sc IT"
     session: text("session"),
     collegeId: text("college_id").references(() => colleges.id, { onDelete: "set null" }),
-    createdAt: integer("created_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
+    instagram: text("instagram"),
+    discord: text("discord"),
+    github: text("github"),
+    notifyPyqs: integer("notify_pyqs", { mode: "boolean" }).default(true),
+    notifyNotices: integer("notify_notices", { mode: "boolean" }).default(true),
+    createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
 // PYQs (Past Year Questions) Table
@@ -57,7 +62,7 @@ export const pyqs = sqliteTable("pyqs", {
     status: text("status", { enum: ["PENDING", "APPROVED", "REJECTED"] }).default("PENDING"),
     views: integer("views").default(0),
     downloads: integer("downloads").default(0),
-    createdAt: integer("created_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
+    createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
 // Notices Table
@@ -67,7 +72,9 @@ export const notices = sqliteTable("notices", {
     content: text("content").notNull(),
     type: text("type", { enum: ["Exam", "Event", "General"] }).notNull(),
     authorId: text("author_id").references(() => users.id),
-    createdAt: integer("created_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
+    expiresAt: integer("expires_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" }),
 });
 
 // Role Applications Table
@@ -78,8 +85,31 @@ export const roleApplications = sqliteTable("role_applications", {
     reason: text("reason").notNull(),
     status: text("status", { enum: ["PENDING", "APPROVED", "REJECTED"] }).default("PENDING"),
     adminNote: text("admin_note"),
-    createdAt: integer("created_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
+    createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
     updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Bug Reports Table
+export const bugReports = sqliteTable("bug_reports", {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    status: text("status", { enum: ["PENDING", "IN_PROGRESS", "RESOLVED", "REJECTED"] }).default("PENDING"),
+    adminNote: text("admin_note"),
+    createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`CURRENT_TIMESTAMP`),
+});
+
+// Notifications Table
+export const notifications = sqliteTable("notifications", {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    message: text("message").notNull(),
+    read: integer("read", { mode: "boolean" }).default(false),
+    link: text("link"),
+    createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
 // NextAuth Specific Tables (Required for Auth.js Database Adapters)
@@ -115,6 +145,8 @@ import { relations } from "drizzle-orm";
 export const usersRelations = relations(users, ({ many, one }) => ({
     pyqs: many(pyqs),
     roleApplications: many(roleApplications),
+    bugReports: many(bugReports),
+    notifications: many(notifications),
     college: one(colleges, {
         fields: [users.collegeId],
         references: [colleges.id],
@@ -153,6 +185,20 @@ export const pyqsRelations = relations(pyqs, ({ one }) => ({
 export const roleApplicationsRelations = relations(roleApplications, ({ one }) => ({
     user: one(users, {
         fields: [roleApplications.userId],
+        references: [users.id],
+    }),
+}));
+
+export const bugReportsRelations = relations(bugReports, ({ one }) => ({
+    user: one(users, {
+        fields: [bugReports.userId],
+        references: [users.id],
+    }),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+    user: one(users, {
+        fields: [notifications.userId],
         references: [users.id],
     }),
 }));

@@ -21,14 +21,14 @@ export default function Footer() {
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full max-w-2xl mx-auto">
                     <ClickSpark className="w-full sm:w-1/2">
-                        <Link href="#" className="w-full h-16 bg-white hover:bg-zinc-200 text-black font-bold text-lg rounded-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-white/10">
+                        <Link href="/vault" className="w-full h-16 bg-white hover:bg-zinc-200 text-black font-bold text-lg rounded-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-white/10">
                             Enter the Library
                             <ChevronRight className="h-5 w-5" />
                         </Link>
                     </ClickSpark>
 
                     <ClickSpark className="w-full sm:w-1/2">
-                        <Link href="#" className="w-full h-16 bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-700 font-bold text-lg rounded-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95">
+                        <Link href="/vault" className="w-full h-16 bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-700 font-bold text-lg rounded-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95">
                             <Upload className="h-5 w-5" />
                             Contribute a Paper
                         </Link>
@@ -47,9 +47,9 @@ export default function Footer() {
                 </div>
 
                 <div className="flex items-center gap-6 text-sm text-zinc-500 font-medium">
-                    <Link href="#" className="hover:text-zinc-300 transition-colors">Privacy</Link>
-                    <Link href="#" className="hover:text-zinc-300 transition-colors">Terms</Link>
-                    <Link href="#" className="hover:text-zinc-300 transition-colors">Disclaimer</Link>
+                    <Link href="/docs#privacy" className="hover:text-zinc-300 transition-colors">Privacy</Link>
+                    <Link href="/docs#terms" className="hover:text-zinc-300 transition-colors">Terms</Link>
+                    <Link href="/docs#disclaimer" className="hover:text-zinc-300 transition-colors">Disclaimer</Link>
                 </div>
 
                 <div className="text-sm font-medium text-zinc-600">

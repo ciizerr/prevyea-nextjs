@@ -5,7 +5,6 @@ import { users, accounts, sessions, verificationTokens } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
-import Credentials from "next-auth/providers/credentials";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: DrizzleAdapter(db, {
@@ -17,31 +16,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
         Google,
         GitHub,
-        Credentials({
-            credentials: {
-                identifier: { label: "Email or Username", type: "text" },
-                password: { label: "Password", type: "password" },
-            },
-            async authorize(credentials) {
-                // In a real app, you would query the DB for the user by email/username
-                // and then verify the hashed password using bcrypt.
-                // For this MVP, we will mock a successful credential login if fields are provided.
-                if (!credentials?.identifier || !credentials?.password) {
-                    return null;
-                }
-
-                return {
-                    id: "mock-user-id",
-                    email: String(credentials.identifier).includes("@") ? String(credentials.identifier) : `${credentials.identifier}@example.com`,
-                    name: "Demo User",
-                    role: "USER"
-                } as Record<string, unknown>;
-            }
-        })
     ],
     pages: {
         signIn: "/login",
-        newUser: "/signup", // New users will be directed here on oauth first login if desired
     },
     callbacks: {
         async jwt({ token, user, trigger }) {
@@ -90,6 +67,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
     },
     session: {
-        strategy: "jwt", // Required if using Credentials provider with Drizzle
+        strategy: "jwt", // Required if using Credentials provider with Drizzle, still useful for JWT sessions
     }
 });

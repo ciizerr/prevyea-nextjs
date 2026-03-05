@@ -83,6 +83,11 @@ export async function getUserProfileAction() {
                 course: user.course ?? "",
                 session: user.session ?? "",
                 collegeId: user.collegeId ?? "",
+                instagram: user.instagram ?? "",
+                discord: user.discord ?? "",
+                github: user.github ?? "",
+                notifyPyqs: user.notifyPyqs ?? true,
+                notifyNotices: user.notifyNotices ?? true,
             }
         };
     } catch (error) {
@@ -101,6 +106,9 @@ export async function updateProfileAction(formData: FormData) {
         const course = formData.get("course") as string;
         const sessionPayload = formData.get("session") as string;
         const collegeId = formData.get("collegeId") as string;
+        const instagram = formData.get("instagram") as string;
+        const discord = formData.get("discord") as string;
+        const github = formData.get("github") as string;
 
         if (!name?.trim()) {
             throw new Error("Name is required.");
@@ -113,6 +121,9 @@ export async function updateProfileAction(formData: FormData) {
                 course: course || null,
                 session: sessionPayload || null,
                 collegeId: collegeId || null,
+                instagram: instagram?.trim() || null,
+                discord: discord?.trim() || null,
+                github: github?.trim() || null,
             })
             .where(eq(users.id, session.user.id));
 
@@ -120,6 +131,25 @@ export async function updateProfileAction(formData: FormData) {
     } catch (error) {
         console.error("Update Profile Error:", error);
         return { success: false, error: error instanceof Error ? error.message : "Failed to update profile." };
+    }
+}
+
+export async function updateNotificationPrefsAction(notifyPyqs: boolean, notifyNotices: boolean) {
+    try {
+        const session = await auth();
+        if (!session?.user?.id) throw new Error("Unauthorized");
+
+        await db.update(users)
+            .set({
+                notifyPyqs,
+                notifyNotices
+            })
+            .where(eq(users.id, session.user.id));
+
+        return { success: true, message: "Preferences updated!" };
+    } catch (error) {
+        console.error("Update Prefs Error:", error);
+        return { success: false, error: "Failed to update notification preferences." };
     }
 }
 
