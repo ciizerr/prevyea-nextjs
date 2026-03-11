@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Plasma from "@/components/reactbits/Plasma";
+import dynamic from "next/dynamic";
+
+const Plasma = dynamic(() => import("@/components/reactbits/Plasma"), {
+    ssr: false,
+});
 
 export default function PlasmaBackground() {
     const [plasmaColor, setPlasmaColor] = useState<string | undefined>(undefined);
