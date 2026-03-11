@@ -1,8 +1,11 @@
-import { Library, ChevronRight } from "lucide-react";
+import { Library, ChevronRight, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import { auth } from "@/auth";
 
-export default function Navbar() {
+export default async function Navbar() {
+    const session = await auth();
+
     return (
         <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-white/70 dark:bg-black/60 border-b border-zinc-200/50 dark:border-zinc-800/50 supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-black/40">
             <nav className="w-full relative z-10 transition-colors duration-300">
@@ -34,10 +37,17 @@ export default function Navbar() {
 
                             <div className="flex items-center gap-2">
                                 <ClickSpark className="relative inline-flex">
-                                    <Link href="/login" className="group text-sm font-bold bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 px-5 py-2.5 rounded-full shadow-lg transition-all flex items-center gap-1.5">
-                                        Sign In
-                                        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                                    </Link>
+                                    {session?.user ? (
+                                        <Link href="/dashboard" className="group text-sm font-bold bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 px-5 py-2.5 rounded-full shadow-lg transition-all flex items-center gap-2">
+                                            <LayoutDashboard className="h-4 w-4" />
+                                            Dashboard
+                                        </Link>
+                                    ) : (
+                                        <Link href="/login" className="group text-sm font-bold bg-zinc-900 hover:bg-zinc-800 dark:bg-white dark:hover:bg-zinc-200 text-white dark:text-zinc-900 px-5 py-2.5 rounded-full shadow-lg transition-all flex items-center gap-1.5">
+                                            Sign In
+                                            <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                                        </Link>
+                                    )}
                                 </ClickSpark>
                             </div>
                         </div>

@@ -10,7 +10,18 @@ const LEADERBOARD_DATA = [
     { rank: 5, name: "Neha Y.", course: "B.Sc Biotech", uploads: 12, points: 310, recent: "Shared Zoology Notes" }
 ];
 
-export default function WallOfFame() {
+export interface LeaderboardUser {
+    rank: number;
+    name: string;
+    course: string;
+    uploads: number;
+    points: number;
+    recent: string;
+}
+
+export default function WallOfFame({ leaderboard }: { leaderboard?: LeaderboardUser[] }) {
+    const dataToUse = leaderboard && leaderboard.length > 0 ? leaderboard : LEADERBOARD_DATA;
+
     return (
         <section className="w-full py-24 md:py-32 px-4 relative bg-zinc-50 dark:bg-[#0a0a0a] overflow-hidden">
             {/* Background elements */}
@@ -39,11 +50,11 @@ export default function WallOfFame() {
                                     <th className="py-4 px-6 font-semibold text-zinc-500 dark:text-zinc-400 w-16">Rank</th>
                                     <th className="py-4 px-6 font-semibold text-zinc-500 dark:text-zinc-400">Contributor</th>
                                     <th className="py-4 px-6 font-semibold text-zinc-500 dark:text-zinc-400 hidden sm:table-cell">Recent Activity</th>
-                                    <th className="py-4 px-6 font-semibold text-zinc-500 dark:text-zinc-400 text-right">Points</th>
+                                    <th className="py-4 px-6 font-semibold text-zinc-500 dark:text-zinc-400 text-right">Uploads</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
-                                {LEADERBOARD_DATA.map((user) => (
+                                {dataToUse.map((user) => (
                                     <tr key={user.rank} className="group hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
                                         <td className="py-4 px-6">
                                             <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold
@@ -69,7 +80,7 @@ export default function WallOfFame() {
                                         </td>
                                         <td className="py-4 px-6 text-right">
                                             <span className="font-mono font-bold text-amber-600 dark:text-amber-400">
-                                                {user.points.toLocaleString()}
+                                                {user.uploads.toLocaleString()}
                                             </span>
                                         </td>
                                     </tr>

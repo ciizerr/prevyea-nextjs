@@ -9,11 +9,12 @@ import WallOfFame from "@/components/home/wall-of-fame";
 import RecentAdditions from "@/components/home/recent-additions";
 import PlasmaBackground from "@/components/home/plasma-background";
 
-import { getLandingStats, getRecentPyqs } from "@/actions/public";
+import { getLandingStats, getRecentPyqs, getLeaderboard } from "@/actions/public";
 
 export default async function Home() {
   const stats = await getLandingStats();
   const recent = await getRecentPyqs();
+  const leaderboard = await getLeaderboard();
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-transparent text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
@@ -29,7 +30,7 @@ export default async function Home() {
           <CourseGrid />
           <SneakPeek />
           <LibraryStats stats={stats} />
-          <WallOfFame />
+          <WallOfFame leaderboard={leaderboard} />
           <RecentAdditions pyqs={recent} />
         </main>
 

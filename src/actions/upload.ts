@@ -43,13 +43,16 @@ export async function uploadPYQAction(formData: FormData) {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
+        // Generate a unique filename to prevent overwriting existing files in Cloudinary with the same name
+        const uniqueFilename = `${crypto.randomUUID()}-${file.name}`;
+
         // Upload the Buffer directly to Cloudinary using a Promise stream
         const uploadResult = await new Promise<{ secure_url: string; public_id: string }>((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream(
                 {
-                    folder: "pu-library-pyqs", // Creates a specific folder in your loudinary dashboard
+                    folder: "pu-library-pyqs", // Creates a specific folder in your Cloudinary dashboard
                     resource_type: "raw", // "raw" is strictly required by Cloudinary for PDFs/Docs
-                    public_id: file.name, // Raw files in Cloudinary must include the file extension
+                    public_id: uniqueFilename, // Make sure public_id is unique
                 },
                 (error, result) => {
                     if (error) reject(error);
