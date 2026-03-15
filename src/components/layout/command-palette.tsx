@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { 
-    Search, FileText, BookOpen, LayoutDashboard, 
+import {
+    Search, FileText, BookOpen, LayoutDashboard,
     Settings, Terminal, Sparkles, Command
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 const COMMANDS = [
     { id: "archive", name: "Browse Archive", icon: FileText, shortcut: "A", href: "/vault" },
     { id: "syllabus", name: "Official Syllabus", icon: BookOpen, shortcut: "S", href: "/syllabus" },
-    { id: "notice", name: "Internal Notices", icon: Sparkles, shortcut: "N", href: "/notices" },
+    { id: "notice", name: "Internal Notices", icon: Sparkles, shortcut: "N", href: "/notice" },
     { id: "dashboard", name: "User Dashboard", icon: LayoutDashboard, shortcut: "D", href: "/dashboard" },
     { id: "settings", name: "Preference Settings", icon: Settings, shortcut: ",", href: "/settings" },
 ];
@@ -41,7 +41,7 @@ export default function CommandPalette() {
         setIsOpen(false);
     };
 
-    const filteredCommands = COMMANDS.filter(cmd => 
+    const filteredCommands = COMMANDS.filter(cmd =>
         cmd.name.toLowerCase().includes(query.toLowerCase())
     );
 

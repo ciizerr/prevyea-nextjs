@@ -234,7 +234,7 @@ export default function SyllabusPage() {
     const computedSemesters = Array.from({ length: maxSems }, (_, i) => `Sem ${i + 1}`);
 
     return (
-        <div className="relative min-h-screen bg-white dark:bg-[#050505] selection:bg-indigo-100 dark:selection:bg-indigo-900/40 pb-20">
+        <div className="relative min-h-screen bg-white dark:bg-[#050505] selection:bg-indigo-100 dark:selection:bg-indigo-900/40 pb-20 overflow-x-hidden">
             {/* Ambient Background Glows */}
             <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-500/5 dark:bg-indigo-600/10 blur-[120px] rounded-full animate-pulse" />
@@ -345,7 +345,7 @@ export default function SyllabusPage() {
 
                     {/* Right Main Content */}
                     <div className="flex-1 min-w-0">
-                        <div className="bg-white dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/40 rounded-[3rem] p-6 lg:p-12 shadow-2xl min-h-[calc(100vh-160px)] flex flex-col relative overflow-visible">
+                        <div className="bg-white dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/40 rounded-[3rem] p-6 lg:p-12 shadow-2xl min-h-[calc(100vh-160px)] flex flex-col relative overflow-hidden">
                             
                             {/* Decorative Elements */}
                             <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/[0.03] blur-[100px] -mr-20 -mt-20 pointer-events-none" />
@@ -422,7 +422,7 @@ export default function SyllabusPage() {
                                                         <Loader2 className="h-10 w-10 animate-spin text-blue-500 opacity-20" />
                                                     </div>
                                                 ) : (
-                                                    <div id="markdown-content" className="w-full bg-zinc-50/50 dark:bg-zinc-950/30 p-8 md:p-14 rounded-[3rem] border border-zinc-100 dark:border-zinc-800/60 prose prose-zinc dark:prose-invert max-w-none selection:bg-indigo-100 dark:selection:bg-indigo-900/40 shadow-inner">
+                                                    <div id="markdown-content" className="w-full bg-zinc-50/50 dark:bg-zinc-950/30 p-8 md:p-14 rounded-[3rem] border border-zinc-100 dark:border-zinc-800/60 prose prose-zinc dark:prose-invert max-w-none selection:bg-indigo-100 dark:selection:bg-indigo-900/40 shadow-inner overflow-x-auto break-words">
                                                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent || ""}</ReactMarkdown>
                                                     </div>
                                                 )}

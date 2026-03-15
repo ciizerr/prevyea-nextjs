@@ -158,7 +158,7 @@ export default function VaultPage() {
     const availableSubjects = dbSubjects;
 
     return (
-        <div className="relative min-h-screen bg-white dark:bg-[#050505] selection:bg-indigo-100 dark:selection:bg-indigo-900/40 pb-20">
+        <div className="relative min-h-screen bg-white dark:bg-[#050505] selection:bg-indigo-100 dark:selection:bg-indigo-900/40 pb-20 overflow-x-hidden">
             {/* Ambient Background Glows */}
             <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
                 <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/5 dark:bg-indigo-600/10 blur-[120px] rounded-full animate-pulse" />
