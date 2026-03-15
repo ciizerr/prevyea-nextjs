@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { GraduationCap, ChevronRight, CheckCircle2, FileText, Download, BookOpen, Loader2 } from "lucide-react";
+import { GraduationCap, ChevronRight, CheckCircle2, FileText, Download, BookOpen, Loader2, Sparkles, ArrowRight } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import Link from "next/link";
 import { getCoursesAction, getSubjectsAction, getFilesAction } from "@/actions/curriculum";
 import PDFViewer from "@/components/pdf-viewer";
 import ReactMarkdown from "react-markdown";
@@ -232,185 +233,239 @@ export default function SyllabusPage() {
     const maxSems = activeCourse?.totalSemesters || 6;
     const computedSemesters = Array.from({ length: maxSems }, (_, i) => `Sem ${i + 1}`);
 
-
     return (
-        <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
+        <div className="relative min-h-screen animate-in fade-in slide-in-from-bottom-6 duration-700 pb-20 selection:bg-indigo-100 dark:selection:bg-indigo-900/40">
 
-            {/* Left Sidebar (Sticky Menu) */}
-            <div className="w-full lg:w-80 shrink-0 space-y-6">
-                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm sticky top-24">
-                    <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 mb-6">
-                        <GraduationCap className="h-5 w-5 text-indigo-500" />
-                        Curriculum
-                    </h2>
-
-                    {/* Course Selection */}
-                    <div className="space-y-3 mb-8">
-                        <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest pl-2">Degree</p>
-                        <div className="flex gap-2 bg-zinc-100 dark:bg-zinc-950 p-1 rounded-xl flex-wrap">
-                            {loadingCourses ? (
-                                <div className="p-4 flex items-center justify-center w-full"><Loader2 className="h-4 w-4 animate-spin text-zinc-400" /></div>
-                            ) : dbCourses.map(c => (
-                                <button
-                                    key={c.id}
-                                    onClick={() => { setActiveCourseId(c.id); setActiveSem("Sem 1"); }}
-                                    className={`flex-1 py-1.5 px-3 whitespace-nowrap rounded-lg text-sm font-semibold transition-all ${activeCourseId === c.id
-                                        ? "bg-white text-blue-600 dark:bg-zinc-800 dark:text-blue-400 shadow-sm"
-                                        : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200"
-                                        }`}
-                                >
-                                    {c.name}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Semester Selection */}
-                    <div className="space-y-3 mb-8">
-                        <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest pl-2">Semester</p>
-                        <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto custom-scrollbar pr-2">
-                            {computedSemesters.map(sem => (
-                                <button
-                                    key={sem}
-                                    onClick={() => setActiveSem(sem)}
-                                    className={`py-2 px-3 rounded-xl text-sm font-medium transition-all text-left flex items-center justify-between group ${activeSem === sem
-                                        ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50 border shadow-sm"
-                                        : "bg-zinc-50 text-zinc-600 border-transparent dark:bg-zinc-950 dark:text-zinc-400 border hover:border-zinc-200 dark:hover:border-zinc-800"
-                                        }`}
-                                >
-                                    {sem}
-                                    {activeSem === sem && <CheckCircle2 className="h-4 w-4 shrink-0 transition-transform scale-in-100" />}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Subjects in active semester */}
-                    <div className="space-y-3">
-                        <p className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest pl-2">Subjects</p>
-                        <div className="space-y-1 h-[250px] overflow-y-auto pr-2 custom-scrollbar relative">
-                            {loadingSubjects ? (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
-                                </div>
-                            ) : dbSubjects.map(subject => (
-                                <button
-                                    key={subject.id}
-                                    onClick={() => setActiveSubjectId(subject.id)}
-                                    className={`w-full py-2.5 px-3 rounded-xl text-sm transition-all text-left flex items-center gap-2 ${activeSubjectId === subject.id
-                                        ? "bg-zinc-900 text-white font-bold dark:bg-white dark:text-zinc-900 shadow-md"
-                                        : "bg-transparent text-zinc-600 font-medium hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
-                                        }`}
-                                >
-                                    <BookOpen className={`h-4 w-4 shrink-0 ${activeSubjectId === subject.id ? "text-indigo-400 dark:text-indigo-600" : "text-zinc-400"}`} />
-                                    <span className="truncate" title={subject.name}>{subject.name}</span>
-                                </button>
-                            ))}
-                            {!loadingSubjects && dbSubjects.length === 0 && (
-                                <div className="text-center py-6 text-sm text-zinc-500">
-                                    No subjects found.
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+            {/* Ambient Background Glows */}
+            <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 dark:bg-blue-500/5 blur-[100px] rounded-full" />
             </div>
 
-            {/* Main Content Pane */}
-            <div className="flex-1 space-y-6 lg:max-w-[calc(100vw-24rem)] mt-6 lg:mt-0">
-                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 flex flex-col shadow-sm relative overflow-hidden h-full min-h-[600px] lg:h-[calc(100vh-120px)] lg:sticky lg:top-24">
-                    {/* Decorative Blob */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 dark:bg-indigo-500/20 blur-[80px] rounded-full pointer-events-none" />
+            <main className="max-w-screen-2xl mx-auto px-6 pt-12 space-y-12">
 
-                    <div className="relative z-10 flex flex-col h-full w-full">
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
-                            <div>
-                                <div className="flex flex-wrap items-center gap-3 mb-6">
-                                    <span className="px-3 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 text-xs font-bold uppercase tracking-wider rounded-lg border border-zinc-200 dark:border-zinc-700">
-                                        {activeCourse?.name || "Select Course"}
-                                    </span>
-                                    <ChevronRight className="h-4 w-4 text-zinc-400" />
-                                    <span className="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-xs font-bold uppercase tracking-wider rounded-lg border border-blue-200 dark:border-blue-800/50">
-                                        {activeSem}
-                                    </span>
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 text-center md:text-left">
+                    <div className="space-y-4">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 rounded-full text-indigo-600 dark:text-indigo-400 text-xs font-black uppercase tracking-widest">
+                            <BookOpen className="w-3.5 h-3.5" />
+                            Official Curriculum
+                        </div>
+
+                    </div>
+                </div>
+
+                <div className="flex flex-col lg:flex-row gap-6">
+
+                    {/* Left Navigation Hub */}
+                    <div className="w-full lg:w-72 shrink-0 space-y-6">
+                        <div className="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border border-zinc-200/60 dark:border-zinc-800/60 rounded-[2.5rem] p-6 shadow-2xl shadow-indigo-500/5 lg:sticky lg:top-24 space-y-8">
+
+                            {/* Course Selection */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 pl-2">
+                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Select Program</p>
                                 </div>
-
-                                <h1 className="text-3xl md:text-5xl font-black text-zinc-900 dark:text-white mb-4 tracking-tight">
-                                    {dbSubjects.find(s => s.id === activeSubjectId)?.name || "Syllabus"}
-                                </h1>
-                                <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl font-medium">
-                                    {loadingSyllabus ? "Locating syllabus document..." : syllabusFile ? "Official Curriculum & Syllabus Document" : "No syllabus document found for this subject."}
-                                </p>
+                                <div className="flex flex-col gap-2 bg-zinc-100/50 dark:bg-zinc-900/50 p-2 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/40">
+                                    {loadingCourses ? (
+                                        <div className="p-10 flex flex-col items-center justify-center w-full gap-3">
+                                            <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
+                                            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Loading courses</span>
+                                        </div>
+                                    ) : dbCourses.map(c => (
+                                        <button
+                                            key={c.id}
+                                            onClick={() => { setActiveCourseId(c.id); setActiveSem("Sem 1"); }}
+                                            className={`flex items-center justify-between px-5 py-3 rounded-2xl text-sm font-black transition-all group ${activeCourseId === c.id
+                                                ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-xl"
+                                                : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900/80 hover:text-zinc-900 dark:hover:text-zinc-100"
+                                                }`}
+                                        >
+                                            <span>{c.name}</span>
+                                            {activeCourseId === c.id ? <ArrowRight className="h-4 w-4" /> : <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800" />}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
-                            {syllabusFile && (
-                                <ClickSpark className="shrink-0 w-full sm:w-auto">
-                                    {isMarkdown ? (
-                                        <button
-                                            onClick={handleDownloadPdf}
-                                            disabled={downloadingPdf || loadingMarkdown}
-                                            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20 disabled:opacity-50"
-                                        >
-                                            {downloadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                                            {downloadingPdf ? "Generating..." : "Download PDF"}
-                                        </button>
-                                    ) : (
-                                        <a
-                                            href={syllabusFile.downloadLink}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20"
-                                        >
-                                            <Download className="h-4 w-4" />
-                                            Download PDF
-                                        </a>
-                                    )}
-                                </ClickSpark>
-                            )}
-                        </div>
-
-                        {/* Interactive Viewer Body */}
-                        <div className={`flex-1 w-full rounded-2xl relative overflow-hidden flex flex-col items-center justify-center border mt-2 ${!syllabusFile || isMarkdown ? 'bg-transparent border-transparent overflow-y-auto min-h-[400px]' : 'bg-black/5 dark:bg-black/20 border-zinc-200 dark:border-zinc-800/60'}`}>
-                            {loadingSyllabus ? (
-                                <div className="flex flex-col items-center justify-center gap-4 text-zinc-400">
-                                    <Loader2 className="h-8 w-8 animate-spin" />
-                                    <span className="font-semibold text-sm">Loading document...</span>
+                            {/* Semester Selection */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 pl-2">
+                                    <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Select Semester</p>
                                 </div>
-                            ) : syllabusFile ? (
-                                isMarkdown ? (
-                                    <div className="w-full h-full max-w-4xl mx-auto text-left flex flex-col justify-start items-start">
-                                        {loadingMarkdown ? (
-                                            <div className="w-full flex-1 flex flex-col items-center justify-center gap-4 text-zinc-400 py-20">
-                                                <Loader2 className="h-8 w-8 animate-spin" />
-                                                <span className="font-semibold text-sm">Loading markdown...</span>
+                                <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto pr-2 scrollbar-hide">
+                                    {computedSemesters.map(sem => (
+                                        <button
+                                            key={sem}
+                                            onClick={() => setActiveSem(sem)}
+                                            className={`py-3 px-4 rounded-2xl text-xs font-black transition-all text-left flex items-center justify-between group uppercase tracking-widest ${activeSem === sem
+                                                ? "bg-indigo-600 text-white shadow-xl shadow-indigo-500/30"
+                                                : "bg-zinc-50 dark:bg-zinc-900 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                                                }`}
+                                        >
+                                            {sem}
+                                            {activeSem === sem && <CheckCircle2 className="h-4 w-4 shrink-0 transition-transform scale-in-100" />}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Subjects Selection */}
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 pl-2">
+                                    <div className="w-2 h-2 rounded-full bg-purple-500" />
+                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Subject List</p>
+                                </div>
+                                <div className="space-y-1 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide relative min-h-[100px]">
+                                    {loadingSubjects ? (
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                                            <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
+                                        </div>
+                                    ) : dbSubjects.length > 0 ? (
+                                        dbSubjects.map(subject => (
+                                            <button
+                                                key={subject.id}
+                                                onClick={() => setActiveSubjectId(subject.id)}
+                                                className={`w-full py-3 px-4 rounded-2xl text-sm transition-all text-left flex items-center gap-3 group ${activeSubjectId === subject.id
+                                                    ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black border border-blue-100 dark:border-blue-500/20"
+                                                    : "bg-transparent text-zinc-500 font-bold hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+                                                    }`}
+                                            >
+                                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${activeSubjectId === subject.id ? "bg-blue-600 text-white" : "bg-zinc-100 dark:bg-zinc-900"}`}>
+                                                    <BookOpen className="h-4 w-4" />
+                                                </div>
+                                                <span className="truncate flex-1 tracking-tight" title={subject.name}>{subject.name}</span>
+                                                {activeSubjectId === subject.id && <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50" />}
+                                            </button>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-10">
+                                            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">No modules found</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Main Content Display */}
+                    <div className="flex-1 min-h-[600px] lg:h-[calc(100vh-140px)] lg:sticky lg:top-24">
+                        <div className="h-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 rounded-[2.5rem] p-5 md:p-8 shadow-2xl shadow-zinc-200/20 dark:shadow-none relative overflow-hidden flex flex-col">
+
+                            {/* Decorative Elements */}
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 dark:bg-indigo-500/10 blur-[100px] -mr-20 -mt-20 pointer-events-none" />
+
+                            <div className="relative z-10 flex flex-col h-full w-full">
+
+                                {/* Top Banner/Actions */}
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-6 pb-6 border-b border-zinc-100 dark:border-zinc-800/60">
+                                    <div className="space-y-2 max-w-2xl text-center sm:text-left">
+                                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                            <div className="flex items-center gap-2 px-3 py-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                                                <GraduationCap className="w-3 h-3" />
+                                                {activeCourse?.name || "Unselected"}
+                                            </div>
+                                            <ChevronRight className="h-3 w-3 text-zinc-300" />
+                                            <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-500/10 rounded-lg border border-blue-100 dark:border-blue-500/20 text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">
+                                                {activeSem}
+                                            </div>
+                                            {syllabusFile && (
+                                                <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-500/10 rounded-lg border border-amber-100 dark:border-amber-500/20 text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest shrink-0">
+                                                    <Sparkles className="w-3 h-3" />
+                                                    Verified
+                                                </div>
+                                            )}
+                                        </div>
+                                        <h2 className="text-2xl md:text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight leading-tight">
+                                            {dbSubjects.find(s => s.id === activeSubjectId)?.name || "Subject Syllabus"}
+                                        </h2>
+                                        <p className="text-sm font-medium text-zinc-500 max-w-xl">
+                                            {loadingSyllabus ? "Loading syllabus..." : syllabusFile ? "Official verified syllabus for the current session" : "The curriculum for this subject has not been uploaded yet."}
+                                        </p>
+                                    </div>
+
+                                    {syllabusFile && (
+                                        <ClickSpark className="shrink-0 w-full sm:w-auto">
+                                            {isMarkdown ? (
+                                                <button
+                                                    onClick={handleDownloadPdf}
+                                                    disabled={downloadingPdf || loadingMarkdown}
+                                                    className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black flex items-center justify-center gap-2 shadow-2xl shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-50 text-sm italic"
+                                                >
+                                                    {downloadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                                                    {downloadingPdf ? "Generating..." : "Export as PDF"}
+                                                </button>
+                                            ) : (
+                                                <a
+                                                    href={syllabusFile.downloadLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black flex items-center justify-center gap-2 shadow-2xl shadow-indigo-500/30 transition-all active:scale-95 text-sm italic"
+                                                >
+                                                    <Download className="h-4 w-4" />
+                                                    Download Syllabus
+                                                </a>
+                                            )}
+                                        </ClickSpark>
+                                    )}
+                                </div>
+
+                                {/* Viewer Frame */}
+                                <div className="flex-1 min-h-0">
+                                    {loadingSyllabus ? (
+                                        <div className="h-full flex flex-col items-center justify-center gap-4 text-zinc-400">
+                                            <div className="w-16 h-16 bg-zinc-50 dark:bg-zinc-900 rounded-[2rem] flex items-center justify-center shadow-inner">
+                                                <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+                                            </div>
+                                            <p className="text-[10px] font-black uppercase tracking-[0.2em]">Loading document</p>
+                                        </div>
+                                    ) : syllabusFile ? (
+                                        isMarkdown ? (
+                                            <div className="h-full flex flex-col">
+                                                {loadingMarkdown ? (
+                                                    <div className="h-full flex flex-col items-center justify-center gap-4 text-zinc-400">
+                                                        <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
+                                                        <span className="text-[10px] font-black tracking-widest uppercase">Loading content</span>
+                                                    </div>
+                                                ) : (
+                                                    <div id="markdown-content" className="h-full bg-zinc-50/50 dark:bg-zinc-900/30 p-6 md:p-10 rounded-[2rem] border border-zinc-200/60 dark:border-zinc-800/60 prose prose-indigo dark:prose-invert max-w-none overflow-y-auto scrollbar-hide selection:bg-indigo-200 dark:selection:bg-indigo-900/40">
+                                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent || ""}</ReactMarkdown>
+                                                    </div>
+                                                )}
                                             </div>
                                         ) : (
-                                            <div id="markdown-content" className="w-full h-full flex-1 bg-white dark:bg-zinc-950 p-6 sm:p-10 rounded-2xl border border-zinc-200 dark:border-zinc-800 prose prose-zinc dark:prose-invert prose-sm sm:prose-base max-w-none shadow-sm h-full max-h-[calc(100vh-250px)] overflow-y-auto">
-                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent || ""}</ReactMarkdown>
+                                            <div className="h-full rounded-[2.5rem] overflow-hidden border border-zinc-200 dark:border-zinc-800 group relative">
+                                                <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/20 to-transparent pointer-events-none z-10" />
+                                                <PDFViewer url={syllabusFile.viewLink} />
                                             </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <PDFViewer url={syllabusFile.viewLink} />
-                                )
-                            ) : (
-                                <div className="flex flex-col items-center justify-center px-6 text-center border shadow-sm border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl w-full h-full py-20 bg-zinc-50/50 dark:bg-zinc-950/50">
-                                    <div className="p-4 bg-zinc-200/50 dark:bg-zinc-800/50 rounded-full mb-4">
-                                        <FileText className="h-8 w-8 text-zinc-400" />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">No Syllabus Uploaded</h3>
-                                    <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm mb-6">
-                                        We couldn&apos;t locate a verified syllabus for {dbSubjects.find(s => s.id === activeSubjectId)?.name || "this subject"}.
-                                    </p>
-                                    <a href="/vault" className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline">
-                                        Check Vault for PYQs instead
-                                    </a>
+                                        )
+                                    ) : (
+                                        <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-zinc-50 dark:bg-zinc-900/20 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-[3rem] space-y-6">
+                                            <div className="w-24 h-24 bg-white dark:bg-zinc-900 rounded-[2rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800">
+                                                <FileText className="h-10 w-10 text-zinc-300" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h3 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">Syllabus Unavailable</h3>
+                                                <p className="text-zinc-500 dark:text-zinc-400 max-w-xs mx-auto font-medium">
+                                                    We haven&apos;t received the syllabus for {dbSubjects.find(s => s.id === activeSubjectId)?.name || "this subject"} yet.
+                                                </p>
+                                            </div>
+                                            <Link href="/vault" className="inline-flex items-center gap-2 text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:gap-3 transition-all">
+                                                Explore Vault Archives <ChevronRight className="w-4 h-4" />
+                                            </Link>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+
+                                {/* Spacing at bottom */}
+                                <div className="mt-6" />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     );
 }

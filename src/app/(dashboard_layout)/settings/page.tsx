@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import { User, Shield, Bell, Key, Image as ImageIcon, CheckCircle2, Briefcase, XCircle, Loader2, Link2, Camera, Trash2, Instagram, MessageSquare, Github } from "lucide-react";
+import { User, CheckCircle2, XCircle, Loader2, Link2, Camera, Trash2, Instagram, MessageSquare, Github, Briefcase, Key } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getUserProfileAction, updateProfileAction } from "@/actions/user";
 import { getCoursesAction } from "@/actions/curriculum";
@@ -29,8 +29,12 @@ interface UserProfile {
     notifyNotices: boolean;
 }
 
+import { useSearchParams } from "next/navigation";
+
 export default function SettingsPage() {
-    const [activeTab, setActiveTab] = useState("profile");
+    const searchParams = useSearchParams();
+    const activeTab = searchParams.get("tab") || "profile";
+
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [courses, setCourses] = useState<{ id: string; name: string; collegeId: string | null }[]>([]);
     const [colleges, setColleges] = useState<{ id: string; name: string }[]>([]);
@@ -128,49 +132,12 @@ export default function SettingsPage() {
         setStatus(null);
     };
 
-    const tabs = [
-        { id: "profile", label: "Profile", icon: User },
-        { id: "roles", label: "Roles & Permissions", icon: Briefcase },
-        { id: "appearance", label: "Appearance", icon: ImageIcon },
-        { id: "notifications", label: "Notifications", icon: Bell },
-        { id: "security", label: "Security", icon: Key },
-    ];
 
     return (
-        <div className="flex flex-col lg:flex-row gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12 w-full max-w-6xl mx-auto">
-
-            {/* Left Sidebar (Sticky Menu) */}
-            <div className="w-full lg:w-72 shrink-0 space-y-6">
-                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm sticky top-24">
-                    <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-6 flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-indigo-500" />
-                        Settings
-                    </h2>
-
-                    <div className="space-y-1">
-                        {tabs.map(tab => {
-                            const Icon = tab.icon;
-                            return (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => { setActiveTab(tab.id); setStatus(null); }}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === tab.id
-                                        ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 shadow-sm"
-                                        : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                                        }`}
-                                >
-                                    <Icon className="h-4 w-4" />
-                                    {tab.label}
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-
+        <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12 w-full max-w-6xl mx-auto">
             {/* Main Content Pane */}
             <div className="flex-1 space-y-6">
-                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm relative overflow-hidden h-full flex flex-col">
+                <div className="bg-white/40 dark:bg-zinc-950/40 backdrop-blur-md border border-zinc-200/60 dark:border-zinc-800/60 rounded-[3rem] p-6 sm:p-8 md:p-12 shadow-2xl shadow-zinc-200/10 dark:shadow-none relative overflow-hidden h-full flex flex-col">
                     {/* Decorative Blob */}
                     <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-500/10 blur-[100px] rounded-full pointer-events-none" />
 
@@ -187,8 +154,8 @@ export default function SettingsPage() {
                         {!loading && activeTab === "profile" && profile && (
                             <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
                                 <div>
-                                    <h1 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">Public Profile</h1>
-                                    <p className="text-zinc-500 dark:text-zinc-400 font-medium">This information will be displayed on your public profile.</p>
+                                    <h1 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">My Profile</h1>
+                                    <p className="text-zinc-500 dark:text-zinc-400 font-medium">Update your public identity and curriculum details.</p>
                                 </div>
 
                                 {/* Avatar */}
@@ -239,163 +206,191 @@ export default function SettingsPage() {
                                     </div>
                                 </div>
 
-                                {/* Forms */}
-                                <div className="space-y-6 max-w-2xl">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Display Name</label>
-                                        <input
-                                            type="text"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                            className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Email Address</label>
-                                        <input
-                                            type="email"
-                                            value={profile.email}
-                                            disabled
-                                            className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 cursor-not-allowed font-medium"
-                                        />
-                                        <p className="text-xs text-zinc-500">Email is linked to your OAuth provider and cannot be changed.</p>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Username</label>
-                                        <div className="relative">
-                                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                                <span className="text-zinc-400 font-bold">@</span>
+                                {/* Sections Grid */}
+                                <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                                    {/* Left Column: Personal & Academic */}
+                                    <div className="space-y-10">
+                                        {/* Identity Section */}
+                                        <section className="space-y-6">
+                                            <div className="flex items-center gap-3 pb-2 border-b border-zinc-200 dark:border-zinc-800/60">
+                                                <User className="h-4 w-4 text-indigo-500" />
+                                                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-900 dark:text-white">Identity</h3>
                                             </div>
-                                            <input
-                                                type="text"
-                                                value={profile.username}
-                                                disabled
-                                                className="w-full pl-9 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 cursor-not-allowed font-medium"
-                                            />
-                                        </div>
-                                        <p className="text-xs text-zinc-500">Username is permanent and cannot be changed.</p>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">College / University</label>
-                                            <select
-                                                value={selectedCollege}
-                                                onChange={(e) => {
-                                                    setSelectedCollege(e.target.value);
-                                                    setSelectedCourse(""); // Reset course when college changes
-                                                    setSelectedSession("");
-                                                }}
-                                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium appearance-none"
-                                            >
-                                                <option value="">Select College</option>
-                                                {colleges.map((c) => (
-                                                    <option key={c.id} value={c.id}>{c.name}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Course</label>
-                                            <select
-                                                value={selectedCourse}
-                                                onChange={(e) => {
-                                                    setSelectedCourse(e.target.value);
-                                                    setSelectedSession(""); // Reset session when course changes
-                                                }}
-                                                disabled={!selectedCollege}
-                                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium appearance-none disabled:opacity-50"
-                                            >
-                                                <option value="">{selectedCollege ? "Select Course" : "Select College First"}</option>
-                                                {courses.filter(c => c.collegeId === selectedCollege).map((c) => (
-                                                    <option key={c.id} value={c.id}>{c.name}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Session</label>
-                                            <input
-                                                type="text"
-                                                value={selectedSession}
-                                                onChange={(e) => setSelectedSession(e.target.value)}
-                                                disabled={!selectedCourse}
-                                                placeholder="e.g. 2023-2027"
-                                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium disabled:opacity-50"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Role</label>
-                                        <div className="px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/50">
-                                            <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold ${profile.role === "ADMIN" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
-                                                profile.role === "MODERATOR" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" :
-                                                    profile.role === "REVIEWER" ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400" :
-                                                        "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
-                                                }`}>
-                                                {profile.role}
-                                            </span>
-                                        </div>
-                                        <p className="text-xs text-zinc-500">Roles are assigned by admins. Apply via the Roles & Permissions tab.</p>
-                                    </div>
-
-                                    {/* Social Links */}
-                                    <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800/60 mt-6 space-y-6">
-                                        <div>
-                                            <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-1">Social Links</h3>
-                                            <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Add your social media handles to display on your public profile.</p>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Instagram</label>
-                                                <div className="relative">
-                                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                        <Instagram className="h-4 w-4 text-pink-500" />
-                                                    </div>
+                                            <div className="space-y-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Display Name</label>
                                                     <input
                                                         type="text"
-                                                        value={instagram}
-                                                        onChange={(e) => setInstagram(e.target.value)}
-                                                        placeholder="username"
-                                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
+                                                        value={name}
+                                                        onChange={(e) => setName(e.target.value)}
+                                                        className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
                                                     />
                                                 </div>
-                                            </div>
 
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Discord</label>
-                                                <div className="relative">
-                                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                        <MessageSquare className="h-4 w-4 text-indigo-500" />
-                                                    </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Email Address</label>
                                                     <input
-                                                        type="text"
-                                                        value={discord}
-                                                        onChange={(e) => setDiscord(e.target.value)}
-                                                        placeholder="username"
-                                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
+                                                        type="email"
+                                                        value={profile.email}
+                                                        disabled
+                                                        className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 cursor-not-allowed font-medium"
                                                     />
                                                 </div>
-                                            </div>
 
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">GitHub</label>
-                                                <div className="relative">
-                                                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                        <Github className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Username</label>
+                                                    <div className="relative">
+                                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                            <span className="text-zinc-400 font-bold">@</span>
+                                                        </div>
+                                                        <input
+                                                            type="text"
+                                                            value={profile.username}
+                                                            disabled
+                                                            className="w-full pl-9 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 cursor-not-allowed font-medium"
+                                                        />
                                                     </div>
-                                                    <input
-                                                        type="text"
-                                                        value={github}
-                                                        onChange={(e) => setGithub(e.target.value)}
-                                                        placeholder="username"
-                                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
-                                                    />
                                                 </div>
                                             </div>
-                                        </div>
+                                        </section>
+
+                                        {/* Academic Section */}
+                                        <section className="space-y-6">
+                                            <div className="flex items-center gap-3 pb-2 border-b border-zinc-200 dark:border-zinc-800/60">
+                                                <Briefcase className="h-4 w-4 text-emerald-500" />
+                                                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-900 dark:text-white">Academic Details</h3>
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">College / University</label>
+                                                    <select
+                                                        value={selectedCollege}
+                                                        onChange={(e) => {
+                                                            setSelectedCollege(e.target.value);
+                                                            setSelectedCourse(""); 
+                                                            setSelectedSession("");
+                                                        }}
+                                                        className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium appearance-none"
+                                                    >
+                                                        <option value="">Select College</option>
+                                                        {colleges.map((c) => (
+                                                            <option key={c.id} value={c.id}>{c.name}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Course</label>
+                                                        <select
+                                                            value={selectedCourse}
+                                                            onChange={(e) => {
+                                                                setSelectedCourse(e.target.value);
+                                                                setSelectedSession(""); 
+                                                            }}
+                                                            disabled={!selectedCollege}
+                                                            className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium appearance-none disabled:opacity-50"
+                                                        >
+                                                            <option value="">{selectedCollege ? "Select Course" : "Select College First"}</option>
+                                                            {courses.filter(c => c.collegeId === selectedCollege).map((c) => (
+                                                                <option key={c.id} value={c.id}>{c.name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Session</label>
+                                                        <input
+                                                            type="text"
+                                                            value={selectedSession}
+                                                            onChange={(e) => setSelectedSession(e.target.value)}
+                                                            disabled={!selectedCourse}
+                                                            placeholder="e.g. 2023-2027"
+                                                            className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium disabled:opacity-50"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </div>
+
+                                    {/* Right Column: Account Type & Socials */}
+                                    <div className="space-y-10">
+                                        {/* Status Section */}
+                                        <section className="space-y-6">
+                                            <div className="flex items-center gap-3 pb-2 border-b border-zinc-200 dark:border-zinc-800/60">
+                                                <Key className="h-4 w-4 text-amber-500" />
+                                                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-900 dark:text-white">Account Status</h3>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Account Type</label>
+                                                <div className="px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/40">
+                                                    <span className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${profile.role === "ADMIN" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
+                                                        profile.role === "MODERATOR" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" :
+                                                            profile.role === "REVIEWER" ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400" :
+                                                                "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                                                        }`}>
+                                                        {profile.role === "ADMIN" ? "Administrator" : profile.role === "MODERATOR" ? "Moderator" : profile.role === "REVIEWER" ? "Reviewer" : "Student"}
+                                                    </span>
+                                                </div>
+                                                <p className="text-[11px] text-zinc-500 font-medium">Special roles provide additional platform capabilities.</p>
+                                            </div>
+                                        </section>
+
+                                        {/* Social Section */}
+                                        <section className="space-y-6">
+                                            <div className="flex items-center gap-3 pb-2 border-b border-zinc-200 dark:border-zinc-800/60">
+                                                <Instagram className="h-4 w-4 text-pink-500" />
+                                                <h3 className="text-sm font-black uppercase tracking-widest text-zinc-900 dark:text-white">Social Presence</h3>
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Instagram</label>
+                                                    <div className="relative">
+                                                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                            <Instagram className="h-4 w-4 text-pink-500" />
+                                                        </div>
+                                                        <input
+                                                            type="text"
+                                                            value={instagram}
+                                                            onChange={(e) => setInstagram(e.target.value)}
+                                                            placeholder="username"
+                                                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Discord</label>
+                                                    <div className="relative">
+                                                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                            <MessageSquare className="h-4 w-4 text-indigo-500" />
+                                                        </div>
+                                                        <input
+                                                            type="text"
+                                                            value={discord}
+                                                            onChange={(e) => setDiscord(e.target.value)}
+                                                            placeholder="username"
+                                                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">GitHub</label>
+                                                    <div className="relative">
+                                                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                                            <Github className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
+                                                        </div>
+                                                        <input
+                                                            type="text"
+                                                            value={github}
+                                                            onChange={(e) => setGithub(e.target.value)}
+                                                            placeholder="username"
+                                                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
                                     </div>
                                 </div>
                             </div>

@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { Loader2, FileUp, Megaphone } from "lucide-react";
 import { updateNotificationPrefsAction } from "@/actions/user";
 
 // ─── Constants ─────────────────────────────────────────────────────
 
 const NOTIFICATION_OPTIONS = [
-    { key: "pyq_uploads", label: "New Document Uploads", description: "Get notified when someone uploads a new past paper or notes for your selected course.", defaultOn: true },
-    { key: "announcements", label: "Community Announcements", description: "Receive updates about exams, events, and library maintenance.", defaultOn: true },
+    { key: "pyq_uploads", label: "Learning Resources", description: "Get notified when new past papers or notes are added to your course.", icon: FileUp, onColor: "text-blue-500", onBg: "bg-blue-500/10" },
+    { key: "announcements", label: "Updates & Alerts", description: "Stay informed about exams, events, and important platform updates.", icon: Megaphone, onColor: "text-amber-500", onBg: "bg-amber-500/10" },
 ];
 
 // ─── Main Component ────────────────────────────────────────────────
@@ -41,24 +41,32 @@ export default function NotificationsTab({ initialPyqs, initialNotices }: { init
                 {isPending && <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />}
             </div>
 
-            <div className="space-y-4 max-w-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {NOTIFICATION_OPTIONS.map((opt) => {
-                    const isOn = prefs[opt.key] ?? opt.defaultOn;
+                    const isOn = prefs[opt.key] ?? true;
+                    const Icon = opt.icon;
                     return (
                         <button
                             key={opt.key}
                             onClick={() => toggle(opt.key)}
-                            className="w-full flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-left transition-all hover:border-zinc-300 dark:hover:border-zinc-700"
+                            className={`group w-full flex flex-col p-6 rounded-[2rem] text-left transition-all duration-300 border ${
+                                isOn 
+                                ? "bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 shadow-xl shadow-zinc-200/20 dark:shadow-none" 
+                                : "bg-zinc-50 dark:bg-zinc-950 border-zinc-100 dark:border-zinc-900 opacity-80"
+                            }`}
                         >
-                            <div>
-                                <h4 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm mb-1">{opt.label}</h4>
-                                <p className="text-xs text-zinc-500">{opt.description}</p>
-                            </div>
-                            <div className={`w-11 h-6 rounded-full relative shrink-0 ml-4 transition-colors duration-200 ${isOn ? "bg-indigo-500" : "bg-zinc-300 dark:bg-zinc-700"}`}>
-                                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 shadow-sm transition-all duration-200 flex items-center justify-center ${isOn ? "right-0.5 text-indigo-500" : "left-0.5 text-transparent"
-                                    }`}>
-                                    {isOn && <CheckCircle2 className="h-3 w-3" />}
+                            <div className="flex items-center justify-between mb-6 w-full">
+                                <div className={`p-4 rounded-2xl transition-all ${isOn ? `${opt.onBg} ${opt.onColor}` : "bg-zinc-100 dark:bg-zinc-800 text-zinc-400"}`}>
+                                    <Icon className="h-6 w-6" />
                                 </div>
+                                <div className={`w-12 h-6 rounded-full relative shrink-0 transition-colors duration-300 ${isOn ? "bg-indigo-500" : "bg-zinc-200 dark:bg-zinc-800"}`}>
+                                    <div className={`w-4 h-4 bg-white rounded-full absolute top-1 shadow-sm transition-all duration-300 flex items-center justify-center ${isOn ? "right-1" : "left-1"}`}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 className={`font-black text-sm mb-1 transition-colors ${isOn ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-500"}`}>{opt.label}</h4>
+                                <p className="text-xs text-zinc-500 leading-relaxed font-medium">{opt.description}</p>
                             </div>
                         </button>
                     );

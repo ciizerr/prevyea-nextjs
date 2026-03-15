@@ -59,7 +59,7 @@ function StatusBadge({ status }: { status: string | null | undefined }) {
         return <span className="px-2.5 py-1 text-xs font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-lg">Not Applied</span>;
     }
     if (status === "PENDING") {
-        return <span className="px-2.5 py-1 text-xs font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-center gap-1"><Clock className="h-3 w-3" /> Under Review</span>;
+        return <span className="px-2.5 py-1 text-xs font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-lg border border-amber-200 dark:border-amber-900/50 flex items-center gap-1"><Clock className="h-3 w-3" /> Processing</span>;
     }
     if (status === "APPROVED") {
         return <span className="px-2.5 py-1 text-xs font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-lg flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Approved</span>;
@@ -103,8 +103,8 @@ export default function RolesTab({ profile, roleApps, setRoleApps }: RolesTabPro
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div>
-                <h1 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">Roles & Permissions</h1>
-                <p className="text-zinc-500 dark:text-zinc-400 font-medium max-w-2xl">Apply for specialized roles within the PU Digital Library community to help maintain quality and curate content.</p>
+                <h1 className="text-3xl font-black text-zinc-900 dark:text-white mb-2">Community Roles</h1>
+                <p className="text-zinc-500 dark:text-zinc-400 font-medium max-w-2xl">Help us moderate, review, and grow the PU Digital Library community by applying for a specialized role.</p>
             </div>
 
             {roleStatus && (
@@ -135,49 +135,57 @@ export default function RolesTab({ profile, roleApps, setRoleApps }: RolesTabPro
 
                     return (
                         <div key={roleDef.roleKey} className={`relative group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-sm ${hoverBorder} transition-all duration-300`}>
-                            <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center justify-between">
-                                <div className="flex items-start gap-5">
-                                    <div className={`p-4 rounded-2xl ${bgColor} shrink-0`}>
-                                        <Icon className="h-8 w-8" />
+                            <div className="flex flex-col lg:flex-row gap-8 items-start lg:items-center justify-between">
+                                <div className="flex flex-col sm:flex-row items-start gap-6">
+                                    <div className={`p-5 rounded-3xl ${bgColor} shrink-0 shadow-inner`}>
+                                        <Icon className="h-10 w-10" />
                                     </div>
-                                    <div>
-                                        <div className="flex items-center gap-3 mb-1 flex-wrap">
-                                            <h3 className="text-xl font-bold text-zinc-900 dark:text-white">{roleDef.title}</h3>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-3 flex-wrap">
+                                            <h3 className="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">{roleDef.title}</h3>
                                             {hasRole ? (
-                                                <span className="px-2.5 py-1 text-xs font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-lg flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Active</span>
+                                                <span className="px-3 py-1 text-[10px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 rounded-lg flex items-center gap-1.5 shadow-sm"><CheckCircle2 className="h-3 w-3" /> Active</span>
                                             ) : (
                                                 <StatusBadge status={appStatus} />
                                             )}
                                         </div>
-                                        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-md">{roleDef.description}</p>
+                                        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-lg">{roleDef.description}</p>
                                         {app?.adminNote && appStatus === "REJECTED" && (
-                                            <p className="text-xs text-red-500 dark:text-red-400 mt-2 font-medium">Admin note: {app.adminNote}</p>
+                                            <div className="p-3 bg-red-50 dark:bg-red-500/5 border border-red-100 dark:border-red-500/20 rounded-xl">
+                                                <p className="text-[11px] text-red-600 dark:text-red-400 font-bold uppercase tracking-wider mb-1">Feedback</p>
+                                                <p className="text-sm text-red-500 dark:text-red-400 font-medium italic">&quot;{app.adminNote}&quot;</p>
+                                            </div>
                                         )}
                                     </div>
                                 </div>
 
-                                {canApply && !isFormOpen && (
-                                    <ClickSpark className="shrink-0 w-full sm:w-auto">
-                                        <button
-                                            onClick={() => { setApplyingFor(roleDef.roleKey); setApplyReason(""); setRoleStatus(null); }}
-                                            className={`w-full sm:w-auto px-6 py-3 font-bold text-sm ${btnColor} text-white rounded-xl transition-all shadow-md active:scale-95`}
-                                        >
-                                            Apply Now
-                                        </button>
-                                    </ClickSpark>
-                                )}
+                                <div className="shrink-0 w-full lg:w-auto">
+                                    {canApply && !isFormOpen && (
+                                        <ClickSpark className="w-full">
+                                            <button
+                                                onClick={() => { setApplyingFor(roleDef.roleKey); setApplyReason(""); setRoleStatus(null); }}
+                                                className={`w-full lg:w-auto px-8 py-4 font-black text-[11px] uppercase tracking-widest ${btnColor} text-white rounded-2xl transition-all shadow-xl active:scale-95`}
+                                            >
+                                                Apply Now
+                                            </button>
+                                        </ClickSpark>
+                                    )}
 
-                                {hasRole && (
-                                    <div className="shrink-0">
-                                        <span className="px-6 py-3 font-bold text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 rounded-xl cursor-default">Already Assigned</span>
-                                    </div>
-                                )}
+                                    {hasRole && (
+                                        <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 rounded-2xl text-center">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Currently Assigned</span>
+                                        </div>
+                                    )}
 
-                                {appStatus === "PENDING" && (
-                                    <div className="shrink-0">
-                                        <span className="px-6 py-3 font-bold text-sm bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 rounded-xl cursor-default border border-zinc-200 dark:border-zinc-700">Application Pending</span>
-                                    </div>
-                                )}
+                                    {appStatus === "PENDING" && (
+                                        <div className="p-4 bg-amber-50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/20 rounded-2xl text-center">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 flex items-center justify-center gap-2">
+                                                <Clock className="h-3.5 w-3.5" />
+                                                Review In Progress
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Application Form */}

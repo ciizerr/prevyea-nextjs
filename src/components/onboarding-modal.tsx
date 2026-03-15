@@ -99,7 +99,7 @@ export default function OnboardingModal() {
                                 maxLength={20}
                                 pattern="^[a-zA-Z0-9_]*$"
                                 title="Only letters, numbers, and underscores allowed"
-                                placeholder="panjab_student"
+                                placeholder="username"
                                 className="w-full pl-9 pr-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                             />
                         </div>

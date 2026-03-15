@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
 import { Menu } from "lucide-react";
+import { SettingsSubNav } from "@/components/settings/sub-nav";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -66,6 +67,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         {children}
                     </div>
                 </main>
+
+                <SettingsSubNav isMobile />
             </div>
         </div>
     );

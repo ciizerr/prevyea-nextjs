@@ -77,3 +77,21 @@ export async function markAllAsReadAction() {
         return { success: false };
     }
 }
+export async function clearNotificationsAction() {
+    const session = await auth();
+    if (!session?.user?.email) return { success: false };
+
+    try {
+        const user = await db.query.users.findFirst({
+            where: eq(users.email, session.user.email)
+        });
+        if (!user) return { success: false };
+
+        await db.delete(notifications)
+            .where(eq(notifications.userId, user.id));
+        return { success: true };
+    } catch (error) {
+        console.error(error);
+        return { success: false };
+    }
+}
