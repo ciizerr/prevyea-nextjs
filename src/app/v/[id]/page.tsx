@@ -117,7 +117,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
                         </div>
                         <div>
                             <h3 className="text-xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight italic uppercase">Activity</h3>
-                            <p className="text-zinc-500 dark:text-zinc-400 font-medium">{paper.views || 0} Views · {paper.downloads || 0} Downloads</p>
+                            <p className="text-zinc-500 dark:text-zinc-400 font-medium">{paper.downloads || 0} Downloads</p>
                         </div>
                     </div>
 
