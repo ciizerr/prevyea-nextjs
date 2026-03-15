@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { SettingsSubNav } from "@/components/settings/sub-nav";
 import Link from "next/link";
+import Image from "next/image";
 import { getNotificationsAction, markAsReadAction, markAllAsReadAction, clearNotificationsAction } from "@/actions/notifications";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -288,7 +289,7 @@ export function Header({ isMobile = false }: HeaderProps) {
                                 <div className="relative">
                                     <div className="w-10 h-10 rounded-2xl bg-zinc-900 dark:bg-white flex items-center justify-center font-black text-white dark:text-zinc-950 shadow-xl overflow-hidden group-hover:scale-105 transition-transform duration-300">
                                         {session?.user?.image ? (
-                                            <img src={session.user.image} alt="Avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                            <Image src={session.user.image} alt="Avatar" width={40} height={40} className="w-full h-full object-cover" />
                                         ) : (
                                             <span className="text-xs">{getInitials(session?.user?.name)}</span>
                                         )}
@@ -312,7 +313,7 @@ export function Header({ isMobile = false }: HeaderProps) {
                                         </div>
                                         <div className="w-16 h-16 rounded-[1.5rem] bg-white dark:bg-zinc-800 border-4 border-white dark:border-zinc-800 shadow-2xl flex items-center justify-center overflow-hidden">
                                             {session?.user?.image ? (
-                                                <img src={session.user.image} alt="Avatar" className="w-full h-full object-cover" />
+                                                <Image src={session.user.image} alt="Avatar" width={64} height={64} className="w-full h-full object-cover" />
                                             ) : (
                                                 <span className="text-lg font-black">{getInitials(session?.user?.name)}</span>
                                             )}
