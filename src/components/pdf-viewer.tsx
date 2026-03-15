@@ -21,7 +21,7 @@ interface PDFViewerProps {
     url: string;
     downloadUrl?: string;
     onDownload?: () => void;
-    filename?: string;
+    fileLabel?: string;
 }
 
 export default function PDFViewer(props: PDFViewerProps) {

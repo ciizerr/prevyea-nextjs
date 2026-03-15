@@ -12,14 +12,14 @@ interface PDFViewerInnerProps {
     url: string;
     downloadUrl?: string;
     onDownload?: () => void;
-    filename?: string;
+    fileLabel?: string;
 }
 
 export default function PDFViewerInner({
     url,
     downloadUrl,
     onDownload,
-    filename,
+    fileLabel,
 }: PDFViewerInnerProps) {
     const [numPages, setNumPages] = useState<number>();
     const [scale, setScale] = useState<number>(1.0);
@@ -88,9 +88,9 @@ export default function PDFViewerInner({
                                 
                                 const a = document.createElement('a');
                                 a.href = blobUrl;
-                                // Use provided filename or fallback to URL part
-                                const cleanFilename = filename 
-                                    ? `${filename.replace(/[/\\?%*:|"<>]/g, '-')}.pdf` 
+                                // Use provided fileLabel or fallback to URL part
+                                const cleanFilename = fileLabel 
+                                    ? `${fileLabel.replace(/[/\\?%*:|"<>]/g, '-')}.pdf` 
                                     : (downloadUrl.split('/').pop()?.split('?')[0] || 'paper.pdf');
                                 a.download = cleanFilename;
                                 document.body.appendChild(a);
