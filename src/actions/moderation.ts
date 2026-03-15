@@ -94,6 +94,7 @@ export async function approvePYQAction(formData: FormData) {
 
         revalidatePath("/verification");
         revalidatePath("/vault");
+        revalidatePath("/leaderboard");
 
         return { success: true, message: "Document Approved!" };
     } catch (error) {
@@ -140,6 +141,7 @@ export async function rejectPYQAction(formData: FormData) {
         await db.delete(pyqs).where(eq(pyqs.id, pyqId));
 
         revalidatePath("/verification");
+        revalidatePath("/leaderboard");
 
         return { success: true, message: "Document Rejected and Deleted!" };
     } catch (error) {

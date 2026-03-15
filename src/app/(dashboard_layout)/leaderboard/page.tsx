@@ -2,6 +2,8 @@ import { getLeaderboardAction, type LeaderboardUser } from "@/actions/leaderboar
 import { Trophy, User, FileType, GraduationCap, Sparkles } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function LeaderboardPage() {
     const { success, data, error } = await getLeaderboardAction();
 

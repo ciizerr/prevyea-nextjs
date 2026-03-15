@@ -301,6 +301,7 @@ export async function deleteFileAction(id: string) {
         revalidatePath("/management");
         revalidatePath("/vault");
         revalidatePath("/syllabus");
+        revalidatePath("/leaderboard");
         return { success: true, warning: cloudinaryWarning };
     } catch (error) {
         console.error("Delete File Error:", error);
@@ -341,6 +342,7 @@ export async function bulkDeleteFilesAction(ids: string[]) {
         revalidatePath("/management");
         revalidatePath("/vault");
         revalidatePath("/syllabus");
+        revalidatePath("/leaderboard");
 
         return { success: true, warning: hasCloudinaryWarning ? "Some files could not be removed from Cloudinary" : null };
     } catch (error) {
@@ -396,6 +398,7 @@ export async function deleteAllFilesAction() {
         revalidatePath("/management");
         revalidatePath("/vault");
         revalidatePath("/syllabus");
+        revalidatePath("/leaderboard");
         
         return { success: true, message: "All files deleted successfully", warning: cloudinaryWarning };
     } catch (error) {
