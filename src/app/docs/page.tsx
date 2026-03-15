@@ -129,6 +129,7 @@ export default function DocsPage() {
     }, []);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         syncHash();
         window.addEventListener("hashchange", syncHash);
         return () => window.removeEventListener("hashchange", syncHash);

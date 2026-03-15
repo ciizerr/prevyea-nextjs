@@ -167,6 +167,16 @@ export function Header({ isMobile = false }: HeaderProps) {
 
             <div className={`flex items-center relative ${isMobile ? "gap-2" : "gap-4 md:gap-6"}`}>
                 
+                {/* Mobile Search Trigger */}
+                {isMobile && (
+                    <button
+                        onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true }))}
+                        className="p-2.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-2xl transition-all"
+                        title="Search"
+                    >
+                        <Search className="h-5 w-5" />
+                    </button>
+                )}
                 {isLoggedIn ? (
                     <>
                         {/* Notifications Module */}

@@ -11,7 +11,7 @@ async function main() {
         try {
             await db.run(sql.raw(`UPDATE ${table} SET created_at = cast(strftime('%s', created_at) as int) WHERE typeof(created_at) = 'text'`));
             console.log(`Updated ${table} created_at`);
-        } catch (e) {
+        } catch {
             // Ignore if table doesn't have created_at or doesn't exist
         }
     }

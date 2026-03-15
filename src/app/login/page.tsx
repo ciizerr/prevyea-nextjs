@@ -24,7 +24,7 @@ export default function LoginPage() {
                         <div className="absolute inset-0 bg-indigo-500 blur-md opacity-20 dark:opacity-40 group-hover:opacity-60 transition-opacity" />
                         <div className="relative bg-zinc-950 dark:bg-zinc-100 p-2 rounded-2xl transition-transform group-hover:scale-105 duration-500 overflow-hidden">
                             <Image 
-                                src="/img-512x512.png" 
+                                src="/img-512x512.webp" 
                                 alt="PU Library Logo" 
                                 width={36} 
                                 height={36} 
@@ -103,7 +103,7 @@ export default function LoginPage() {
                         <div className="relative">
                             <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-full" />
                             <div className="relative bg-zinc-950 dark:bg-zinc-100 p-2.5 rounded-2xl shadow-2xl">
-                                <Image src="/img-512x512.png" alt="Logo" width={44} height={44} className="rounded-xl" />
+                                <Image src="/img-512x512.webp" alt="Logo" width={44} height={44} className="rounded-xl" />
                             </div>
                         </div>
                         <div className="text-center">

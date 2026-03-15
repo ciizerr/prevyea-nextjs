@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useRef, useTransition, useEffect } from "react";
-import { X, UploadCloud, CheckCircle2, XCircle, FileType, Loader2, ChevronDown } from "lucide-react";
+import { X, UploadCloud, XCircle, FileType, Loader2, ChevronDown, Sparkles, ShieldCheck } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { uploadPYQAction } from "@/actions/upload";
 import { getCoursesAction, getSubjectsAction } from "@/actions/curriculum";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface UploadModalProps {
     isOpen: boolean;
@@ -21,11 +22,9 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
     const MAX_FILE_SIZE_MB = 5;
     const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
-    // Dynamic Curriculum State
     const [courses, setCourses] = useState<CourseOption[]>([]);
     const [subjects, setSubjects] = useState<{ id: string; name: string }[]>([]);
 
-    // User Selection State
     const [selectedCourseId, setSelectedCourseId] = useState("");
     const [selectedSemester, setSelectedSemester] = useState("");
     const [isFetchingSubjects, setIsFetchingSubjects] = useState(false);
@@ -33,7 +32,6 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
     const selectedCourse = courses.find(c => c.id === selectedCourseId);
     const maxSemesters = selectedCourse?.totalSemesters ?? 8;
 
-    // Fetch Courses on Open — deduplicate because of M2M join
     useEffect(() => {
         if (isOpen) {
             getCoursesAction().then((res) => {
@@ -47,22 +45,32 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
     }, [isOpen]);
 
     // Reset semester when course changes (avoids out-of-range semesters)
-    useEffect(() => {
+    const handleCourseChange = (id: string) => {
+        setSelectedCourseId(id);
         setSelectedSemester("");
         setSubjects([]);
-    }, [selectedCourseId]);
+    };
+
+    const handleSemesterChange = (sem: string) => {
+        setSelectedSemester(sem);
+        if (selectedCourseId && sem) {
+            setIsFetchingSubjects(true);
+        }
+    };
 
     // Fetch Subjects when Course + Semester are both selected
     useEffect(() => {
+        let isCancelled = false;
         if (selectedCourseId && selectedSemester) {
-            setIsFetchingSubjects(true);
+            // Loading is now triggered by handlers
             getSubjectsAction(selectedCourseId, selectedSemester).then((res) => {
-                if (res.success && res.data) setSubjects(res.data as { id: string; name: string }[]);
-                setIsFetchingSubjects(false);
+                if (!isCancelled && res.success && res.data) {
+                    setSubjects(res.data as { id: string; name: string }[]);
+                }
+                if (!isCancelled) setIsFetchingSubjects(false);
             });
-        } else {
-            setSubjects([]);
         }
+        return () => { isCancelled = true; };
     }, [selectedCourseId, selectedSemester]);
 
     if (!isOpen) return null;
@@ -72,242 +80,264 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
         startTransition(async () => {
             const result = await uploadPYQAction(formData);
             if (result.success) {
-                setUploadStatus({ success: true, message: "Uploaded! Awaiting moderator approval." });
+                setUploadStatus({ success: true, message: "Upload successful. Document sent for review." });
                 if (fileInputRef.current) fileInputRef.current.value = "";
                 setFileName("");
-                setTimeout(() => { onClose(); setUploadStatus(null); }, 2000);
+                setTimeout(() => { onClose(); setUploadStatus(null); }, 2500);
             } else {
-                setUploadStatus({ success: false, message: result.error || "Upload failed." });
+                setUploadStatus({ success: false, message: result.error || "Upload failed: Submission rejected." });
             }
         });
     };
 
-    const selectClass = "w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none disabled:opacity-50 disabled:cursor-not-allowed";
-    const labelClass = "block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider";
+    const selectClass = "w-full px-5 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 text-[11px] font-black uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none disabled:opacity-30 disabled:cursor-not-allowed transition-all";
+    const labelClass = "block text-[10px] font-black text-zinc-400 dark:text-zinc-500 mb-2 uppercase tracking-[0.2em]";
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200 max-h-[95vh] overflow-y-auto">
+        <AnimatePresence>
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 overflow-hidden">
+                {/* Backdrop */}
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={onClose}
+                    className="absolute inset-0 bg-zinc-950/40 backdrop-blur-xl z-[101]"
+                />
 
-                {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-zinc-100 dark:border-zinc-800/60 sticky top-0 bg-white dark:bg-zinc-950 z-10">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-blue-100 dark:bg-blue-500/10 p-2 rounded-xl text-blue-600 dark:text-blue-500">
-                            <UploadCloud className="h-5 w-5" />
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">Upload Document</h2>
-                            <p className="text-xs text-zinc-500 font-medium mt-0.5">Submitted for moderator review</p>
-                        </div>
-                    </div>
-                    <button
-                        onClick={onClose}
-                        className="p-2 -mr-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
-                </div>
-
-                {/* Body Form */}
-                <form action={handleUpload} className="p-6 space-y-5">
-
-                    {/* File Drop Zone */}
-                    <div className="relative group cursor-pointer">
-                        <div className={`absolute inset-0 rounded-xl border-2 border-dashed transition-colors ${fileName ? "bg-blue-50 dark:bg-blue-500/10 border-blue-400 dark:border-blue-500/50" : "bg-zinc-50 dark:bg-zinc-900/40 border-zinc-300 dark:border-zinc-700 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/5 group-hover:border-blue-300 dark:group-hover:border-blue-500/30"}`} />
-                        <div className="relative flex flex-col items-center justify-center p-7 text-center pointer-events-none">
-                            <FileType className={`h-8 w-8 mb-2 transition-colors ${fileName ? "text-blue-500" : "text-zinc-400 group-hover:text-blue-400"}`} />
-                            {fileName ? (
-                                <>
-                                    <p className="text-sm font-bold text-blue-700 dark:text-blue-400 truncate max-w-xs">{fileName}</p>
-                                    <p className="text-xs text-blue-500/70 mt-1">Click to change file</p>
-                                </>
-                            ) : (
-                                <>
-                                    <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">Click to select PDF or MD</p>
-                                    <p className="text-xs font-medium text-zinc-400 mt-1">Max 5 MB · PDF or Markdown allowed</p>
-                                </>
-                            )}
-                        </div>
-                        <input
-                            type="file"
-                            name="file"
-                            accept="application/pdf,.md"
-                            required
-                            ref={fileInputRef}
-                            onChange={e => {
-                                const file = e.target.files?.[0];
-                                if (file && file.size > MAX_FILE_SIZE_BYTES) {
-                                    setUploadStatus({ success: false, message: `File is too large. Max size is ${MAX_FILE_SIZE_MB} MB.` });
-                                    e.target.value = "";
-                                    setFileName("");
-                                } else {
-                                    setUploadStatus(null);
-                                    setFileName(file?.name ?? "");
-                                }
-                            }}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                    </div>
-
-                    {/* Title + Type */}
-                    <div className="grid grid-cols-[2fr_1fr] gap-4">
-                        <div>
-                            <label className={labelClass}>Document Title</label>
-                            <input
-                                name="title"
-                                type="text"
-                                required
-                                placeholder="e.g. OS End Sem 2023"
-                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                            />
-                        </div>
-                        <div>
-                            <label className={labelClass}>Type</label>
-                            <div className="relative">
-                                <select name="type" required defaultValue="PYQ" className={selectClass}>
-                                    <option value="PYQ">PYQ</option>
-                                    <option value="Notes">Notes</option>
-                                    <option value="Syllabus">Syllabus</option>
-                                </select>
-                                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Course + Semester */}
-                    <div>
-                        <p className={labelClass}>Curriculum Context</p>
-                        <div className="grid grid-cols-2 gap-3 p-4 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                            <div>
-                                <label className="block text-[10px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">Course</label>
-                                <div className="relative">
-                                    <select
-                                        name="courseId"
-                                        required
-                                        value={selectedCourseId}
-                                        onChange={(e) => setSelectedCourseId(e.target.value)}
-                                        className={selectClass}
-                                    >
-                                        <option value="" disabled>Select course</option>
-                                        {courses.map((course) => (
-                                            <option key={course.id} value={course.id}>{course.name}</option>
-                                        ))}
-                                    </select>
-                                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-                                </div>
+                {/* Modal Container */}
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                    className="relative z-[102] bg-white dark:bg-[#080808] border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] w-full max-w-xl overflow-hidden flex flex-col max-h-[90dvh]"
+                >
+                    {/* Interior Glow */}
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 dark:bg-indigo-600/10 blur-[80px] rounded-full pointer-events-none" />
+                    
+                    {/* Top Bar */}
+                    <div className="flex items-center justify-between p-8 border-b border-zinc-100 dark:border-zinc-900">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-zinc-950 dark:bg-zinc-100 p-3 rounded-2xl shadow-xl">
+                                <UploadCloud className="h-6 w-6 text-white dark:text-zinc-900" />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-bold text-zinc-500 mb-1.5 uppercase tracking-wider">
-                                    Semester {selectedCourse ? `(1–${maxSemesters})` : ""}
-                                </label>
-                                <div className="relative">
-                                    <select
-                                        name="semester"
-                                        required
-                                        value={selectedSemester}
-                                        disabled={!selectedCourseId}
-                                        onChange={(e) => setSelectedSemester(e.target.value)}
-                                        className={selectClass}
-                                    >
-                                        <option value="" disabled>{!selectedCourseId ? "Pick course first" : "Select semester"}</option>
-                                        {Array.from({ length: maxSemesters }, (_, i) => (
-                                            <option key={i} value={`Sem ${i + 1}`}>Semester {i + 1}</option>
-                                        ))}
-                                    </select>
-                                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-                                </div>
-                            </div>
-
-                            {/* Context breadcrumb */}
-                            {(selectedCourse || selectedSemester) && (
-                                <div className="col-span-2 flex items-center gap-2 pt-1 text-xs text-zinc-400 font-medium">
-                                    <span className={selectedCourse ? "text-blue-600 dark:text-blue-400 font-bold" : ""}>{selectedCourse?.name ?? "—"}</span>
-                                    <span>›</span>
-                                    <span className={selectedSemester ? "text-blue-600 dark:text-blue-400 font-bold" : ""}>{selectedSemester || "—"}</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Subject + Year */}
-                    <div className="grid grid-cols-[2fr_1fr] gap-4">
-                        <div>
-                            <label className={`${labelClass} flex items-center justify-between`}>
-                                <span>Subject</span>
-                                {isFetchingSubjects && <Loader2 className="h-3 w-3 animate-spin text-blue-500" />}
-                            </label>
-                            <div className="relative">
-                                <select
-                                    name="subjectId"
-                                    required
-                                    defaultValue=""
-                                    disabled={!selectedCourseId || !selectedSemester || isFetchingSubjects}
-                                    className={selectClass}
-                                >
-                                    <option value="" disabled>
-                                        {!selectedCourseId
-                                            ? "Select a course first"
-                                            : !selectedSemester
-                                                ? "Select a semester first"
-                                                : isFetchingSubjects
-                                                    ? "Loading subjects..."
-                                                    : subjects.length === 0
-                                                        ? "No subjects found"
-                                                        : "Select subject"}
-                                    </option>
-                                    {subjects.map((sub) => (
-                                        <option key={sub.id} value={sub.id}>{sub.name}</option>
-                                    ))}
-                                </select>
-                                <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                                <h2 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter leading-none uppercase">Upload Document</h2>
+                                <p className="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-widest mt-2 flex items-center gap-2">
+                                    <ShieldCheck className="h-3 w-3" />
+                                    Secure Document Upload
+                                </p>
                             </div>
                         </div>
-                        <div>
-                            <label className={labelClass}>Year</label>
-                            <input
-                                name="year"
-                                type="number"
-                                required
-                                min="1990"
-                                max={new Date().getFullYear()}
-                                defaultValue={new Date().getFullYear()}
-                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Status Message */}
-                    {uploadStatus && (
-                        <div className={`p-4 rounded-xl border flex items-center gap-3 ${uploadStatus.success ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-500/10 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-red-50 border-red-200 dark:bg-red-500/10 dark:border-red-500/20 text-red-700 dark:text-red-400"}`}>
-                            {uploadStatus.success ? <CheckCircle2 className="h-5 w-5 shrink-0" /> : <XCircle className="h-5 w-5 shrink-0" />}
-                            <p className="text-sm font-semibold">{uploadStatus.message}</p>
-                        </div>
-                    )}
-
-                    {/* Actions */}
-                    <div className="pt-2 flex items-center justify-end gap-3">
                         <button
-                            type="button"
                             onClick={onClose}
-                            className="px-5 py-2.5 text-sm font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                            className="p-3 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-2xl transition-all group"
                         >
-                            Cancel
+                            <X className="h-6 w-6 transition-transform group-hover:rotate-90" />
                         </button>
-                        <ClickSpark>
-                            <button
-                                type="submit"
-                                disabled={isPending}
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {isPending
-                                    ? <><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</>
-                                    : "Submit for Verification"}
-                            </button>
-                        </ClickSpark>
                     </div>
 
-                </form>
+                    {/* Scrollable Form */}
+                    <form action={handleUpload} className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8">
+                        
+                        {/* File Area */}
+                        <div className="relative group">
+                            <div className={`absolute inset-0 rounded-3xl border-2 border-dashed transition-all duration-500 ${fileName ? "bg-indigo-500/5 border-indigo-500/50" : "bg-zinc-50 dark:bg-zinc-900/30 border-zinc-200 dark:border-zinc-800 group-hover:border-indigo-500/30"}`} />
+                            <div className="relative flex flex-col items-center justify-center p-10 text-center pointer-events-none">
+                                <motion.div
+                                    animate={fileName ? { scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] } : {}}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <FileType className={`h-12 w-12 mb-4 transition-colors ${fileName ? "text-indigo-500" : "text-zinc-400 opacity-40 group-hover:opacity-100"}`} />
+                                </motion.div>
+                                {fileName ? (
+                                    <div className="space-y-2">
+                                        <p className="text-sm font-black text-zinc-900 dark:text-zinc-50 truncate max-w-[280px]">{fileName}</p>
+                                        <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest">File ready to upload</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-2">
+                                        <p className="text-sm font-black text-zinc-900 dark:text-zinc-50 uppercase tracking-tight">Drop PDF or Markdown Here</p>
+                                        <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-relaxed">Max File Size: 5.0 MB</p>
+                                    </div>
+                                )}
+                            </div>
+                            <input
+                                type="file"
+                                name="file"
+                                accept="application/pdf,.md"
+                                required
+                                ref={fileInputRef}
+                                onChange={e => {
+                                    const file = e.target.files?.[0];
+                                    if (file && file.size > MAX_FILE_SIZE_BYTES) {
+                                        setUploadStatus({ success: false, message: `Error: File size exceeds ${MAX_FILE_SIZE_MB}MB limit.` });
+                                        e.target.value = "";
+                                        setFileName("");
+                                    } else {
+                                        setUploadStatus(null);
+                                        setFileName(file?.name ?? "");
+                                    }
+                                }}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                        </div>
+
+                        {/* Metadata Grid */}
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className={labelClass}>Document Title</label>
+                                    <input
+                                        name="title"
+                                        type="text"
+                                        required
+                                        placeholder="E.G. OS END SEM 2023"
+                                        className="w-full px-5 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 text-sm font-bold text-zinc-900 dark:text-zinc-50 placeholder:text-zinc-300 dark:placeholder:text-zinc-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all uppercase"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className={labelClass}>Document Type</label>
+                                    <div className="relative">
+                                        <select name="type" required defaultValue="PYQ" className={selectClass}>
+                                            <option value="PYQ">Previous Year (PYQ)</option>
+                                            <option value="Notes">Study Notes</option>
+                                            <option value="Syllabus">Official Syllabus</option>
+                                        </select>
+                                        <ChevronDown className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-zinc-50 dark:bg-zinc-900/50 p-6 rounded-[2rem] border border-zinc-100 dark:border-zinc-800/60 space-y-6">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className={labelClass}>Select Course</label>
+                                        <div className="relative">
+                                            <select
+                                                name="courseId"
+                                                required
+                                                value={selectedCourseId}
+                                                onChange={(e) => handleCourseChange(e.target.value)}
+                                                className={selectClass}
+                                            >
+                                                <option value="" disabled>CHOOSE COURSE</option>
+                                                {courses.map((course) => (
+                                                    <option key={course.id} value={course.id}>{course.name.toUpperCase()}</option>
+                                                ))}
+                                            </select>
+                                            <ChevronDown className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className={labelClass}>Semester</label>
+                                        <div className="relative">
+                                            <select
+                                                name="semester"
+                                                required
+                                                value={selectedSemester}
+                                                disabled={!selectedCourseId}
+                                                onChange={(e) => handleSemesterChange(e.target.value)}
+                                                className={selectClass}
+                                            >
+                                                <option value="" disabled>SELECT SEM</option>
+                                                {Array.from({ length: maxSemesters }, (_, i) => (
+                                                    <option key={i} value={`Sem ${i + 1}`}>SEMESTER {i + 1}</option>
+                                                ))}
+                                            </select>
+                                            <ChevronDown className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className={`${labelClass} flex items-center justify-between`}>
+                                        <span>Subject</span>
+                                        {isFetchingSubjects && <Loader2 className="h-3 w-3 animate-spin text-indigo-500" />}
+                                    </label>
+                                    <div className="relative">
+                                        <select
+                                            name="subjectId"
+                                            required
+                                            defaultValue=""
+                                            disabled={!selectedCourseId || !selectedSemester || isFetchingSubjects}
+                                            className={selectClass}
+                                        >
+                                            <option value="" disabled>
+                                                {isFetchingSubjects ? "LOADING SUBJECTS..." : "SELECT SUBJECT"}
+                                            </option>
+                                            {subjects.map((sub) => (
+                                                <option key={sub.id} value={sub.id}>{sub.name.toUpperCase()}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className={labelClass}>Examination Year</label>
+                                <input
+                                    name="year"
+                                    type="number"
+                                    required
+                                    min="1990"
+                                    max={new Date().getFullYear()}
+                                    defaultValue={new Date().getFullYear()}
+                                    className="w-full px-5 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 text-sm font-bold text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Confirmation */}
+                        {uploadStatus && (
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className={`p-6 rounded-3xl border flex items-center gap-4 ${uploadStatus.success ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400" : "bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400"}`}
+                            >
+                                {uploadStatus.success ? <Sparkles className="h-6 w-6 shrink-0" /> : <XCircle className="h-6 w-6 shrink-0" />}
+                                <p className="text-xs font-black uppercase tracking-widest leading-relaxed">
+                                    {uploadStatus.message}
+                                </p>
+                            </motion.div>
+                        )}
+
+                        {/* Footer Controls */}
+                        <div className="pt-6 flex flex-col sm:flex-row items-center justify-end gap-6 text-center sm:text-left">
+                            <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest hidden sm:block">
+                                Files will be reviewed <br /> by a moderator.
+                            </p>
+                            <div className="flex items-center gap-4 w-full sm:w-auto">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className="flex-1 sm:flex-none px-8 py-4 text-[11px] font-black text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 uppercase tracking-widest transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <ClickSpark className="flex-1 sm:flex-none">
+                                    <button
+                                        type="submit"
+                                        disabled={isPending}
+                                        className="w-full bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-900 px-10 py-5 rounded-2xl text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-30 disabled:pointer-events-none"
+                                    >
+                                        {isPending
+                                            ? <><Loader2 className="h-4 w-4 animate-spin text-white dark:text-zinc-900" /> Uploading...</>
+                                            : "Submit Document"}
+                                    </button>
+                                </ClickSpark>
+                            </div>
+                        </div>
+                    </form>
+
+                    {/* Footer Watermark */}
+                    <div className="px-8 py-4 bg-zinc-50 dark:bg-[#0a0a0a] border-t border-zinc-100 dark:border-zinc-900 flex justify-between items-center opacity-40">
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em]">User Session</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em]">PU Library System</span>
+                    </div>
+                </motion.div>
             </div>
-        </div>
+        </AnimatePresence>
     );
 }

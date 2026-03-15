@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { GraduationCap, ChevronRight, CheckCircle2, FileText, Download, BookOpen, Loader2, Sparkles, ArrowRight } from "lucide-react";
+import { ChevronRight, FileText, Download, BookOpen, Loader2, Sparkles, ArrowRight } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import Link from "next/link";
 import { getCoursesAction, getSubjectsAction, getFilesAction } from "@/actions/curriculum";
@@ -234,155 +234,147 @@ export default function SyllabusPage() {
     const computedSemesters = Array.from({ length: maxSems }, (_, i) => `Sem ${i + 1}`);
 
     return (
-        <div className="relative min-h-screen animate-in fade-in slide-in-from-bottom-6 duration-700 pb-20 selection:bg-indigo-100 dark:selection:bg-indigo-900/40">
-
+        <div className="relative min-h-screen bg-white dark:bg-[#050505] selection:bg-indigo-100 dark:selection:bg-indigo-900/40 pb-20">
             {/* Ambient Background Glows */}
             <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 dark:bg-blue-500/5 blur-[100px] rounded-full" />
+                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-indigo-500/5 dark:bg-indigo-600/10 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/5 blur-[100px] rounded-full" />
             </div>
 
-            <main className="max-w-screen-2xl mx-auto px-6 pt-12 space-y-12">
-
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 text-center md:text-left">
-                    <div className="space-y-4">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 rounded-full text-indigo-600 dark:text-indigo-400 text-xs font-black uppercase tracking-widest">
-                            <BookOpen className="w-3.5 h-3.5" />
-                            Official Curriculum
-                        </div>
-
-                    </div>
-                </div>
-
-                <div className="flex flex-col lg:flex-row gap-6">
-
-                    {/* Left Navigation Hub */}
-                    <div className="w-full lg:w-72 shrink-0 space-y-6">
-                        <div className="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border border-zinc-200/60 dark:border-zinc-800/60 rounded-[2.5rem] p-6 shadow-2xl shadow-indigo-500/5 lg:sticky lg:top-24 space-y-8">
-
-                            {/* Course Selection */}
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-2 pl-2">
-                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
-                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Select Program</p>
-                                </div>
-                                <div className="flex flex-col gap-2 bg-zinc-100/50 dark:bg-zinc-900/50 p-2 rounded-3xl border border-zinc-200/40 dark:border-zinc-800/40">
-                                    {loadingCourses ? (
-                                        <div className="p-10 flex flex-col items-center justify-center w-full gap-3">
-                                            <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
-                                            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Loading courses</span>
-                                        </div>
-                                    ) : dbCourses.map(c => (
-                                        <button
-                                            key={c.id}
-                                            onClick={() => { setActiveCourseId(c.id); setActiveSem("Sem 1"); }}
-                                            className={`flex items-center justify-between px-5 py-3 rounded-2xl text-sm font-black transition-all group ${activeCourseId === c.id
-                                                ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-xl"
-                                                : "text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900/80 hover:text-zinc-900 dark:hover:text-zinc-100"
-                                                }`}
-                                        >
-                                            <span>{c.name}</span>
-                                            {activeCourseId === c.id ? <ArrowRight className="h-4 w-4" /> : <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800" />}
-                                        </button>
-                                    ))}
-                                </div>
+            <main className="max-w-7xl mx-auto px-6 pt-12">
+                <div className="flex flex-col lg:flex-row gap-10">
+                    
+                    {/* Left Sidebar: Curriculum Hub */}
+                    <aside className="w-full lg:w-80 shrink-0">
+                        <div className="lg:sticky lg:top-28 space-y-8">
+                            
+                            {/* Branding / Title */}
+                            <div className="space-y-1 pl-2">
+                                <h1 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic leading-none">Syllabus</h1>
+                                <p className="text-[10px] font-black text-blue-500 dark:text-blue-400 tracking-[0.3em] uppercase opacity-70">View Syllabus</p>
                             </div>
 
-                            {/* Semester Selection */}
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-2 pl-2">
-                                    <div className="w-2 h-2 rounded-full bg-indigo-500" />
-                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Select Semester</p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto pr-2 scrollbar-hide">
-                                    {computedSemesters.map(sem => (
-                                        <button
-                                            key={sem}
-                                            onClick={() => setActiveSem(sem)}
-                                            className={`py-3 px-4 rounded-2xl text-xs font-black transition-all text-left flex items-center justify-between group uppercase tracking-widest ${activeSem === sem
-                                                ? "bg-indigo-600 text-white shadow-xl shadow-indigo-500/30"
-                                                : "bg-zinc-50 dark:bg-zinc-900 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                                                }`}
-                                        >
-                                            {sem}
-                                            {activeSem === sem && <CheckCircle2 className="h-4 w-4 shrink-0 transition-transform scale-in-100" />}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Subjects Selection */}
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-2 pl-2">
-                                    <div className="w-2 h-2 rounded-full bg-purple-500" />
-                                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em]">Subject List</p>
-                                </div>
-                                <div className="space-y-1 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide relative min-h-[100px]">
-                                    {loadingSubjects ? (
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-                                            <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
-                                        </div>
-                                    ) : dbSubjects.length > 0 ? (
-                                        dbSubjects.map(subject => (
+                            <div className="bg-zinc-50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800/60 rounded-[2.5rem] p-6 shadow-2xl space-y-8">
+                                
+                                {/* Program Selection */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 px-2">
+                                        <div className="w-1.5 h-6 bg-blue-500 rounded-full" />
+                                        <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Select Course</span>
+                                    </div>
+                                    <div className="flex flex-col gap-2 p-1.5 bg-white dark:bg-zinc-950/50 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                                        {loadingCourses ? (
+                                            <div className="p-10 flex flex-col items-center justify-center w-full gap-3">
+                                                <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+                                            </div>
+                                        ) : dbCourses.map(c => (
                                             <button
-                                                key={subject.id}
-                                                onClick={() => setActiveSubjectId(subject.id)}
-                                                className={`w-full py-3 px-4 rounded-2xl text-sm transition-all text-left flex items-center gap-3 group ${activeSubjectId === subject.id
-                                                    ? "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black border border-blue-100 dark:border-blue-500/20"
-                                                    : "bg-transparent text-zinc-500 font-bold hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900"
+                                                key={c.id}
+                                                onClick={() => { setActiveCourseId(c.id); setActiveSem("Sem 1"); }}
+                                                className={`flex items-center justify-between px-5 py-3 rounded-2xl text-[11px] font-black transition-all group uppercase tracking-widest ${activeCourseId === c.id
+                                                    ? "bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-xl scale-[1.02]"
+                                                    : "text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/80 hover:text-zinc-900 dark:hover:text-zinc-100"
                                                     }`}
                                             >
-                                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${activeSubjectId === subject.id ? "bg-blue-600 text-white" : "bg-zinc-100 dark:bg-zinc-900"}`}>
-                                                    <BookOpen className="h-4 w-4" />
-                                                </div>
-                                                <span className="truncate flex-1 tracking-tight" title={subject.name}>{subject.name}</span>
-                                                {activeSubjectId === subject.id && <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-lg shadow-blue-500/50" />}
+                                                <span>{c.name}</span>
+                                                {activeCourseId === c.id ? <ArrowRight className="h-4 w-4" /> : <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800" />}
                                             </button>
-                                        ))
-                                    ) : (
-                                        <div className="text-center py-10">
-                                            <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">No modules found</p>
-                                        </div>
-                                    )}
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Semester Selection */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 px-2">
+                                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                                        <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Semester</span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto scrollbar-hide pr-1">
+                                        {computedSemesters.map(sem => (
+                                            <button
+                                                key={sem}
+                                                onClick={() => setActiveSem(sem)}
+                                                className={`py-3 rounded-2xl text-[10px] font-black transition-all text-center uppercase tracking-widest border ${activeSem === sem
+                                                    ? "bg-indigo-500 text-white shadow-xl shadow-indigo-500/30 border-transparent"
+                                                    : "bg-white dark:bg-zinc-950/30 border-zinc-100 dark:border-zinc-800/60 text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600"
+                                                    }`}
+                                            >
+                                                {sem}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Subject List */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 px-2">
+                                        <div className="w-1.5 h-6 bg-purple-500 rounded-full" />
+                                        <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Subjects</span>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto scrollbar-hide pr-1 relative min-h-[100px]">
+                                        {loadingSubjects ? (
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                                                <Loader2 className="h-6 w-6 animate-spin text-blue-500 opacity-20" />
+                                            </div>
+                                        ) : dbSubjects.length > 0 ? (
+                                            dbSubjects.map(subject => (
+                                                <button
+                                                    key={subject.id}
+                                                    onClick={() => setActiveSubjectId(subject.id)}
+                                                    className={`w-full py-4 px-4 rounded-xl text-[10px] transition-all text-left flex items-center gap-3 group border ${activeSubjectId === subject.id
+                                                        ? "bg-blue-500 text-white font-black border-transparent shadow-lg shadow-blue-500/20"
+                                                        : "bg-white dark:bg-zinc-950/20 text-zinc-400 border-zinc-100 dark:border-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-zinc-300 dark:hover:border-zinc-600"
+                                                        }`}
+                                                >
+                                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${activeSubjectId === subject.id ? "bg-white/20" : "bg-zinc-100 dark:bg-zinc-800"}`}>
+                                                        <BookOpen className="h-4 w-4" />
+                                                    </div>
+                                                    <span className="line-clamp-3 uppercase tracking-tight font-black leading-tight flex-1" title={subject.name}>{subject.name}</span>
+                                                </button>
+                                            ))
+                                        ) : (
+                                            <div className="col-span-2 text-center py-10 opacity-40">
+                                                <p className="text-[9px] font-black text-zinc-400 uppercase tracking-widest">No subjects found</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </aside>
 
-                    {/* Main Content Display */}
-                    <div className="flex-1 min-h-[600px] lg:h-[calc(100vh-140px)] lg:sticky lg:top-24">
-                        <div className="h-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 rounded-[2.5rem] p-5 md:p-8 shadow-2xl shadow-zinc-200/20 dark:shadow-none relative overflow-hidden flex flex-col">
-
+                    {/* Right Main Content */}
+                    <div className="flex-1 min-w-0">
+                        <div className="bg-white dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/40 rounded-[3rem] p-6 lg:p-12 shadow-2xl min-h-[calc(100vh-160px)] flex flex-col relative overflow-visible">
+                            
                             {/* Decorative Elements */}
-                            <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 dark:bg-indigo-500/10 blur-[100px] -mr-20 -mt-20 pointer-events-none" />
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/[0.03] blur-[100px] -mr-20 -mt-20 pointer-events-none" />
 
                             <div className="relative z-10 flex flex-col h-full w-full">
 
                                 {/* Top Banner/Actions */}
-                                <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-6 pb-6 border-b border-zinc-100 dark:border-zinc-800/60">
-                                    <div className="space-y-2 max-w-2xl text-center sm:text-left">
-                                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                                            <div className="flex items-center gap-2 px-3 py-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
-                                                <GraduationCap className="w-3 h-3" />
-                                                {activeCourse?.name || "Unselected"}
+                                <div className="flex flex-col sm:flex-row items-center justify-between gap-8 mb-12 pb-10 border-b border-zinc-100 dark:border-zinc-800/60">
+                                    <div className="space-y-4 max-w-2xl text-center sm:text-left">
+                                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                                            <div className="px-4 py-1.5 bg-zinc-100 dark:bg-zinc-900/50 rounded-full border border-zinc-200 dark:border-zinc-800 text-[9px] font-black text-zinc-400 uppercase tracking-widest">
+                                                {activeCourse?.name || "Library"}
                                             </div>
                                             <ChevronRight className="h-3 w-3 text-zinc-300" />
-                                            <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-500/10 rounded-lg border border-blue-100 dark:border-blue-500/20 text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">
+                                            <div className="px-4 py-1.5 bg-blue-500 text-white rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg shadow-blue-500/20">
                                                 {activeSem}
                                             </div>
                                             {syllabusFile && (
-                                                <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 dark:bg-amber-500/10 rounded-lg border border-amber-100 dark:border-amber-500/20 text-[9px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest shrink-0">
+                                                <div className="flex items-center gap-1.5 px-4 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase tracking-widest rounded-full border border-emerald-500/20 shadow-sm shrink-0">
                                                     <Sparkles className="w-3 h-3" />
                                                     Verified
                                                 </div>
                                             )}
                                         </div>
-                                        <h2 className="text-2xl md:text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight leading-tight">
+                                        <h2 className="text-3xl md:text-5xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter italic uppercase leading-none">
                                             {dbSubjects.find(s => s.id === activeSubjectId)?.name || "Subject Syllabus"}
                                         </h2>
-                                        <p className="text-sm font-medium text-zinc-500 max-w-xl">
-                                            {loadingSyllabus ? "Loading syllabus..." : syllabusFile ? "Official verified syllabus for the current session" : "The curriculum for this subject has not been uploaded yet."}
+                                        <p className="text-lg font-medium text-zinc-500 dark:text-zinc-400">
+                                            {loadingSyllabus ? "Loading..." : syllabusFile ? "Check your subject syllabus here." : "Syllabus not available."}
                                         </p>
                                     </div>
 
@@ -392,7 +384,7 @@ export default function SyllabusPage() {
                                                 <button
                                                     onClick={handleDownloadPdf}
                                                     disabled={downloadingPdf || loadingMarkdown}
-                                                    className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black flex items-center justify-center gap-2 shadow-2xl shadow-indigo-500/30 transition-all active:scale-95 disabled:opacity-50 text-sm italic"
+                                                    className="w-full sm:w-auto px-10 py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl transition-all active:scale-95 disabled:opacity-30 text-[11px] uppercase tracking-widest"
                                                 >
                                                     {downloadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                                                     {downloadingPdf ? "Generating..." : "Export as PDF"}
@@ -402,10 +394,10 @@ export default function SyllabusPage() {
                                                     href={syllabusFile.downloadLink}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black flex items-center justify-center gap-2 shadow-2xl shadow-indigo-500/30 transition-all active:scale-95 text-sm italic"
+                                                    className="w-full sm:w-auto px-10 py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl transition-all active:scale-95 text-[11px] uppercase tracking-widest"
                                                 >
                                                     <Download className="h-4 w-4" />
-                                                    Download Syllabus
+                                                    Download Archive
                                                 </a>
                                             )}
                                         </ClickSpark>
@@ -413,54 +405,50 @@ export default function SyllabusPage() {
                                 </div>
 
                                 {/* Viewer Frame */}
-                                <div className="flex-1 min-h-0">
+                                <div className="flex-1">
                                     {loadingSyllabus ? (
-                                        <div className="h-full flex flex-col items-center justify-center gap-4 text-zinc-400">
-                                            <div className="w-16 h-16 bg-zinc-50 dark:bg-zinc-900 rounded-[2rem] flex items-center justify-center shadow-inner">
-                                                <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+                                        <div className="h-full flex flex-col items-center justify-center gap-6 py-40">
+                                            <div className="relative">
+                                                <div className="w-24 h-24 bg-blue-500/10 blur-[80px] rounded-full absolute -inset-6 animate-pulse" />
+                                                <Loader2 className="h-12 w-12 animate-spin text-blue-500 relative z-10 opacity-30" />
                                             </div>
-                                            <p className="text-[10px] font-black uppercase tracking-[0.2em]">Loading document</p>
+                                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400 animate-pulse">Loading document...</p>
                                         </div>
                                     ) : syllabusFile ? (
                                         isMarkdown ? (
-                                            <div className="h-full flex flex-col">
+                                            <>
                                                 {loadingMarkdown ? (
-                                                    <div className="h-full flex flex-col items-center justify-center gap-4 text-zinc-400">
-                                                        <Loader2 className="h-10 w-10 animate-spin text-indigo-500" />
-                                                        <span className="text-[10px] font-black tracking-widest uppercase">Loading content</span>
+                                                    <div className="flex-1 flex flex-col items-center justify-center gap-4 text-zinc-400 py-20">
+                                                        <Loader2 className="h-10 w-10 animate-spin text-blue-500 opacity-20" />
                                                     </div>
                                                 ) : (
-                                                    <div id="markdown-content" className="h-full bg-zinc-50/50 dark:bg-zinc-900/30 p-6 md:p-10 rounded-[2rem] border border-zinc-200/60 dark:border-zinc-800/60 prose prose-indigo dark:prose-invert max-w-none overflow-y-auto scrollbar-hide selection:bg-indigo-200 dark:selection:bg-indigo-900/40">
+                                                    <div id="markdown-content" className="w-full bg-zinc-50/50 dark:bg-zinc-950/30 p-8 md:p-14 rounded-[3rem] border border-zinc-100 dark:border-zinc-800/60 prose prose-zinc dark:prose-invert max-w-none selection:bg-indigo-100 dark:selection:bg-indigo-900/40 shadow-inner">
                                                         <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent || ""}</ReactMarkdown>
                                                     </div>
                                                 )}
-                                            </div>
+                                            </>
                                         ) : (
-                                            <div className="h-full rounded-[2.5rem] overflow-hidden border border-zinc-200 dark:border-zinc-800 group relative">
-                                                <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/20 to-transparent pointer-events-none z-10" />
+                                            <div className="h-full min-h-[800px] rounded-[3rem] overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-2xl group relative bg-zinc-100 dark:bg-black">
                                                 <PDFViewer url={syllabusFile.viewLink} />
                                             </div>
                                         )
                                     ) : (
-                                        <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-zinc-50 dark:bg-zinc-900/20 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-[3rem] space-y-6">
-                                            <div className="w-24 h-24 bg-white dark:bg-zinc-900 rounded-[2rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800">
-                                                <FileText className="h-10 w-10 text-zinc-300" />
+                                        <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-zinc-50 dark:bg-zinc-950/20 border-2 border-dashed border-zinc-100 dark:border-zinc-800/40 rounded-[4rem] space-y-8">
+                                            <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800 text-zinc-200 dark:text-zinc-800">
+                                                <FileText className="h-12 w-12" />
                                             </div>
-                                            <div className="space-y-2">
-                                                <h3 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight">Syllabus Unavailable</h3>
-                                                <p className="text-zinc-500 dark:text-zinc-400 max-w-xs mx-auto font-medium">
-                                                    We haven&apos;t received the syllabus for {dbSubjects.find(s => s.id === activeSubjectId)?.name || "this subject"} yet.
+                                            <div className="space-y-4">
+                                                <h3 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter italic uppercase">No Syllabus Found</h3>
+                                                <p className="text-zinc-400 dark:text-zinc-500 max-w-xs mx-auto font-medium leading-relaxed">
+                                                    The syllabus for {dbSubjects.find(s => s.id === activeSubjectId)?.name || "this subject"} hasn&apos;t been uploaded yet.
                                                 </p>
                                             </div>
-                                            <Link href="/vault" className="inline-flex items-center gap-2 text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest hover:gap-3 transition-all">
-                                                Explore Vault Archives <ChevronRight className="w-4 h-4" />
+                                            <Link href="/vault" className="inline-flex items-center gap-3 text-[11px] font-black text-indigo-500 uppercase tracking-[0.2em] hover:gap-5 transition-all">
+                                                Go to Vault <ChevronRight className="w-4 h-4" />
                                             </Link>
                                         </div>
                                     )}
                                 </div>
-
-                                {/* Spacing at bottom */}
-                                <div className="mt-6" />
                             </div>
                         </div>
                     </div>

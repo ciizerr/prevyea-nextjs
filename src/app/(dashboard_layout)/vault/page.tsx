@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, FolderOpen, ChevronRight, CheckCircle2, FileText, Clock, User, BookOpen, X, LayoutGrid, List, Loader2, Upload } from "lucide-react";
+import { FolderOpen, ChevronRight, CheckCircle2, FileText, Clock, BookOpen, X, LayoutGrid, List, Loader2, Upload } from "lucide-react";
+import { motion } from "framer-motion";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getCoursesAction, getSubjectsAction, getFilesAction, incrementDownloadAction } from "@/actions/curriculum";
 import PDFViewer from "@/components/pdf-viewer";
@@ -36,7 +37,6 @@ type Paper = {
 };
 
 export default function VaultPage() {
-    const [searchQuery, setSearchQuery] = useState("");
     const [activeCourseId, setActiveCourseId] = useState<string>("");
     const [activeSem, setActiveSem] = useState<string>("");
     const [activeSubjectId, setActiveSubjectId] = useState<string>("");
@@ -155,278 +155,286 @@ export default function VaultPage() {
     const maxSems = activeCourse?.totalSemesters || 6;
     const computedSemesters = Array.from({ length: maxSems }, (_, i) => `Sem ${i + 1}`);
 
-    const availableSubjects = dbSubjects.filter(subject =>
-        subject.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const availableSubjects = dbSubjects;
 
     return (
-        <div className="relative min-h-screen pb-20 selection:bg-indigo-100 dark:selection:bg-indigo-900/40">
+        <div className="relative min-h-screen bg-white dark:bg-[#050505] selection:bg-indigo-100 dark:selection:bg-indigo-900/40 pb-20">
             {/* Ambient Background Glows */}
             <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 dark:bg-blue-500/5 blur-[100px] rounded-full" />
+                <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/5 dark:bg-indigo-600/10 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-emerald-500/5 blur-[100px] rounded-full" />
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-8 max-w-screen-2xl mx-auto px-4 sm:px-6">
-                {/* Left Sidebar (Sticky Menu) */}
-                <aside className="w-full lg:w-80 lg:sticky lg:top-24 lg:h-[calc(100vh-120px)] flex flex-col gap-6">
-                    <div className="bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border border-zinc-200/60 dark:border-zinc-800/60 rounded-[2.5rem] p-8 shadow-2xl shadow-zinc-200/20 dark:shadow-none flex flex-col h-full">
-                        <div className="space-y-6 flex-1 overflow-y-auto scrollbar-hide">
-                            <div className="flex items-center gap-3 mb-2">
-                                <div className="p-3 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20">
-                                    <FolderOpen className="h-5 w-5" />
-                                </div>
-                                <h2 className="text-xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">Resources</h2>
+            <div className="max-w-7xl mx-auto px-6 pt-12">
+                <div className="flex flex-col lg:flex-row gap-10">
+                    
+                    {/* Left Sidebar: Discovery Hub */}
+                    <aside className="w-full lg:w-80 shrink-0">
+                        <div className="lg:sticky lg:top-28 space-y-8">
+                            
+                            {/* Branding / Title */}
+                            <div className="space-y-1 pl-2">
+                                <h1 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic leading-none">Vault</h1>
+                                <p className="text-[10px] font-black text-indigo-500 dark:text-indigo-400 tracking-[0.3em] uppercase opacity-70">View Papers</p>
                             </div>
 
-                            {/* Course Selection */}
-                            <div className="space-y-4">
-                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] pl-1">Select Degree</p>
-                                <div className="grid grid-cols-1 gap-2">
-                                    {loadingCourses ? (
-                                        <div className="p-10 flex flex-col items-center justify-center w-full gap-3">
-                                            <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
-                                        </div>
-                                    ) : dbCourses.map(c => (
-                                        <button
-                                            key={c.id}
-                                            onClick={() => { setActiveCourseId(c.id); setActiveSem("Sem 1"); }}
-                                            className={`w-full py-3 px-4 rounded-2xl text-xs font-black transition-all text-left flex items-center justify-between group uppercase tracking-widest ${activeCourseId === c.id
-                                                ? "bg-zinc-900 text-white shadow-xl shadow-zinc-500/20 dark:bg-white dark:text-zinc-950"
-                                                : "bg-zinc-50 dark:bg-zinc-900 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700"
-                                                }`}
-                                        >
-                                            <span className="truncate">{c.name}</span>
-                                            {activeCourseId === c.id && <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Semester Selection */}
-                            <div className="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/60">
-                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] pl-1">Semester</p>
-                                <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto scrollbar-hide">
-                                    {computedSemesters.map(sem => (
-                                        <button
-                                            key={sem}
-                                            onClick={() => setActiveSem(sem)}
-                                            className={`py-3 px-4 rounded-2xl text-[10px] font-black transition-all text-center uppercase tracking-widest ${activeSem === sem
-                                                ? "bg-indigo-600 text-white shadow-xl shadow-indigo-500/20"
-                                                : "bg-zinc-50 dark:bg-zinc-900 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-transparent"
-                                                }`}
-                                        >
-                                            {sem}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Subject Search & List */}
-                            <div className="space-y-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/60 flex-1 flex flex-col min-h-0">
-                                <div className="relative group">
-                                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none group-focus-within:text-indigo-500 transition-colors">
-                                        <Search className="h-4 w-4 text-zinc-400" />
+                            {/* Resource Card */}
+                            <div className="bg-zinc-50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800/60 rounded-[2.5rem] p-6 shadow-2xl space-y-8">
+                                
+                                {/* Program Selection */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 px-2">
+                                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                                        <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Select Course</span>
                                     </div>
-                                    <input
-                                        type="text"
-                                        placeholder="Search subjects..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-zinc-400"
-                                    />
-                                </div>
-
-                                <div className="space-y-1 overflow-y-auto scrollbar-hide relative min-h-[150px]">
-                                    {loadingSubjects ? (
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
-                                        </div>
-                                    ) : availableSubjects.length > 0 ? (
-                                        availableSubjects.map(subject => (
+                                    <div className="flex flex-col gap-2 p-1.5 bg-white dark:bg-zinc-950/50 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
+                                        {loadingCourses ? (
+                                            <div className="p-10 flex flex-col items-center justify-center w-full gap-3">
+                                                <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />
+                                            </div>
+                                        ) : dbCourses.map(c => (
                                             <button
-                                                key={subject.id}
-                                                onClick={() => setActiveSubjectId(subject.id)}
-                                                className={`w-full py-3 px-4 rounded-2xl text-[11px] transition-all text-left flex items-center gap-3 group ${activeSubjectId === subject.id
-                                                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black border border-indigo-100 dark:border-indigo-500/20 shadow-sm"
-                                                    : "bg-transparent text-zinc-500 font-bold hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-900 border border-transparent"
+                                                key={c.id}
+                                                onClick={() => { setActiveCourseId(c.id); setActiveSem("Sem 1"); }}
+                                                className={`w-full py-3 px-5 rounded-2xl text-[11px] font-black transition-all text-left flex items-center justify-between group uppercase tracking-widest ${activeCourseId === c.id
+                                                    ? "bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xl scale-[1.02]"
+                                                    : "text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900/80"
                                                     }`}
                                             >
-                                                <div className={`p-1.5 rounded-lg border transition-colors ${activeSubjectId === subject.id ? "bg-white dark:bg-zinc-900 border-indigo-200" : "bg-zinc-100 dark:bg-zinc-800 border-transparent group-hover:bg-white"}`}>
-                                                    <BookOpen className="h-3 w-3" />
-                                                </div>
-                                                <span className="truncate" title={subject.name}>{subject.name}</span>
+                                                <span className="truncate">{c.name}</span>
+                                                {activeCourseId === c.id && <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />}
                                             </button>
-                                        ))
-                                    ) : (
-                                        <div className="text-center py-10 opacity-50">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">No subjects found</p>
-                                        </div>
-                                    )}
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
 
-                {/* Main Content Pane */}
-                <main className="flex-1 min-w-0">
-                    <div className="bg-white/40 dark:bg-zinc-950/40 backdrop-blur-md border border-zinc-200/60 dark:border-zinc-800/60 rounded-[3rem] p-6 lg:p-12 shadow-2xl shadow-zinc-200/10 dark:shadow-none min-h-[calc(100vh-120px)] flex flex-col">
-                        
-                        {/* Header Area */}
-                        <div className="relative mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">
-                            <div className="space-y-6">
-                                <div className="flex flex-wrap items-center gap-3">
-                                    <div className="px-4 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-full border border-indigo-100 dark:border-indigo-500/20 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">
-                                        {activeCourse?.name || "Library"}
+                                {/* Semester Grid */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 px-2">
+                                        <div className="w-1.5 h-6 bg-emerald-500 rounded-full" />
+                                        <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Semester</span>
                                     </div>
-                                    <ChevronRight className="h-4 w-4 text-zinc-300" />
-                                    <div className="px-4 py-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full border border-zinc-200 dark:border-zinc-700 text-[10px] font-black text-zinc-600 dark:text-zinc-400 uppercase tracking-widest">
-                                        {activeSem}
+                                    <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto scrollbar-hide pr-1">
+                                        {computedSemesters.map(sem => (
+                                            <button
+                                                key={sem}
+                                                onClick={() => setActiveSem(sem)}
+                                                className={`py-3 rounded-2xl text-[10px] font-black transition-all text-center uppercase tracking-widest border ${activeSem === sem
+                                                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                                                    : "bg-white dark:bg-zinc-950/30 border-zinc-100 dark:border-zinc-800/60 text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600"
+                                                    }`}
+                                            >
+                                                {sem}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <h1 className="text-2xl sm:text-3xl lg:text-5xl font-black text-zinc-900 dark:text-white tracking-tight leading-tight">
-                                        {dbSubjects.find(s => s.id === activeSubjectId)?.name || "Subject Resources"}
-                                    </h1>
-                                    <p className="text-lg font-medium text-zinc-500 dark:text-zinc-400 max-w-2xl leading-relaxed">
-                                        {loadingPapers ? (
-                                            <span className="flex items-center gap-3">
-                                                <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />
-                                                Loading details...
-                                            </span>
+
+                                {/* Subjects Selection */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 px-2">
+                                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                                        <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Subjects</span>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2 overflow-y-auto max-h-[300px] scrollbar-hide pr-1 min-h-[100px] relative">
+                                        {loadingSubjects ? (
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <Loader2 className="h-6 w-6 animate-spin text-indigo-500 opacity-20" />
+                                            </div>
+                                        ) : availableSubjects.length > 0 ? (
+                                            availableSubjects.map(subject => (
+                                                <button
+                                                    key={subject.id}
+                                                    onClick={() => setActiveSubjectId(subject.id)}
+                                                    className={`w-full py-4 px-4 rounded-xl text-[10px] transition-all text-left flex items-center gap-3 group border ${activeSubjectId === subject.id
+                                                        ? "bg-indigo-500 text-white font-black border-transparent shadow-lg shadow-indigo-500/20"
+                                                        : "bg-white dark:bg-zinc-950/20 text-zinc-400 border-zinc-100 dark:border-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-zinc-300 dark:hover:border-zinc-600"
+                                                        }`}
+                                                >
+                                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${activeSubjectId === subject.id ? "bg-white/20" : "bg-zinc-100 dark:bg-zinc-800"}`}>
+                                                        <BookOpen className="h-4 w-4" />
+                                                    </div>
+                                                    <span className="line-clamp-3 uppercase tracking-tight font-black leading-tight flex-1" title={subject.name}>{subject.name}</span>
+                                                </button>
+                                            ))
                                         ) : (
-                                            `Access ${papers.length} high-quality academic documents for your curriculum.`
-                                        )}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* View Controls */}
-                            <div className="flex items-center gap-3 self-end md:self-auto">
-                                <div className="bg-zinc-100/50 dark:bg-zinc-900/50 backdrop-blur-sm p-1.5 rounded-2xl flex items-center border border-zinc-200/50 dark:border-zinc-800/50 shadow-inner">
-                                    <button
-                                        onClick={() => setViewMode("grid")}
-                                        className={`p-3 rounded-xl transition-all ${viewMode === "grid" ? "bg-white dark:bg-zinc-800 shadow-xl text-indigo-600 dark:text-indigo-400" : "text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"}`}
-                                        title="Grid Layout"
-                                    >
-                                        <LayoutGrid className="h-5 w-5" />
-                                    </button>
-                                    <button
-                                        onClick={() => setViewMode("list")}
-                                        className={`p-3 rounded-xl transition-all ${viewMode === "list" ? "bg-white dark:bg-zinc-800 shadow-xl text-indigo-600 dark:text-indigo-400" : "text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"}`}
-                                        title="List Detail"
-                                    >
-                                        <List className="h-5 w-5" />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Documents Grid / List */}
-                        <div className="flex-1 relative">
-                            {loadingPapers ? (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 py-32">
-                                    <div className="relative">
-                                        <div className="w-24 h-24 bg-indigo-500/10 blur-2xl rounded-full absolute -inset-4 animate-pulse" />
-                                        <Loader2 className="h-12 w-12 animate-spin text-indigo-500 relative z-10" />
-                                    </div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 animate-pulse">Loading Resources</p>
-                                </div>
-                            ) : papers.length > 0 ? (
-                                <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" : "space-y-4"}>
-                                    {papers.map((paper, idx) => (
-                                        <div
-                                            key={paper.id}
-                                            className={`group relative bg-white dark:bg-zinc-950 border border-zinc-200/60 dark:border-zinc-800/60 rounded-[2.5rem] shadow-xl shadow-zinc-200/10 dark:shadow-none hover:border-indigo-500/40 transition-all duration-500 overflow-hidden ${viewMode === "list" ? "p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-8" : "p-8 flex flex-col"}`}
-                                        >
-                                            {/* Accent Background */}
-                                            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-[40px] -mr-16 -mt-16 pointer-events-none group-hover:bg-indigo-500/10 transition-colors" />
-
-                                            <div className={viewMode === "list" ? "flex items-center gap-8 flex-1 min-w-0" : "flex-1"}>
-                                                <div className={`shrink-0 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500 ${viewMode === "list" ? "w-20 h-20 rounded-[1.75rem]" : "w-16 h-16 rounded-2xl mb-8"}`}>
-                                                    <FileText className={`text-indigo-500 ${viewMode === "list" ? "w-10 h-10" : "w-8 h-8"}`} />
-                                                </div>
-
-                                                <div className="space-y-4 flex-1 min-w-0">
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="px-3 py-1 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-lg border border-emerald-100 dark:border-emerald-500/20 leading-none">
-                                                            {paper.type}
-                                                        </span>
-                                                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest leading-none flex items-center gap-1.5">
-                                                            <Clock className="w-3.5 h-3.5" />
-                                                            {paper.date}
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <h3 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight leading-none group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                                            {paper.year}
-                                                        </h3>
-                                                        <p className="text-sm font-bold text-zinc-500 mt-2 truncate max-w-full">
-                                                            {paper.title}
-                                                        </p>
-                                                    </div>
-                                                    
-                                                    {/* Author Info */}
-                                                    <div className="flex items-center gap-3 pt-4 border-t border-zinc-50 dark:border-zinc-900">
-                                                        <div className="w-8 h-8 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-400">
-                                                            <User className="w-4 h-4" />
-                                                        </div>
-                                                        <div className="text-[10px] font-black uppercase tracking-widest">
-                                                            <p className="text-zinc-400 opacity-60">Uploader</p>
-                                                            {paper.authorUsername ? (
-                                                                <Link
-                                                                    href={`/u/${paper.authorUsername}`}
-                                                                    className="text-zinc-900 dark:text-zinc-100 hover:text-indigo-500 transition-colors"
-                                                                    onClick={e => e.stopPropagation()}
-                                                                >
-                                                                    {paper.author}
-                                                                </Link>
-                                                            ) : (
-                                                                <span className="text-zinc-900 dark:text-zinc-100">{paper.author}</span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <div className="col-span-2 text-center py-10 opacity-40">
+                                                <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">No subjects found</p>
                                             </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
 
-                                            <div className={viewMode === "list" ? "shrink-0" : "mt-10"}>
-                                                <ClickSpark className="w-full">
-                                                    <button
-                                                        onClick={() => setSelectedPaperIndex(idx)}
-                                                        className="w-full px-8 py-4 bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-950 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
-                                                    >
-                                                        <FileText className="w-4 h-4" />
-                                                        View Paper
-                                                    </button>
-                                                </ClickSpark>
+                            {/* Action Button */}
+                            <ClickSpark>
+                                <button
+                                    onClick={() => setIsUploadModalOpen(true)}
+                                    className="w-full group py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all"
+                                >
+                                    <Upload className="h-4 w-4" />
+                                    Upload Paper
+                                </button>
+                            </ClickSpark>
+                        </div>
+                    </aside>
+
+                    {/* Right Main Content */}
+                    <main className="flex-1 min-w-0">
+                        <div className="bg-white dark:bg-zinc-900/20 backdrop-blur-md border border-zinc-100 dark:border-zinc-800/40 rounded-[3rem] p-6 lg:p-12 shadow-2xl min-h-[calc(100vh-160px)] flex flex-col relative overflow-hidden">
+                            
+                            {/* Decorative Background Element */}
+                            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/[0.02] dark:bg-indigo-600/[0.03] blur-[100px] -mr-48 -mt-48 pointer-events-none" />
+
+                            {/* Header Area */}
+                            <div className="relative z-10 space-y-10 mb-16">
+                                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                                    <div className="space-y-6">
+                                        <div className="flex flex-wrap items-center gap-3">
+                                            <div className="px-4 py-1.5 bg-zinc-100 dark:bg-zinc-900/50 rounded-full border border-zinc-200 dark:border-zinc-800 text-[9px] font-black text-zinc-400 uppercase tracking-widest">
+                                                {activeCourse?.name || "Library"}
+                                            </div>
+                                            <ChevronRight className="h-3 w-3 text-zinc-300" />
+                                            <div className="px-4 py-1.5 bg-indigo-500 text-white rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20">
+                                                {activeSem}
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center py-32 text-center space-y-8 bg-zinc-50/50 dark:bg-zinc-900/20 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-[3rem]">
-                                    <div className="w-24 h-24 bg-white dark:bg-zinc-900 rounded-[2rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800 text-zinc-300">
-                                        <FolderOpen className="h-10 w-10" />
+                                        <div className="space-y-3">
+                                            <h2 className="text-3xl md:text-5xl font-black text-zinc-900 dark:text-white tracking-tighter leading-none uppercase italic">
+                                                {dbSubjects.find(s => s.id === activeSubjectId)?.name || "Papers"}
+                                            </h2>
+                                            <p className="text-lg font-medium text-zinc-500 dark:text-zinc-400 max-w-2xl">
+                                                {loadingPapers ? (
+                                                    <span className="flex items-center gap-3 opacity-50 italic">
+                                                        <Loader2 className="h-4 w-4 animate-spin text-indigo-500" />
+                                                        Loading...
+                                                    </span>
+                                                ) : (
+                                                    `Viewing ${papers.length} papers for this subject.`
+                                                )}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="space-y-3">
-                                        <h3 className="text-2xl font-black text-zinc-900 dark:text-zinc-50 tracking-tight leading-none">No resources found</h3>
-                                        <p className="text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto font-medium leading-relaxed">
-                                            We are currently processing resources for this subject. Be the first to contribute to the library.
-                                        </p>
+
+                                    {/* View Toggle */}
+                                    <div className="flex bg-zinc-50 dark:bg-zinc-950 p-1.5 rounded-[1.5rem] border border-zinc-100 dark:border-zinc-800/50 shadow-inner">
+                                        <button
+                                            onClick={() => setViewMode("grid")}
+                                            className={`p-3.5 rounded-2xl transition-all ${viewMode === "grid" ? "bg-white dark:bg-zinc-800 text-indigo-500 shadow-xl" : "text-zinc-300 hover:text-zinc-900 italic"}`}
+                                        >
+                                            <LayoutGrid className="h-5 w-5" />
+                                        </button>
+                                        <button
+                                            onClick={() => setViewMode("list")}
+                                            className={`p-3.5 rounded-2xl transition-all ${viewMode === "list" ? "bg-white dark:bg-zinc-800 text-indigo-500 shadow-xl" : "text-zinc-300 hover:text-zinc-900 italic"}`}
+                                        >
+                                            <List className="h-5 w-5" />
+                                        </button>
                                     </div>
-                                    <button
-                                        onClick={() => setIsUploadModalOpen(true)}
-                                        className="flex items-center gap-3 px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all"
-                                    >
-                                        <Upload className="w-4 h-4" />
-                                        Upload Paper
-                                    </button>
                                 </div>
-                            )}
+                            </div>
+
+                            {/* Content Display */}
+                            <div className="relative z-10 flex-1">
+                                {loadingPapers ? (
+                                    <div className="h-full flex flex-col items-center justify-center gap-6 py-40">
+                                        <div className="relative">
+                                            <div className="w-24 h-24 bg-indigo-500/10 blur-[60px] rounded-full absolute -inset-6 animate-pulse" />
+                                            <Loader2 className="h-12 w-12 animate-spin text-indigo-500 relative z-10 opacity-30" />
+                                        </div>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400 animate-pulse">Loading...</p>
+                                    </div>
+                                ) : papers.length > 0 ? (
+                                    <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" : "space-y-6"}>
+                                        {papers.map((paper, idx) => (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: idx * 0.05 }}
+                                                key={paper.id}
+                                                className={`group relative bg-white dark:bg-zinc-950/40 border border-zinc-100 dark:border-zinc-800/60 rounded-[2.5rem] shadow-xl hover:border-indigo-500/30 transition-all duration-500 overflow-hidden ${viewMode === "list" ? "p-8 flex flex-col md:flex-row md:items-center justify-between gap-10" : "p-8 flex flex-col"}`}
+                                            >
+                                                {/* File Meta */}
+                                                <div className={viewMode === "list" ? "flex items-center gap-10 flex-1" : "flex flex-col gap-6"}>
+                                                    <div className={`shrink-0 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500 ${viewMode === "list" ? "w-20 h-20 rounded-[1.5rem]" : "w-16 h-16 rounded-2xl mx-auto"}`}>
+                                                        <FileText className={`text-indigo-500 ${viewMode === "list" ? "w-10 h-10" : "w-8 h-8"}`} />
+                                                    </div>
+
+                                                    <div className={`space-y-4 min-w-0 ${viewMode === "grid" ? "text-center" : "flex-1"}`}>
+                                                        <div className={`flex items-center gap-4 ${viewMode === "grid" ? "justify-center" : ""}`}>
+                                                            <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase tracking-widest rounded-lg border border-emerald-500/20">
+                                                                {paper.type}
+                                                            </span>
+                                                            <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+                                                                <Clock className="w-3 h-3" />
+                                                                {paper.date}
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <h3 className="text-4xl font-black text-zinc-900 dark:text-white tracking-tighter italic leading-none group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                                                {paper.year}
+                                                            </h3>
+                                                            <p className="text-[11px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-500 mt-3 truncate">
+                                                                {paper.title}
+                                                            </p>
+                                                        </div>
+                                                        
+                                                        <div className={`flex items-center gap-3 pt-5 border-t border-zinc-100 dark:border-zinc-800/60 transition-colors group-hover:border-indigo-500/20 ${viewMode === "grid" ? "justify-center" : ""}`}>
+                                                            <div className="text-[9px] font-black uppercase tracking-[0.2em]">
+                                                                <span className="text-zinc-400">Uploaded by: </span>
+                                                                {paper.authorUsername ? (
+                                                                    <Link
+                                                                        href={`/u/${paper.authorUsername}`}
+                                                                        className="text-zinc-900 dark:text-zinc-100 hover:text-indigo-500 transition-colors"
+                                                                        onClick={e => e.stopPropagation()}
+                                                                    >
+                                                                        {paper.author}
+                                                                    </Link>
+                                                                ) : (
+                                                                    <span className="text-zinc-900 dark:text-zinc-100">{paper.author}</span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className={viewMode === "list" ? "shrink-0" : "mt-10"}>
+                                                    <ClickSpark className="w-full">
+                                                        <button
+                                                            onClick={() => setSelectedPaperIndex(idx)}
+                                                            className="w-full px-10 py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
+                                                        >
+                                                            View Paper
+                                                        </button>
+                                                    </ClickSpark>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center py-40 text-center space-y-10 bg-zinc-50 dark:bg-zinc-950/20 border-2 border-dashed border-zinc-100 dark:border-zinc-800/40 rounded-[4rem]">
+                                        <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800 text-zinc-200 dark:text-zinc-800">
+                                            <FolderOpen className="h-12 w-12" />
+                                        </div>
+                                        <div className="space-y-4">
+                                            <h3 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic">No Papers Found</h3>
+                                            <p className="text-zinc-400 dark:text-zinc-500 max-w-sm mx-auto font-medium leading-relaxed">
+                                                No papers have been uploaded for this selection yet.
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => setIsUploadModalOpen(true)}
+                                            className="px-10 py-5 bg-indigo-500 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-indigo-500/20 hover:scale-[1.05] active:scale-95 transition-all"
+                                        >
+                                            Upload Now
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                </main>
+                    </main>
+                </div>
             </div>
 
             {/* Premium PDF Viewer Modal */}
@@ -448,7 +456,7 @@ export default function VaultPage() {
                                     <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.1em] text-zinc-400">
                                         <span className="flex items-center gap-1.5 text-emerald-500">
                                             <CheckCircle2 className="w-3 h-3" />
-                                            Verified Resource
+                                            Verified
                                         </span>
                                         <span className="whitespace-nowrap flex items-center gap-1.5">
                                             <Upload className="w-3 h-3" />
@@ -479,7 +487,7 @@ export default function VaultPage() {
                                     ));
                                     incrementDownloadAction(selectedPaper.id);
                                 }}
-                                fileLabel={`${selectedPaper.year} Academic Record`}
+                                fileLabel={`${selectedPaper.year} Paper`}
                                 onPrevFile={() => setSelectedPaperIndex(i => i !== null ? Math.max(0, i - 1) : 0)}
                                 onNextFile={() => setSelectedPaperIndex(i => i !== null ? Math.min(papers.length - 1, i + 1) : 0)}
                                 hasPrev={(selectedPaperIndex ?? 0) > 0}

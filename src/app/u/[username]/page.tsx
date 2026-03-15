@@ -58,7 +58,7 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
         }
     }
 
-    const pyqsList = (userProfile as any).pyqs || [];
+    const pyqsList = (userProfile as unknown as { pyqs: PyqDoc[] }).pyqs || [];
     const totalContributions = pyqsList.length;
 
     return (
@@ -97,12 +97,15 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
                             <div className="relative shrink-0">
                                 <div className="absolute inset-0 bg-blue-500 blur-2xl opacity-20 scale-110" />
                                 {userProfile.image ? (
-                                    <img 
-                                        src={userProfile.image} 
-                                        alt={username} 
-                                        className="relative w-32 h-32 sm:w-40 sm:h-40 rounded-[2rem] border-4 border-zinc-50 dark:border-zinc-900 object-cover shadow-2xl bg-white dark:bg-zinc-800"
-                                        referrerPolicy="no-referrer"
-                                    />
+                                    <>
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img 
+                                            src={userProfile.image} 
+                                            alt={username} 
+                                            className="relative w-32 h-32 sm:w-40 sm:h-40 rounded-[2rem] border-4 border-zinc-50 dark:border-zinc-900 object-cover shadow-2xl bg-white dark:bg-zinc-800"
+                                            referrerPolicy="no-referrer"
+                                        />
+                                    </>
                                 ) : (
                                     <div className="relative w-32 h-32 sm:w-40 sm:h-40 rounded-[2rem] border-4 border-zinc-50 dark:border-zinc-900 flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 text-zinc-400 dark:text-zinc-600 shadow-2xl">
                                         <User className="w-16 h-16" />

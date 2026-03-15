@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Providers from "@/components/providers";
 import ServiceWorkerRegistration from "@/components/sw-register";
 import PWAInstallPrompt from "@/components/pwa-install-prompt";
+import CommandPalette from "@/components/layout/command-palette";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "#050505",
   viewportFit: "cover",
 };
 
@@ -35,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="apple-touch-icon" href="/img-512x512.png" />
+        <link rel="apple-touch-icon" href="/img-512x512.webp" />
       </head>
       <body className={`${nunito.variable} font-sans antialiased bg-zinc-50 dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-50 min-h-screen`}>
         <ThemeProvider
@@ -46,6 +47,7 @@ export default function RootLayout({
         >
           <Providers>
             {children}
+            <CommandPalette />
             <ServiceWorkerRegistration />
             <PWAInstallPrompt />
           </Providers>

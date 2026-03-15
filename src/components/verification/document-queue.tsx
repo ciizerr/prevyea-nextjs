@@ -23,7 +23,9 @@ interface PendingUpload {
 
 interface DocumentQueueProps {
     pendingUploads: PendingUpload[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     approveAction: (formData: FormData) => any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rejectAction: (formData: FormData) => any;
 }
 

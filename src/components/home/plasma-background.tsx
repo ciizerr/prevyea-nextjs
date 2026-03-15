@@ -13,6 +13,7 @@ export default function PlasmaBackground() {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
         const timer = setTimeout(() => {
             const color = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');

@@ -62,7 +62,7 @@ export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: Sideb
                     <Link href="/" className="flex items-center justify-center gap-2.5 group hover:opacity-80 transition-opacity">
                         <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 shadow-sm border border-zinc-200 dark:border-zinc-800 bg-white">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src="/img-512x512.png" alt="PU Library Logo" className="w-full h-full object-cover" />
+                            <img src="/img-512x512.webp" alt="PU Library Logo" className="w-full h-full object-cover" />
                         </div>
                         {(isOpen || isMobileOpen) && <span className="font-bold text-xl tracking-tight text-zinc-900 dark:text-zinc-50 whitespace-nowrap overflow-hidden">PU Digital Library</span>}
                     </Link>
