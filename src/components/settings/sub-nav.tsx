@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { User, Briefcase, ImageIcon, Bell, Key } from "lucide-react";
 
@@ -11,7 +12,15 @@ const SETTINGS_TABS = [
     { id: "security", label: "Account", icon: Key },
 ];
 
-export function SettingsSubNav({ isMobile = false }: { isMobile?: boolean }) {
+export function SettingsSubNav(props: { isMobile?: boolean }) {
+    return (
+        <Suspense fallback={null}>
+            <SettingsSubNavContent {...props} />
+        </Suspense>
+    );
+}
+
+function SettingsSubNavContent({ isMobile = false }: { isMobile?: boolean }) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();

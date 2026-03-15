@@ -29,9 +29,22 @@ interface UserProfile {
     notifyNotices: boolean;
 }
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function SettingsPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center min-h-[400px]">
+                <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+            </div>
+        }>
+            <SettingsContent />
+        </Suspense>
+    );
+}
+
+function SettingsContent() {
     const searchParams = useSearchParams();
     const activeTab = searchParams.get("tab") || "profile";
 
