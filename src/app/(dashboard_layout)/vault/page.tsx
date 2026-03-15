@@ -2,7 +2,20 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FolderOpen, ChevronRight, CheckCircle2, FileText, Clock, BookOpen, X, LayoutGrid, List, Loader2, Upload } from "lucide-react";
+import {
+    FileText,
+    FolderOpen,
+    Loader2,
+    LayoutGrid,
+    List,
+    BookOpen,
+    ChevronRight,
+    ChevronLeft,
+    Upload,
+    CheckCircle2,
+    Share2,
+    X
+} from "lucide-react";
 import { motion } from "framer-motion";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getCoursesAction, getSubjectsAction, getFilesAction, incrementDownloadAction } from "@/actions/curriculum";
@@ -42,7 +55,7 @@ export default function VaultPage() {
     const [activeSubjectId, setActiveSubjectId] = useState<string>("");
 
     const [selectedPaperIndex, setSelectedPaperIndex] = useState<number | null>(null);
-    const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+    const [viewMode, setViewMode] = useState<"grid" | "list">("list");
 
     // Dynamic Data States
     const [dbCourses, setDbCourses] = useState<CourseType[]>([]);
@@ -167,11 +180,11 @@ export default function VaultPage() {
 
             <div className="max-w-7xl mx-auto px-6 pt-12">
                 <div className="flex flex-col lg:flex-row gap-10">
-                    
+
                     {/* Left Sidebar: Discovery Hub */}
                     <aside className="w-full lg:w-80 shrink-0">
                         <div className="lg:sticky lg:top-28 space-y-8">
-                            
+
                             {/* Branding / Title */}
                             <div className="space-y-1 pl-2">
                                 <h1 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic leading-none">Vault</h1>
@@ -180,7 +193,7 @@ export default function VaultPage() {
 
                             {/* Resource Card */}
                             <div className="bg-zinc-50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800/60 rounded-[2.5rem] p-6 shadow-2xl space-y-8">
-                                
+
                                 {/* Program Selection */}
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3 px-2">
@@ -283,7 +296,7 @@ export default function VaultPage() {
                     {/* Right Main Content */}
                     <main className="flex-1 min-w-0">
                         <div className="bg-white dark:bg-zinc-900/20 backdrop-blur-md border border-zinc-100 dark:border-zinc-800/40 rounded-[3rem] p-6 lg:p-12 shadow-2xl min-h-[calc(100vh-160px)] flex flex-col relative overflow-hidden">
-                            
+
                             {/* Decorative Background Element */}
                             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/[0.02] dark:bg-indigo-600/[0.03] blur-[100px] -mr-48 -mt-48 pointer-events-none" />
 
@@ -346,72 +359,47 @@ export default function VaultPage() {
                                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400 animate-pulse">Loading...</p>
                                     </div>
                                 ) : papers.length > 0 ? (
-                                    <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8" : "space-y-6"}>
+                                    <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" : "space-y-3"}>
                                         {papers.map((paper, idx) => (
                                             <motion.div
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: idx * 0.05 }}
+                                                initial={{ opacity: 0, scale: 0.98 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ delay: idx * 0.02 }}
                                                 key={paper.id}
-                                                className={`group relative bg-white dark:bg-zinc-950/40 border border-zinc-100 dark:border-zinc-800/60 rounded-[2.5rem] shadow-xl hover:border-indigo-500/30 transition-all duration-500 overflow-hidden ${viewMode === "list" ? "p-8 flex flex-col md:flex-row md:items-center justify-between gap-10" : "p-8 flex flex-col"}`}
+                                                onClick={() => setSelectedPaperIndex(idx)}
+                                                className="group cursor-pointer bg-white dark:bg-zinc-950/20 border border-zinc-100 dark:border-zinc-800/40 rounded-xl p-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 hover:border-indigo-500/20 transition-all flex items-center justify-between shadow-sm hover:shadow-md"
                                             >
-                                                {/* File Meta */}
-                                                <div className={viewMode === "list" ? "flex items-center gap-10 flex-1" : "flex flex-col gap-6"}>
-                                                    <div className={`shrink-0 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500 ${viewMode === "list" ? "w-20 h-20 rounded-[1.5rem]" : "w-16 h-16 rounded-2xl mx-auto"}`}>
-                                                        <FileText className={`text-indigo-500 ${viewMode === "list" ? "w-10 h-10" : "w-8 h-8"}`} />
+                                                <div className="flex items-center gap-4 min-w-0 flex-1">
+                                                    <div className="shrink-0 w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 dark:text-zinc-500 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                                                        <FileText className="w-5 h-5" />
                                                     </div>
-
-                                                    <div className={`space-y-4 min-w-0 ${viewMode === "grid" ? "text-center" : "flex-1"}`}>
-                                                        <div className={`flex items-center gap-4 ${viewMode === "grid" ? "justify-center" : ""}`}>
-                                                            <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase tracking-widest rounded-lg border border-emerald-500/20">
+                                                    <div className={`min-w-0 flex-1 ${viewMode === "list" ? "flex items-center justify-between gap-6" : ""}`}>
+                                                        <h3 className={`text-xs font-black text-zinc-900 dark:text-zinc-100 uppercase tracking-tight leading-tight ${viewMode === "list" ? "truncate" : "line-clamp-2"}`}>
+                                                            {paper.title} <span className="text-zinc-400 dark:text-zinc-600 px-0.5 font-normal">●</span> {paper.year}
+                                                        </h3>
+                                                        <div className={`flex items-center gap-2 shrink-0 opacity-75 ${viewMode === "list" ? "mt-0" : "mt-1.5"}`}>
+                                                            <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border transition-colors ${
+                                                                paper.type.toLowerCase().includes('pyq') 
+                                                                    ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/30 group-hover:bg-indigo-500/25" 
+                                                                    : paper.type.toLowerCase().includes('note')
+                                                                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 group-hover:bg-emerald-500/25"
+                                                                        : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 group-hover:bg-amber-500/25"
+                                                            }`}>
                                                                 {paper.type}
                                                             </span>
-                                                            <span className="text-[9px] font-black text-zinc-400 uppercase tracking-widest flex items-center gap-2">
-                                                                <Clock className="w-3 h-3" />
-                                                                {paper.date}
-                                                            </span>
-                                                        </div>
-                                                        <div>
-                                                            <h3 className="text-4xl font-black text-zinc-900 dark:text-white tracking-tighter italic leading-none group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                                                {paper.year}
-                                                            </h3>
-                                                            <p className="text-[11px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-500 mt-3 truncate">
-                                                                {paper.title}
-                                                            </p>
-                                                        </div>
-                                                        
-                                                        <div className={`flex items-center gap-3 pt-5 border-t border-zinc-100 dark:border-zinc-800/60 transition-colors group-hover:border-indigo-500/20 ${viewMode === "grid" ? "justify-center" : ""}`}>
-                                                            <div className="text-[9px] font-black uppercase tracking-[0.2em]">
-                                                                <span className="text-zinc-400">Uploaded by: </span>
-                                                                {paper.authorUsername ? (
-                                                                    <Link
-                                                                        href={`/u/${paper.authorUsername}`}
-                                                                        className="text-zinc-900 dark:text-zinc-100 hover:text-indigo-500 transition-colors"
-                                                                        onClick={e => e.stopPropagation()}
-                                                                    >
-                                                                        {paper.author}
-                                                                    </Link>
-                                                                ) : (
-                                                                    <span className="text-zinc-900 dark:text-zinc-100">{paper.author}</span>
-                                                                )}
-                                                            </div>
+                                                            <span className="text-[10px] font-bold text-zinc-400 truncate max-w-[80px]">by {paper.author}</span>
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div className={viewMode === "list" ? "shrink-0" : "mt-10"}>
-                                                    <ClickSpark className="w-full">
-                                                        <button
-                                                            onClick={() => setSelectedPaperIndex(idx)}
-                                                            className="w-full px-10 py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
-                                                        >
-                                                            View Paper
-                                                        </button>
-                                                    </ClickSpark>
-                                                </div>
+                                                <ChevronRight className="w-4 h-4 text-zinc-300 dark:text-zinc-700 group-hover:text-indigo-500 transition-colors shrink-0" />
                                             </motion.div>
                                         ))}
                                     </div>
+
+
+
+
+
                                 ) : (
                                     <div className="flex flex-col items-center justify-center py-40 text-center space-y-10 bg-zinc-50 dark:bg-zinc-950/20 border-2 border-dashed border-zinc-100 dark:border-zinc-800/40 rounded-[4rem]">
                                         <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800 text-zinc-200 dark:text-zinc-800">
@@ -441,7 +429,7 @@ export default function VaultPage() {
             {selectedPaper && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 pointer-events-none">
                     <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-md pointer-events-auto transition-all animate-in fade-in duration-500" onClick={() => setSelectedPaperIndex(null)} />
-                    
+
                     <div className="relative w-full max-w-7xl h-full bg-zinc-100 dark:bg-zinc-950 rounded-[3rem] border border-zinc-200 dark:border-zinc-800 shadow-[0_30px_100px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col pointer-events-auto animate-in zoom-in-95 slide-in-from-bottom-10 duration-500">
                         {/* Interactive Toolbar */}
                         <header className="h-20 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800/60 flex items-center justify-between px-8 shrink-0 z-20">
@@ -458,6 +446,19 @@ export default function VaultPage() {
                                             <CheckCircle2 className="w-3 h-3" />
                                             Verified
                                         </span>
+                                        <div className="flex items-center gap-1.5">
+                                            <span>by</span>
+                                            {selectedPaper.authorUsername ? (
+                                                <Link 
+                                                    href={`/u/${selectedPaper.authorUsername}`}
+                                                    className="text-zinc-900 dark:text-zinc-100 hover:text-indigo-500 transition-colors underline decoration-zinc-300 dark:decoration-zinc-700 underline-offset-4"
+                                                >
+                                                    @{selectedPaper.authorUsername}
+                                                </Link>
+                                            ) : (
+                                                <span className="text-zinc-500 italic">Deleted User</span>
+                                            )}
+                                        </div>
                                         <span className="whitespace-nowrap flex items-center gap-1.5">
                                             <Upload className="w-3 h-3" />
                                             {selectedPaper.downloads || 0} Downloads
@@ -466,19 +467,53 @@ export default function VaultPage() {
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() => setSelectedPaperIndex(null)}
-                                className="p-3 rounded-2xl bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all active:scale-90"
-                            >
-                                <X className="h-6 w-6" />
-                            </button>
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-1 mr-2">
+                                    <button
+                                        onClick={() => setSelectedPaperIndex(i => i !== null ? i - 1 : 0)}
+                                        disabled={(selectedPaperIndex ?? 0) === 0}
+                                        className="p-2 rounded-xl hover:bg-white dark:hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-zinc-600 dark:text-zinc-400"
+                                        title="Previous Paper"
+                                    >
+                                        <ChevronLeft className="h-5 w-5" />
+                                    </button>
+                                    <div className="w-px h-4 bg-zinc-200 dark:bg-zinc-700 mx-1" />
+                                    <button
+                                        onClick={() => setSelectedPaperIndex(i => i !== null ? i + 1 : 0)}
+                                        disabled={(selectedPaperIndex ?? 0) >= papers.length - 1}
+                                        className="p-2 rounded-xl hover:bg-white dark:hover:bg-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-zinc-600 dark:text-zinc-400"
+                                        title="Next Paper"
+                                    >
+                                        <ChevronRight className="h-5 w-5" />
+                                    </button>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        const url = `${window.location.origin}/v/${selectedPaper.id}`;
+                                        navigator.clipboard.writeText(url);
+                                        alert("Link copied to clipboard!");
+                                    }}
+                                    className="p-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 group"
+                                >
+                                    <Share2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                    <span className="hidden sm:inline">Share Link</span>
+                                </button>
+                                <button
+                                    onClick={() => setSelectedPaperIndex(null)}
+                                    className="p-3 rounded-2xl bg-red-50 hover:bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 transition-all active:scale-90"
+                                >
+                                    <X className="h-6 w-6" />
+                                </button>
+                            </div>
+
                         </header>
 
                         {/* High-Fidelity Viewer Body */}
-                        <div className="flex-1 bg-zinc-200 dark:bg-black/40 relative">
+                        <div className="flex-1 bg-zinc-200 dark:bg-black/40 relative min-h-0">
                             <PDFViewer
                                 url={selectedPaper.viewLink}
                                 downloadUrl={selectedPaper.downloadLink}
+                                filename={`${selectedPaper.title} ● ${selectedPaper.year}`}
                                 onDownload={() => {
                                     setPapers(prev => prev.map((p) =>
                                         p.id === selectedPaper.id
@@ -487,11 +522,6 @@ export default function VaultPage() {
                                     ));
                                     incrementDownloadAction(selectedPaper.id);
                                 }}
-                                fileLabel={`${selectedPaper.year} Paper`}
-                                onPrevFile={() => setSelectedPaperIndex(i => i !== null ? Math.max(0, i - 1) : 0)}
-                                onNextFile={() => setSelectedPaperIndex(i => i !== null ? Math.min(papers.length - 1, i + 1) : 0)}
-                                hasPrev={(selectedPaperIndex ?? 0) > 0}
-                                hasNext={(selectedPaperIndex ?? 0) < papers.length - 1}
                             />
                         </div>
                     </div>

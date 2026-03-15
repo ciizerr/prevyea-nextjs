@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import { Loader2, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Download } from 'lucide-react';
+import { Loader2, ZoomIn, ZoomOut, Download } from 'lucide-react';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -12,23 +12,14 @@ interface PDFViewerInnerProps {
     url: string;
     downloadUrl?: string;
     onDownload?: () => void;
-    // File navigation (optional — only shown when more than one file exists)
-    fileLabel?: string;
-    onPrevFile?: () => void;
-    onNextFile?: () => void;
-    hasPrev?: boolean;
-    hasNext?: boolean;
+    filename?: string;
 }
 
 export default function PDFViewerInner({
     url,
     downloadUrl,
     onDownload,
-    fileLabel,
-    onPrevFile,
-    onNextFile,
-    hasPrev = false,
-    hasNext = false,
+    filename,
 }: PDFViewerInnerProps) {
     const [numPages, setNumPages] = useState<number>();
     const [scale, setScale] = useState<number>(1.0);
@@ -51,10 +42,8 @@ export default function PDFViewerInner({
         setNumPages(numPages);
     }
 
-    const showFileNav = !!(onPrevFile || onNextFile);
-
     return (
-        <div className="flex flex-col w-full h-full bg-zinc-100 dark:bg-zinc-950/50">
+        <div className="flex flex-col w-full h-full bg-zinc-100 dark:bg-zinc-950/50 min-h-0">
             {/* Top toolbar — zoom + optional download */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 z-10 sticky top-0 shrink-0">
                 <div className="flex items-center gap-1">
@@ -83,16 +72,45 @@ export default function PDFViewerInner({
                 </div>
 
                 {downloadUrl && (
-                    <a
-                        href={downloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={onDownload}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                    <button
+                        onClick={async (e) => {
+                            if (onDownload) onDownload();
+                            const btn = e.currentTarget;
+                            const originalContent = btn.innerHTML;
+                            
+                            try {
+                                btn.disabled = true;
+                                btn.innerHTML = `<svg class="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>Preparing...</span>`;
+                                
+                                const response = await fetch(downloadUrl);
+                                const blob = await response.blob();
+                                const blobUrl = window.URL.createObjectURL(blob);
+                                
+                                const a = document.createElement('a');
+                                a.href = blobUrl;
+                                // Use provided filename or fallback to URL part
+                                const cleanFilename = filename 
+                                    ? `${filename.replace(/[/\\?%*:|"<>]/g, '-')}.pdf` 
+                                    : (downloadUrl.split('/').pop()?.split('?')[0] || 'paper.pdf');
+                                a.download = cleanFilename;
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                window.URL.revokeObjectURL(blobUrl);
+                            } catch (err) {
+                                console.error("Download error:", err);
+                                // Fallback
+                                window.open(downloadUrl, '_blank');
+                            } finally {
+                                btn.disabled = false;
+                                btn.innerHTML = originalContent;
+                            }
+                        }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors disabled:opacity-70"
                     >
                         <Download className="h-3.5 w-3.5" />
                         <span className="hidden sm:inline">Download</span>
-                    </a>
+                    </button>
                 )}
             </div>
 
@@ -146,34 +164,6 @@ export default function PDFViewerInner({
                 </Document>
             </div>
 
-            {/* Bottom file navigation bar — only rendered when callbacks provided */}
-            {showFileNav && (
-                <div className="flex items-center justify-between px-4 py-2.5 border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shrink-0">
-                    <button
-                        onClick={onPrevFile}
-                        disabled={!hasPrev}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                        <span className="hidden sm:inline">Previous</span>
-                    </button>
-
-                    {fileLabel && (
-                        <span className="text-xs sm:text-sm font-semibold text-zinc-500 dark:text-zinc-400 text-center truncate max-w-[160px] sm:max-w-xs">
-                            {fileLabel}
-                        </span>
-                    )}
-
-                    <button
-                        onClick={onNextFile}
-                        disabled={!hasNext}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                    >
-                        <span className="hidden sm:inline">Next</span>
-                        <ChevronRight className="h-4 w-4" />
-                    </button>
-                </div>
-            )}
         </div>
     );
 }

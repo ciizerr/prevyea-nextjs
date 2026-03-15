@@ -14,7 +14,17 @@ cloudinary.config({ secure: true });
 export async function uploadPYQAction(formData: FormData) {
     try {
         const session = await auth();
-        if (!session?.user?.id) throw new Error("You must be logged in to upload documents.");
+        const userId = session?.user?.id;
+        if (!userId) throw new Error("You must be logged in to upload documents.");
+
+        // Verify user still exists in DB (prevents foreign key errors from stale sessions)
+        const userExists = await db.query.users.findFirst({
+            where: (u, { eq }) => eq(u.id, userId),
+        });
+
+        if (!userExists) {
+            throw new Error("Your session is invalid or the user no longer exists. Please log out and log in again.");
+        }
 
         const file = formData.get("file") as File | null;
         const title = formData.get("title") as string;
@@ -68,10 +78,6 @@ export async function uploadPYQAction(formData: FormData) {
             throw new Error("Cloudinary upload failed to return a secure URL.");
         }
 
-        if (!uploadResult?.secure_url) {
-            throw new Error("Cloudinary upload failed to return a secure URL.");
-        }
-
         // Insert into Turso DB
         await db.insert(pyqs).values({
             id: crypto.randomUUID(),
@@ -84,9 +90,9 @@ export async function uploadPYQAction(formData: FormData) {
             driveId: uploadResult.public_id,
             viewLink: uploadResult.secure_url,
             downloadLink: uploadResult.secure_url,
-            uploaderId: session.user.id,
+            uploaderId: userId,
             status: "PENDING",
-            createdAt: new Date(), // Explicit Date object so Drizzle stores a proper Unix integer
+            createdAt: new Date(), 
         });
 
         // Notify Moderators/Admins/Reviewers

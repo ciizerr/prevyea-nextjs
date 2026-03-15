@@ -13,6 +13,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   title: "PU Digital Library",
   description: "Your college companion — PYQs, Notes, Syllabus & more",
   manifest: "/manifest.json",
@@ -20,6 +21,25 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "PU Digital Library",
+  },
+  openGraph: {
+    title: "PU Digital Library",
+    description: "The ultimate vault for PYQs, Notes, and Syllabus.",
+    type: "website",
+    siteName: "PU Digital Library",
+    images: [
+      {
+        url: "/shared-og/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "PU Digital Library",
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PU Digital Library",
+    description: "Your college companion — PYQs, Notes, Syllabus & more",
   },
 };
 

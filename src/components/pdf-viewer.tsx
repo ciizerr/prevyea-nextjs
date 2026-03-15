@@ -21,11 +21,7 @@ interface PDFViewerProps {
     url: string;
     downloadUrl?: string;
     onDownload?: () => void;
-    fileLabel?: string;
-    onPrevFile?: () => void;
-    onNextFile?: () => void;
-    hasPrev?: boolean;
-    hasNext?: boolean;
+    filename?: string;
 }
 
 export default function PDFViewer(props: PDFViewerProps) {

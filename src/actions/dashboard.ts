@@ -14,6 +14,8 @@ export type DashboardUpload = {
     createdAt: Date | null;
     uploaderName: string | null;
     downloadLink: string;
+    type: "PYQ" | "Notes" | "Syllabus";
+    subjectId: string;
 };
 
 export async function getDashboardData() {
@@ -67,6 +69,8 @@ export async function getDashboardData() {
             createdAt: pyqs.createdAt,
             uploaderName: users.name,
             downloadLink: pyqs.downloadLink,
+            type: pyqs.type,
+            subjectId: pyqs.subjectId,
         })
             .from(pyqs)
             .leftJoin(courses, eq(pyqs.courseId, courses.id))

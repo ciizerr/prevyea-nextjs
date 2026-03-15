@@ -2,8 +2,18 @@ import { getLeaderboardAction, type LeaderboardUser } from "@/actions/leaderboar
 import { Trophy, User, GraduationCap, Sparkles, Medal, Crown, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { ContributorAction } from "@/components/leaderboard/contributor-action";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+    title: "Hall of Fame | Community Leaderboard",
+    description: "Meet the top contributors who are building the largest resource library for Patna University students.",
+    openGraph: {
+        title: "PU Digital Library Hall of Fame",
+        description: "Celebrating our top contributors and their impact on the community.",
+    },
+};
 
 export default async function LeaderboardPage() {
     const { success, data, error } = await getLeaderboardAction();

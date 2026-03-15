@@ -1,4 +1,6 @@
+import { Metadata } from "next";
 import { db } from "@/db";
+
 import { users, pyqs, courses } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { notFound } from "next/navigation";
@@ -19,6 +21,38 @@ interface PyqDoc {
     year: number;
     viewLink: string;
     createdAt: Date | null;
+}
+
+export async function generateMetadata({ params }: ProfilePageProps): Promise<Metadata> {
+    const { username } = await params;
+    const userProfile = await db.query.users.findFirst({
+        where: eq(users.username, username.toLowerCase()),
+    });
+
+    if (!userProfile) {
+        return {
+            title: "User Not Found",
+        };
+    }
+
+    const name = userProfile.name || `@${userProfile.username}`;
+    const description = `Check out ${name}'s profile and verified contributions on PU Digital Library.`;
+
+    return {
+        title: `${name} (@${userProfile.username}) | PU Digital Library`,
+        description,
+        openGraph: {
+            title: `${name} (@${userProfile.username})`,
+            description,
+            type: "profile",
+            username: userProfile.username || undefined,
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `${name} (@${userProfile.username})`,
+            description,
+        },
+    };
 }
 
 export default async function PublicProfilePage({ params }: ProfilePageProps) {

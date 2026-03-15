@@ -116,3 +116,59 @@ export async function fetchMarkdownContent(url: string) {
         return { success: false, error: "Failed to fetch markdown content" };
     }
 }
+
+export async function getFileByIdAction(id: string) {
+    try {
+        const file = await db
+            .select({
+                id: pyqs.id,
+                title: pyqs.title,
+                type: pyqs.type,
+                year: pyqs.year,
+                viewLink: pyqs.viewLink,
+                downloadLink: pyqs.downloadLink,
+                uploaderId: pyqs.uploaderId,
+                uploaderName: users.name,
+                uploaderUsername: users.username,
+                views: pyqs.views,
+                downloads: pyqs.downloads,
+                createdAt: pyqs.createdAt,
+                subjectId: pyqs.subjectId,
+                subjectName: subjects.name,
+                courseName: courses.name,
+                semester: subjects.semester,
+            })
+            .from(pyqs)
+            .leftJoin(users, eq(pyqs.uploaderId, users.id))
+            .leftJoin(subjects, eq(pyqs.subjectId, subjects.id))
+            .leftJoin(courses, eq(subjects.courseId, courses.id))
+            .where(eq(pyqs.id, id))
+            .limit(1);
+
+        return { success: true, data: file[0] };
+    } catch (error) {
+        console.error("Failed to fetch file by id:", error);
+        return { success: false, error: "Failed to fetch file" };
+    }
+}
+
+export async function getSubjectByIdAction(id: string) {
+    try {
+        const subject = await db
+            .select({
+                id: subjects.id,
+                name: subjects.name,
+                semester: subjects.semester,
+                courseName: courses.name,
+            })
+            .from(subjects)
+            .leftJoin(courses, eq(subjects.courseId, courses.id))
+            .where(eq(subjects.id, id))
+            .limit(1);
+
+        return { success: true, data: subject[0] };
+    } catch (error) {
+        console.error("Failed to fetch subject by id:", error);
+        return { success: false, error: "Failed to fetch subject" };
+    }
+}

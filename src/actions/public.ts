@@ -29,6 +29,7 @@ export async function getRecentPyqs() {
                 type: pyqs.type,
                 year: pyqs.year,
                 createdAt: pyqs.createdAt,
+                subjectId: pyqs.subjectId,
             })
             .from(pyqs)
             .where(eq(pyqs.status, "APPROVED"))

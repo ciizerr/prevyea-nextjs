@@ -187,11 +187,9 @@ export function DashboardOverview({
                             </div>
                         ) : (
                             recentUploads.map((item) => (
-                                <a
+                                <Link
                                     key={item.id}
-                                    href={item.downloadLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                    href={item.type === "Syllabus" ? `/s/${item.subjectId}` : `/v/${item.id}`}
                                     className="group flex items-center bg-zinc-50 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 border border-transparent hover:border-blue-500/30 p-5 rounded-[2rem] transition-all duration-300 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1"
                                 >
                                     <div className="flex-1 flex items-center gap-6 min-w-0">
@@ -219,7 +217,7 @@ export function DashboardOverview({
                                     <div className="shrink-0 p-3 bg-white dark:bg-zinc-800 rounded-xl text-zinc-400 group-hover:text-blue-600 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/20 transition-all ml-4">
                                         <ArrowUpRight className="h-5 w-5" />
                                     </div>
-                                </a>
+                                </Link>
                             ))
                         )}
                     </div>

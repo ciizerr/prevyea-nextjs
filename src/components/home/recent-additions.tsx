@@ -5,8 +5,8 @@ import Link from "next/link";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { motion } from "framer-motion";
 
-export default function RecentAdditions({ pyqs }: { pyqs?: { id?: string; title: string; type: string; createdAt?: Date | null; }[] }) {
-    const defaultData: { id?: string; title: string; type: string; createdAt?: Date | null; }[] = [
+export default function RecentAdditions({ pyqs }: { pyqs?: { id?: string; title: string; type: string; createdAt?: Date | null; subjectId?: string; }[] }) {
+    const defaultData: { id?: string; title: string; type: string; createdAt?: Date | null; subjectId?: string; }[] = [
         { title: "BCA Semester 3 - Object Oriented Programming (2024)", type: "PYQ", createdAt: null },
         { title: "BCA Semester 1 - Math Syllabus Update", type: "Syllabus", createdAt: null },
         { title: "B.Sc. IT Semester 4 - Database Management Systems", type: "PYQ", createdAt: null },
@@ -60,7 +60,11 @@ export default function RecentAdditions({ pyqs }: { pyqs?: { id?: string; title:
 
                             <ClickSpark className="relative ml-auto shrink-0">
                                 <Link
-                                    href={item.id ? `/vault?search=${encodeURIComponent(item.title)}` : "/vault"}
+                                    href={
+                                        item.id 
+                                            ? (item.type === "Syllabus" && item.subjectId ? `/s/${item.subjectId}` : `/v/${item.id}`)
+                                            : "/vault"
+                                    }
                                     className="p-4 md:px-6 md:py-3 text-[10px] font-black uppercase tracking-widest rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
                                 >
                                     <span className="hidden sm:inline">Explore</span>

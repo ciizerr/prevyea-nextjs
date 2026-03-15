@@ -5,6 +5,7 @@ import { X, UploadCloud, XCircle, FileType, Loader2, ChevronDown, Sparkles, Shie
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { uploadPYQAction } from "@/actions/upload";
 import { getCoursesAction, getSubjectsAction } from "@/actions/curriculum";
+import { getUserProfileAction } from "@/actions/user";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface UploadModalProps {
@@ -33,14 +34,40 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
     const maxSemesters = selectedCourse?.totalSemesters ?? 8;
 
     useEffect(() => {
-        if (isOpen) {
-            getCoursesAction().then((res) => {
-                if (res.success && res.data) {
-                    const raw = res.data as CourseOption[];
-                    const unique = Array.from(new Map(raw.map(c => [c.id, c])).values());
-                    setCourses(unique);
+        const fetchData = async () => {
+            if (isOpen) {
+                // Fetch All Courses
+                try {
+                    const courseRes = await getCoursesAction();
+                    if (courseRes.success && courseRes.data) {
+                        const raw = courseRes.data as CourseOption[];
+                        const unique = Array.from(new Map(raw.map(c => [c.id, c])).values());
+                        setCourses(unique);
+                    }
+
+                    // Fetch User Profile to pre-fill
+                    const profileRes = await getUserProfileAction();
+                    if (profileRes.success && profileRes.data?.course) {
+                        setSelectedCourseId(profileRes.data.course);
+                        setSelectedSemester("Sem 1");
+                    }
+                } catch (error) {
+                    console.error("Error pre-filling modal:", error);
                 }
-            });
+            }
+        };
+        
+        fetchData();
+
+        // If closing, we can reset state deferred to avoid cascading render lint
+        if (!isOpen) {
+            setTimeout(() => {
+                setSelectedCourseId("");
+                setSelectedSemester("");
+                setSubjects([]);
+                setFileName("");
+                setUploadStatus(null);
+            }, 0);
         }
     }, [isOpen]);
 
@@ -62,7 +89,9 @@ export function UploadModal({ isOpen, onClose }: UploadModalProps) {
     useEffect(() => {
         let isCancelled = false;
         if (selectedCourseId && selectedSemester) {
-            // Loading is now triggered by handlers
+            setTimeout(() => {
+                if (!isCancelled) setIsFetchingSubjects(true);
+            }, 0);
             getSubjectsAction(selectedCourseId, selectedSemester).then((res) => {
                 if (!isCancelled && res.success && res.data) {
                     setSubjects(res.data as { id: string; name: string }[]);

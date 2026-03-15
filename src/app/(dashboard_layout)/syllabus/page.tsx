@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronRight, FileText, Download, BookOpen, Loader2, Sparkles, ArrowRight } from "lucide-react";
+import { ChevronRight, FileText, Download, BookOpen, Loader2, Sparkles, ArrowRight, Share2 } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import Link from "next/link";
 import { getCoursesAction, getSubjectsAction, getFilesAction } from "@/actions/curriculum";
@@ -379,29 +379,45 @@ export default function SyllabusPage() {
                                     </div>
 
                                     {syllabusFile && (
-                                        <ClickSpark className="shrink-0 w-full sm:w-auto">
-                                            {isMarkdown ? (
+                                        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                                            <ClickSpark className="shrink-0 w-full sm:w-auto">
                                                 <button
-                                                    onClick={handleDownloadPdf}
-                                                    disabled={downloadingPdf || loadingMarkdown}
-                                                    className="w-full sm:w-auto px-10 py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl transition-all active:scale-95 disabled:opacity-30 text-[11px] uppercase tracking-widest"
+                                                    onClick={() => {
+                                                        const url = `${window.location.origin}/s/${activeSubjectId}`;
+                                                        navigator.clipboard.writeText(url);
+                                                        alert("Link copied to clipboard!");
+                                                    }}
+                                                    className="w-full sm:w-auto px-6 py-5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 rounded-2xl font-black flex items-center justify-center gap-3 transition-all active:scale-95 text-[11px] uppercase tracking-widest group shadow-sm"
                                                 >
-                                                    {downloadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                                                    {downloadingPdf ? "Generating..." : "Export as PDF"}
+                                                    <Share2 className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                                                    Share Syllabus
                                                 </button>
-                                            ) : (
-                                                <a
-                                                    href={syllabusFile.downloadLink}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-full sm:w-auto px-10 py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl transition-all active:scale-95 text-[11px] uppercase tracking-widest"
-                                                >
-                                                    <Download className="h-4 w-4" />
-                                                    Download Archive
-                                                </a>
-                                            )}
-                                        </ClickSpark>
+                                            </ClickSpark>
+                                            <ClickSpark className="shrink-0 w-full sm:w-auto">
+                                                {isMarkdown ? (
+                                                    <button
+                                                        onClick={handleDownloadPdf}
+                                                        disabled={downloadingPdf || loadingMarkdown}
+                                                        className="w-full sm:w-auto px-10 py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl transition-all active:scale-95 disabled:opacity-30 text-[11px] uppercase tracking-widest"
+                                                    >
+                                                        {downloadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                                                        {downloadingPdf ? "Generating..." : "Export as PDF"}
+                                                    </button>
+                                                ) : (
+                                                    <a
+                                                        href={syllabusFile.downloadLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="w-full sm:w-auto px-10 py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl transition-all active:scale-95 text-[11px] uppercase tracking-widest"
+                                                    >
+                                                        <Download className="h-4 w-4" />
+                                                        Download Archive
+                                                    </a>
+                                                )}
+                                            </ClickSpark>
+                                        </div>
                                     )}
+
                                 </div>
 
                                 {/* Viewer Frame */}
