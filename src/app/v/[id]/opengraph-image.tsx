@@ -13,8 +13,8 @@ export const size = {
 
 export const contentType = "image/png";
 
-export default async function Image({ params }: { params: { id: string } }) {
-    const { id } = params;
+export default async function Image({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const { data: paper } = await getFileByIdAction(id);
 
     // Read local logo for embedding
@@ -107,11 +107,11 @@ export default async function Image({ params }: { params: { id: string } }) {
 
                     {/* Paper Title Section */}
                     <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "center" }}>
-                        <div style={{ fontSize: 90, fontWeight: 900, color: "#18181b", letterSpacing: "-0.05em", lineHeight: 0.9, marginBottom: "20px" }}>
-                            {paper.year} {paper.title}
+                        <div style={{ display: "flex", fontSize: 90, fontWeight: 900, color: "#18181b", letterSpacing: "-0.05em", lineHeight: 0.9, marginBottom: "20px" }}>
+                            <span>{paper.year} {paper.title}</span>
                         </div>
-                        <div style={{ fontSize: 32, fontWeight: 700, color: "#71717a", marginBottom: "40px" }}>
-                            {paper.subjectName}
+                        <div style={{ display: "flex", fontSize: 32, fontWeight: 700, color: "#71717a", marginBottom: "40px" }}>
+                            <span>{paper.subjectName}</span>
                         </div>
                     </div>
 
@@ -119,7 +119,7 @@ export default async function Image({ params }: { params: { id: string } }) {
                     <div style={{ display: "flex", alignItems: "center", gap: "30px", borderTop: "1px solid #f4f4f5", paddingTop: "40px", marginTop: "auto" }}>
                         <div style={{ display: "flex", flexDirection: "column" }}>
                             <span style={{ fontSize: 12, fontWeight: 900, color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: "4px" }}>Course</span>
-                            <span style={{ fontSize: 20, fontWeight: 800, color: "#18181b" }}>{paper.courseName} · {paper.semester}</span>
+                            <span style={{ display: "flex", fontSize: 20, fontWeight: 800, color: "#18181b" }}><span>{paper.courseName} · {paper.semester}</span></span>
                         </div>
                         <div style={{ width: "1px", height: "40px", background: "#f4f4f5" }} />
                         <div style={{ display: "flex", flexDirection: "column" }}>

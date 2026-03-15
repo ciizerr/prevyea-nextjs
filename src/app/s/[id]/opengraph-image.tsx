@@ -13,8 +13,8 @@ export const size = {
 
 export const contentType = "image/png";
 
-export default async function Image({ params }: { params: { id: string } }) {
-    const { id } = params;
+export default async function Image({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const { data: subject } = await getSubjectByIdAction(id);
 
     // Read local logo for embedding
@@ -109,24 +109,24 @@ export default async function Image({ params }: { params: { id: string } }) {
                         <div style={{ fontSize: 14, fontWeight: 900, color: "#3b82f6", textTransform: "uppercase", letterSpacing: "0.3em", marginBottom: "16px" }}>
                             CURRICULUM ARCHIVE
                         </div>
-                        <div style={{ fontSize: 100, fontWeight: 900, color: "#18181b", letterSpacing: "-0.05em", lineHeight: 0.85, marginBottom: "24px" }}>
-                            {subject.name}
+                        <div style={{ display: "flex", fontSize: 100, fontWeight: 900, color: "#18181b", letterSpacing: "-0.05em", lineHeight: 0.85, marginBottom: "24px" }}>
+                            <span>{subject.name}</span>
                         </div>
-                        <div style={{ fontSize: 32, fontWeight: 700, color: "#71717a" }}>
-                            Official Syllabus for {subject.courseName}
+                        <div style={{ display: "flex", fontSize: 32, fontWeight: 700, color: "#71717a" }}>
+                            <span>Official Syllabus for {subject.courseName}</span>
                         </div>
                     </div>
 
                     {/* Bottom Meta */}
                     <div style={{ display: "flex", alignItems: "center", gap: "30px", paddingTop: "40px", borderTop: "1px solid #f4f4f5", marginTop: "auto" }}>
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <span style={{ fontSize: 12, fontWeight: 900, color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "4px" }}>Semester</span>
-                            <span style={{ fontSize: 20, fontWeight: 800, color: "#18181b" }}>{subject.semester}</span>
+                            <span style={{ display: "flex", fontSize: 12, fontWeight: 900, color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "4px" }}>Semester</span>
+                            <span style={{ display: "flex", fontSize: 20, fontWeight: 800, color: "#18181b" }}>{subject.semester}</span>
                         </div>
                         <div style={{ width: "1px", height: "40px", background: "#f4f4f5" }} />
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                            <span style={{ fontSize: 12, fontWeight: 900, color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "4px" }}>Program</span>
-                            <span style={{ fontSize: 20, fontWeight: 800, color: "#18181b" }}>{subject.courseName}</span>
+                            <span style={{ display: "flex", fontSize: 12, fontWeight: 900, color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.12em", marginBottom: "4px" }}>Program</span>
+                            <span style={{ display: "flex", fontSize: 20, fontWeight: 800, color: "#18181b" }}>{subject.courseName}</span>
                         </div>
                         <div style={{ flex: 1 }} />
                         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>

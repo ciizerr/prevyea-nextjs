@@ -151,7 +151,7 @@ export default async function Image({ params }: { params: { username: string } }
                     }}
                 >
                     {/* Avatar with Glow/Border */}
-                    <div style={{ display: "flex", position: "relative" }}>
+                    <div style={{ display: "flex", position: "relative", width: 220, height: 220 }}>
                         <div 
                             style={{ 
                                 position: "absolute", 
@@ -199,23 +199,23 @@ export default async function Image({ params }: { params: { username: string } }
                             <div
                                 style={{
                                     position: "absolute",
-                                    bottom: -5,
-                                    right: -5,
+                                    bottom: -10,
+                                    right: -10,
                                     backgroundColor: "#18181b",
                                     color: "white",
-                                    width: 60,
-                                    height: 60,
-                                    borderRadius: "22px",
+                                    width: 64,
+                                    height: 64,
+                                    borderRadius: "24px",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    fontSize: 32,
-                                    fontWeight: "bold",
                                     border: "8px solid white",
                                     boxShadow: "0 10px 15px rgba(0,0,0,0.1)",
                                 }}
                             >
-                                ✓
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 6L9 17L4 12" />
+                                </svg>
                             </div>
                         )}
                     </div>
@@ -233,7 +233,7 @@ export default async function Image({ params }: { params: { username: string } }
                                     letterSpacing: "-0.04em",
                                 }}
                             >
-                                {userProfile.name || `@${userProfile.username}`}
+                                <span>{userProfile.name || `@${userProfile.username}`}</span>
                             </h1>
                             <div
                                 style={{
@@ -251,7 +251,7 @@ export default async function Image({ params }: { params: { username: string } }
                                 {userProfile.role}
                             </div>
                         </div>
-                        <p style={{ fontSize: 26, color: "#71717a", margin: 0, fontWeight: 500, marginBottom: "40px" }}>
+                        <p style={{ display: "flex", fontSize: 26, color: "#71717a", margin: 0, fontWeight: 500, marginBottom: "40px" }}>
                             @{userProfile.username}
                         </p>
 
@@ -267,8 +267,18 @@ export default async function Image({ params }: { params: { username: string } }
                                     minWidth: "180px",
                                 }}
                             >
-                                <span style={{ fontSize: 13, color: "#a1a1aa", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>Uploads</span>
-                                <span style={{ fontSize: 36, color: "#18181b", fontWeight: 900 }}>{totalContributions} Items</span>
+                                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                                        <path d="M4 22h16" />
+                                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                                    </svg>
+                                    <span style={{ fontSize: 13, color: "#a1a1aa", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>Uploads</span>
+                                </div>
+                                <span style={{ display: "flex", fontSize: 36, color: "#18181b", fontWeight: 900 }}>{totalContributions} Items</span>
                             </div>
                             <div
                                 style={{
@@ -281,8 +291,14 @@ export default async function Image({ params }: { params: { username: string } }
                                     minWidth: "180px",
                                 }}
                             >
-                                <span style={{ fontSize: 13, color: "#a1a1aa", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>Course</span>
-                                <span style={{ fontSize: 24, color: "#18181b", fontWeight: 700 }}>{courseName || "General"}</span>
+                                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                                    </svg>
+                                    <span style={{ fontSize: 13, color: "#a1a1aa", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>Course</span>
+                                </div>
+                                <span style={{ display: "flex", fontSize: 24, color: "#18181b", fontWeight: 700 }}>{courseName || "General"}</span>
                             </div>
                             <div
                                 style={{
@@ -295,8 +311,16 @@ export default async function Image({ params }: { params: { username: string } }
                                     minWidth: "180px",
                                 }}
                             >
-                                <span style={{ fontSize: 13, color: "#a1a1aa", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>Member Since</span>
-                                <span style={{ fontSize: 24, color: "#18181b", fontWeight: 700 }}>{joinedDateString || "Unknown"}</span>
+                                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                                        <line x1="16" x2="16" y1="2" y2="6" />
+                                        <line x1="8" x2="8" y1="2" y2="6" />
+                                        <line x1="3" x2="21" y1="10" y2="10" />
+                                    </svg>
+                                    <span style={{ fontSize: 13, color: "#a1a1aa", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>Member Since</span>
+                                </div>
+                                <span style={{ display: "flex", fontSize: 24, color: "#18181b", fontWeight: 700 }}>{joinedDateString || "Unknown"}</span>
                             </div>
                         </div>
 
