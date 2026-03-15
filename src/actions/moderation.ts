@@ -53,6 +53,31 @@ export async function approvePYQAction(formData: FormData) {
         const pyq = await db.query.pyqs.findFirst({ where: eq(pyqs.id, pyqId) });
         if (!pyq) throw new Error("Document not found");
 
+        if (pyq.type === "Syllabus") {
+            const oldSyllabus = await db.query.pyqs.findFirst({
+                where: and(
+                    eq(pyqs.subjectId, pyq.subjectId),
+                    eq(pyqs.type, "Syllabus"),
+                    eq(pyqs.status, "APPROVED"),
+                    ne(pyqs.id, pyqId)
+                )
+            });
+
+            if (oldSyllabus) {
+                if (oldSyllabus.driveId) {
+                    try {
+                        await cloudinary.uploader.destroy(oldSyllabus.driveId, { 
+                            resource_type: "raw", 
+                            invalidate: true 
+                        });
+                    } catch (err) {
+                        console.error("Cloudinary error deleting old syllabus:", err);
+                    }
+                }
+                await db.delete(pyqs).where(eq(pyqs.id, oldSyllabus.id));
+            }
+        }
+
         await db.update(pyqs)
             .set({ status: "APPROVED" })
             .where(eq(pyqs.id, pyqId));
@@ -134,7 +159,10 @@ export async function rejectPYQAction(formData: FormData) {
 
         // 3. Delete from Cloudinary to save space
         if (doc.driveId) {
-            await cloudinary.uploader.destroy(doc.driveId, { resource_type: "raw" });
+            await cloudinary.uploader.destroy(doc.driveId, { 
+                resource_type: "raw",
+                invalidate: true 
+            });
         }
 
         // 4. Delete from Turso Database

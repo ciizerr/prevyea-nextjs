@@ -1,7 +1,11 @@
 "use client";
 
-import { X, FileText } from "lucide-react";
+import { useEffect, useState } from "react";
+import { X, FileText, Loader2 } from "lucide-react";
 import PDFViewer from "@/components/pdf-viewer";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { fetchMarkdownContent } from "@/actions/curriculum";
 
 interface PreviewModalProps {
     isOpen: boolean;
@@ -12,6 +16,8 @@ interface PreviewModalProps {
 
 export function PreviewModal({ isOpen, onClose, url, title }: PreviewModalProps) {
     if (!isOpen) return null;
+
+    const isMarkdown = title.toLowerCase().endsWith(".md") || url.toLowerCase().endsWith(".md");
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
@@ -38,14 +44,76 @@ export function PreviewModal({ isOpen, onClose, url, title }: PreviewModalProps)
                     </button>
                 </div>
 
-                {/* PDF Viewer Container */}
+                {/* Content Area */}
                 <div className="flex-1 w-full bg-black/5 relative overflow-hidden">
-                    <PDFViewer
-                        url={url}
-                        fileLabel={title}
-                    />
+                    {isMarkdown ? (
+                        <MarkdownPreview url={url} />
+                    ) : (
+                        <PDFViewer
+                            url={url}
+                            fileLabel={title}
+                        />
+                    )}
                 </div>
             </div>
+        </div>
+    );
+}
+
+function MarkdownPreview({ url }: { url: string }) {
+    const [markdownContent, setMarkdownContent] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let isMounted = true;
+        // The state is already 'true' by default or becomes true when the component re-mounts on key change.
+        // If we want to force it to true for URL changes without re-mounting:
+        Promise.resolve().then(() => {
+            if (isMounted) setLoading(true);
+        });
+
+        fetchMarkdownContent(url)
+            .then(res => {
+                if (isMounted) {
+                    if (res.success && res.data) {
+                        setMarkdownContent(res.data);
+                    } else {
+                        setMarkdownContent(`# Error\n${res.error || "Failed to load markdown content."}`);
+                    }
+                    // Wrapping in a microtask/Promise.resolve to avoid the "synchronous setState" lint error 
+                    // if the linter is extremely pedantic, although here the promise itself is async.
+                    setLoading(false);
+                }
+            })
+            .catch(err => {
+                console.error("Failed to fetch markdown:", err);
+                if (isMounted) {
+                    setMarkdownContent("# Error\nFailed to load markdown content.");
+                    setLoading(false);
+                }
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, [url]);
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center h-full gap-3 text-zinc-500 bg-white dark:bg-zinc-950">
+                <Loader2 className="h-8 w-8 animate-spin" />
+                <p className="font-medium">Loading Markdown...</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="h-full overflow-y-auto p-6 md:p-10 bg-white dark:bg-zinc-950">
+            <article className="prose prose-zinc dark:prose-invert max-w-none prose-headings:font-black prose-a:text-blue-500 dark:prose-a:text-blue-400">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {markdownContent || ""}
+                </ReactMarkdown>
+            </article>
         </div>
     );
 }

@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { LayoutDashboard, FolderOpen, BookOpen, Settings, Library, LogOut, LogIn, PanelLeftClose, PanelLeftOpen, X, Megaphone, ShieldCheck, Building2, Trophy, Bug } from "lucide-react";
+import { LayoutDashboard, FolderOpen, BookOpen, Settings, LogOut, LogIn, PanelLeftClose, PanelLeftOpen, X, Megaphone, ShieldCheck, Building2, Trophy, Bug, PlusCircle } from "lucide-react";
 import { useState } from "react";
 import { ReportBugModal } from "./reports/report-bug-modal";
+import { UploadModal } from "./upload-modal";
 
 interface SidebarProps {
     isOpen: boolean;
@@ -22,6 +23,7 @@ export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: Sideb
     const userRole = session?.user?.role;
 
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
     const allLinks = [
         { name: "Overview", href: "/dashboard", icon: LayoutDashboard, public: false },
@@ -58,8 +60,9 @@ export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: Sideb
             >
                 <div className={`h-16 md:h-20 flex items-center border-b border-zinc-200/50 dark:border-zinc-800/50 shrink-0 transition-all duration-300 px-4 md:px-6 justify-between md:justify-start ${!isOpen && !isMobileOpen ? "md:px-0 md:justify-center" : ""}`}>
                     <Link href="/" className="flex items-center justify-center gap-2.5 group hover:opacity-80 transition-opacity">
-                        <div className="bg-blue-600 p-2 rounded-xl group-hover:bg-blue-500 transition-colors shrink-0">
-                            <Library className="h-5 w-5 text-white" />
+                        <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 shadow-sm border border-zinc-200 dark:border-zinc-800 bg-white">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src="/img-512x512.png" alt="PU Library Logo" className="w-full h-full object-cover" />
                         </div>
                         {(isOpen || isMobileOpen) && <span className="font-bold text-xl tracking-tight text-zinc-900 dark:text-zinc-50 whitespace-nowrap overflow-hidden">PU Digital Library</span>}
                     </Link>
@@ -101,15 +104,29 @@ export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: Sideb
 
                 <div className={`p-4 mt-auto border-t border-zinc-200/50 dark:border-zinc-800/50 shrink-0 flex flex-col gap-2 ${(!isOpen && !isMobileOpen) ? "items-center" : ""}`}>
                     {isLoggedIn && (
-                        <button
-                            onClick={() => setIsReportModalOpen(true)}
-                            title={!isOpen && !isMobileOpen ? "Report a Bug" : undefined}
-                            className={`flex items-center py-2.5 rounded-xl text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all ${isOpen || isMobileOpen ? "w-full px-3 gap-3" : "justify-center w-12"
-                                }`}
-                        >
-                            <Bug className="h-5 w-5 shrink-0 hover:text-indigo-500 transition-colors" />
-                            {(isOpen || isMobileOpen) && <span className="block">Report a Bug</span>}
-                        </button>
+                        <>
+                            <button
+                                onClick={() => setIsReportModalOpen(true)}
+                                title={!isOpen && !isMobileOpen ? "Report a Bug" : undefined}
+                                className={`flex items-center py-2.5 rounded-xl text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all ${isOpen || isMobileOpen ? "w-full px-3 gap-3" : "justify-center w-12"
+                                    }`}
+                            >
+                                <Bug className="h-5 w-5 shrink-0 hover:text-indigo-500 transition-colors" />
+                                {(isOpen || isMobileOpen) && <span className="block">Report a Bug</span>}
+                            </button>
+
+                            {/* Quick Upload Button at the very bottom of the utility section */}
+                            <button
+                                onClick={() => setIsUploadModalOpen(true)}
+                                title={!isOpen && !isMobileOpen ? "Quick Upload" : undefined}
+                                className={`w-full flex items-center my-2 py-3 rounded-xl text-sm font-black transition-all group overflow-hidden relative shadow-lg shadow-blue-500/20 active:scale-[0.98] ${isOpen || isMobileOpen ? "px-4 gap-3" : "justify-center"
+                                    } bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white`}
+                            >
+                                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <PlusCircle className={`h-5 w-5 shrink-0 transition-transform ${isOpen || isMobileOpen ? "group-hover:rotate-90 duration-300" : ""}`} />
+                                {(isOpen || isMobileOpen) && <span className="whitespace-nowrap overflow-hidden block">Quick Upload</span>}
+                            </button>
+                        </>
                     )}
 
                     <button
@@ -150,7 +167,11 @@ export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: Sideb
                 isOpen={isReportModalOpen}
                 onClose={() => setIsReportModalOpen(false)}
             />
+
+            <UploadModal
+                isOpen={isUploadModalOpen}
+                onClose={() => setIsUploadModalOpen(false)}
+            />
         </>
     );
 }
-

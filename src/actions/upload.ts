@@ -68,6 +68,10 @@ export async function uploadPYQAction(formData: FormData) {
             throw new Error("Cloudinary upload failed to return a secure URL.");
         }
 
+        if (!uploadResult?.secure_url) {
+            throw new Error("Cloudinary upload failed to return a secure URL.");
+        }
+
         // Insert into Turso DB
         await db.insert(pyqs).values({
             id: crypto.randomUUID(),

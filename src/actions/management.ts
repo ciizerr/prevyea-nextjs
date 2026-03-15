@@ -285,7 +285,10 @@ export async function deleteFileAction(id: string) {
             try {
                 const cloudinary = (await import("cloudinary")).v2;
                 cloudinary.config({ secure: true });
-                const result = await cloudinary.uploader.destroy(record.driveId, { resource_type: "raw" });
+                const result = await cloudinary.uploader.destroy(record.driveId, { 
+                    resource_type: "raw",
+                    invalidate: true 
+                });
                 if (result.result !== "ok" && result.result !== "not found") {
                     cloudinaryWarning = `Cloudinary: ${result.result}`;
                 }
@@ -326,7 +329,10 @@ export async function bulkDeleteFilesAction(ids: string[]) {
 
             for (const record of records) {
                 if (record?.driveId) {
-                    const result = await cloudinary.uploader.destroy(record.driveId, { resource_type: "raw" });
+                    const result = await cloudinary.uploader.destroy(record.driveId, { 
+                        resource_type: "raw",
+                        invalidate: true 
+                    });
                     if (result.result !== "ok" && result.result !== "not found") {
                         hasCloudinaryWarning = true;
                     }
@@ -384,7 +390,10 @@ export async function deleteAllFilesAction() {
                 for (let i = 0; i < publicIds.length; i += 100) {
                     const chunk = publicIds.slice(i, i + 100);
                     // Using api.delete_resources since it's more efficient for bulk
-                    await cloudinary.api.delete_resources(chunk, { resource_type: "raw" });
+                    await cloudinary.api.delete_resources(chunk, { 
+                        resource_type: "raw",
+                        invalidate: true 
+                    });
                 }
             } catch (err) {
                 console.error("Cloudinary empty error:", err);
