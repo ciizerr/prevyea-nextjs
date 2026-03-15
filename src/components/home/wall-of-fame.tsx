@@ -1,13 +1,16 @@
-import { Trophy, Medal, Upload, Award } from "lucide-react";
+"use client";
+
+import { Trophy, Medal, Upload, Award, Sparkles } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const LEADERBOARD_DATA = [
-    { rank: 1, name: "Rahul S.", course: "BCA Sem 5", uploads: 42, points: 1250, recent: "Uploaded 2023 OS Paper" },
-    { rank: 2, name: "Aman K.", course: "B.Sc IT Sem 3", uploads: 38, points: 980, recent: "Shared C++ Notes" },
-    { rank: 3, name: "Priya M.", course: "BBA Sem 4", uploads: 25, points: 720, recent: "Updated Syllabus" },
-    { rank: 4, name: "Vikash D.", course: "BCA Sem 2", uploads: 18, points: 450, recent: "Added Math PYQs" },
-    { rank: 5, name: "Neha Y.", course: "B.Sc Biotech", uploads: 12, points: 310, recent: "Shared Zoology Notes" }
+    { rank: 1, name: "Rahul S.", course: "BCA Sem 5", uploads: 42, points: 1250, recent: "2023 OS Paper" },
+    { rank: 2, name: "Aman K.", course: "B.Sc IT Sem 3", uploads: 38, points: 980, recent: "C++ Notes" },
+    { rank: 3, name: "Priya M.", course: "BBA Sem 4", uploads: 25, points: 720, recent: "Official Syllabus" },
+    { rank: 4, name: "Vikash D.", course: "BCA Sem 2", uploads: 18, points: 450, recent: "Math PYQs" },
+    { rank: 5, name: "Neha Y.", course: "B.Sc Biotech", uploads: 12, points: 310, recent: "Zoology Notes" }
 ];
 
 export interface LeaderboardUser {
@@ -23,63 +26,74 @@ export default function WallOfFame({ leaderboard }: { leaderboard?: LeaderboardU
     const dataToUse = leaderboard && leaderboard.length > 0 ? leaderboard : LEADERBOARD_DATA;
 
     return (
-        <section className="w-full py-24 md:py-32 px-4 relative bg-zinc-50 dark:bg-[#0a0a0a] overflow-hidden">
-            {/* Background elements */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-[400px] bg-amber-500/5 dark:bg-amber-500/10 blur-[100px] rounded-full pointer-events-none -z-10" />
+        <section className="w-full py-24 md:py-40 px-4 relative bg-zinc-50 dark:bg-[#050505] overflow-hidden">
+            {/* Ambient Background */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-[600px] bg-amber-500/5 blur-[120px] rounded-full pointer-events-none -z-10" />
 
-            <div className="max-w-4xl mx-auto">
-                <div className="text-center mb-12 md:mb-16 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-semibold text-sm mb-4 border border-amber-200/50 dark:border-amber-800/50">
-                        <Trophy className="h-4 w-4" />
-                        Legends of the Library
+            <div className="max-w-5xl mx-auto">
+                <div className="text-center mb-20 md:mb-32 space-y-4">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 font-black text-[10px] uppercase tracking-widest mb-4 border border-amber-100 dark:border-amber-500/20">
+                        <Trophy className="h-3 w-3" />
+                        Library Contributors
                     </div>
-                    <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                        Built by students, for students.
+                    <h2 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 leading-none">
+                        Legends of the Archive.
                     </h2>
-                    <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-                        The ultimate flex? Saving your juniors before exams. Join the leaderboard by contributing to the archive.
+                    <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto font-medium">
+                        The ultimate flex? Empowering your juniors. Join the leaderboard by contributing verified study material.
                     </p>
                 </div>
 
-                {/* Leaderboard */}
-                <div className="bg-white dark:bg-zinc-950 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden mb-12">
+                {/* Highly Polished Leaderboard */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="bg-white dark:bg-zinc-950 rounded-[3rem] border border-zinc-200 dark:border-zinc-800 shadow-[0_40px_100px_-30px_rgba(0,0,0,0.1)] dark:shadow-none overflow-hidden mb-20"
+                >
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 text-sm md:text-base">
-                                    <th className="py-4 px-6 font-semibold text-zinc-500 dark:text-zinc-400 w-16">Rank</th>
-                                    <th className="py-4 px-6 font-semibold text-zinc-500 dark:text-zinc-400">Contributor</th>
-                                    <th className="py-4 px-6 font-semibold text-zinc-500 dark:text-zinc-400 hidden sm:table-cell">Recent Activity</th>
-                                    <th className="py-4 px-6 font-semibold text-zinc-500 dark:text-zinc-400 text-right">Uploads</th>
+                                <tr className="bg-zinc-50/50 dark:bg-zinc-900/50 border-b border-zinc-100 dark:border-zinc-800 text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                                    <th className="py-6 px-10">Status</th>
+                                    <th className="py-6 px-4">Contributor</th>
+                                    <th className="py-6 px-4 hidden md:table-cell">Recent Impact</th>
+                                    <th className="py-6 px-10 text-right">Uploads</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
+                            <tbody className="divide-y divide-zinc-50 dark:divide-zinc-800/40">
                                 {dataToUse.map((user) => (
-                                    <tr key={user.rank} className="group hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
-                                        <td className="py-4 px-6">
-                                            <div className={`flex items-center justify-center w-8 h-8 rounded-full font-bold
-                                                ${user.rank === 1 ? 'bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400' :
-                                                    user.rank === 2 ? 'bg-zinc-200 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400' :
-                                                        user.rank === 3 ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/40 dark:text-orange-400' :
-                                                            'bg-zinc-100 text-zinc-500 dark:bg-zinc-900/50 dark:text-zinc-500'}`}
-                                            >
-                                                {user.rank === 1 ? <Trophy className="h-4 w-4" /> : user.rank === 2 ? <Medal className="h-4 w-4" /> : user.rank === 3 ? <Award className="h-4 w-4" /> : user.rank}
+                                    <tr key={user.rank} className="group hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-all duration-500">
+                                        <td className="py-6 px-10">
+                                            <div className="flex items-center justify-center">
+                                                {user.rank === 1 ? (
+                                                    <div className="relative">
+                                                        <div className="absolute inset-0 bg-amber-500 blur-lg opacity-40 animate-pulse" />
+                                                        <Trophy className="h-6 w-6 text-amber-500 relative z-10" />
+                                                    </div>
+                                                ) : user.rank === 2 ? (
+                                                    <Medal className="h-6 w-6 text-zinc-400" />
+                                                ) : user.rank === 3 ? (
+                                                    <Award className="h-6 w-6 text-orange-400" />
+                                                ) : (
+                                                    <span className="font-black text-sm text-zinc-300 dark:text-zinc-700">{user.rank.toString().padStart(2, '0')}</span>
+                                                )}
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-6 px-4">
                                             <div className="flex flex-col">
-                                                <span className="font-bold text-zinc-900 dark:text-zinc-100">{user.name}</span>
-                                                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-500">{user.course}</span>
+                                                <span className="font-black text-zinc-900 dark:text-zinc-100 text-sm group-hover:text-indigo-600 dark:group-hover:text-amber-400 transition-colors">{user.name}</span>
+                                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{user.course}</span>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6 hidden sm:table-cell">
-                                            <span className="inline-flex items-center gap-1.5 text-sm text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 px-3 py-1 rounded-full border border-zinc-200/50 dark:border-zinc-800/50">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        <td className="py-6 px-4 hidden md:table-cell">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200/50 dark:border-zinc-800/50 text-xs font-bold text-zinc-600 dark:text-zinc-400">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_5px_rgba(99,102,241,0.5)]" />
                                                 {user.recent}
-                                            </span>
+                                            </div>
                                         </td>
-                                        <td className="py-4 px-6 text-right">
-                                            <span className="font-mono font-bold text-amber-600 dark:text-amber-400">
+                                        <td className="py-6 px-10 text-right">
+                                            <span className="font-black text-zinc-900 dark:text-zinc-100 tabular-nums">
                                                 {user.uploads.toLocaleString()}
                                             </span>
                                         </td>
@@ -88,17 +102,18 @@ export default function WallOfFame({ leaderboard }: { leaderboard?: LeaderboardU
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* CTA */}
-                <div className="flex flex-col items-center justify-center space-y-4">
-                    <p className="text-zinc-600 dark:text-zinc-400 font-medium text-center">
-                        Upload your old notes or past papers and claim your spot.
+                <div className="flex flex-col items-center justify-center space-y-8">
+                    <p className="text-zinc-400 font-black text-[10px] uppercase tracking-[0.4em] text-center">
+                        Your legacy begins with one contribution.
                     </p>
                     <ClickSpark className="w-full sm:w-auto">
-                        <Link href="/vault" className="w-full sm:w-auto inline-flex bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 font-bold py-4 px-8 rounded-full shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer">
-                            <Upload className="h-5 w-5" />
+                        <Link href="/vault" className="w-full sm:w-auto inline-flex bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 font-black text-xs uppercase tracking-[0.2em] py-5 px-10 rounded-[1.5rem] shadow-2xl transition-all hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3">
+                            <Upload className="h-4 w-4" />
                             Contribute Material
+                            <Sparkles className="h-4 w-4" />
                         </Link>
                     </ClickSpark>
                 </div>

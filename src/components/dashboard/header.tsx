@@ -289,7 +289,7 @@ export function Header({ isMobile = false }: HeaderProps) {
                                 <div className="relative">
                                     <div className="w-10 h-10 rounded-2xl bg-zinc-900 dark:bg-white flex items-center justify-center font-black text-white dark:text-zinc-950 shadow-xl overflow-hidden group-hover:scale-105 transition-transform duration-300">
                                         {session?.user?.image ? (
-                                            <Image src={session.user.image} alt="Avatar" width={40} height={40} className="w-full h-full object-cover" />
+                                            <Image src={session.user.image} alt="Avatar" width={40} height={40} className="w-full h-full object-cover" unoptimized />
                                         ) : (
                                             <span className="text-xs">{getInitials(session?.user?.name)}</span>
                                         )}
@@ -313,7 +313,7 @@ export function Header({ isMobile = false }: HeaderProps) {
                                         </div>
                                         <div className="w-16 h-16 rounded-[1.5rem] bg-white dark:bg-zinc-800 border-4 border-white dark:border-zinc-800 shadow-2xl flex items-center justify-center overflow-hidden">
                                             {session?.user?.image ? (
-                                                <Image src={session.user.image} alt="Avatar" width={64} height={64} className="w-full h-full object-cover" />
+                                                <Image src={session.user.image} alt="Avatar" width={64} height={64} className="w-full h-full object-cover" unoptimized />
                                             ) : (
                                                 <span className="text-lg font-black">{getInitials(session?.user?.name)}</span>
                                             )}

@@ -1,6 +1,9 @@
-import { FileText, ChevronRight } from "lucide-react";
+"use client";
+
+import { FileText, ChevronRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import ClickSpark from "@/components/reactbits/ClickSpark";
+import { motion } from "framer-motion";
 
 export default function RecentAdditions({ pyqs }: { pyqs?: { id?: string; title: string; type: string; createdAt?: Date | null; }[] }) {
     const defaultData: { id?: string; title: string; type: string; createdAt?: Date | null; }[] = [
@@ -13,53 +16,60 @@ export default function RecentAdditions({ pyqs }: { pyqs?: { id?: string; title:
     const itemsToRender = pyqs && pyqs.length > 0 ? pyqs : defaultData;
 
     return (
-        <section className="w-full py-20 bg-transparent border-y border-zinc-200/50 dark:border-zinc-800/50">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-end mb-8">
-                    <div>
-                        <h2 className="text-2xl font-bold tracking-tight">Recently Added</h2>
-                        <p className="text-zinc-500 mt-1">Fresh study materials uploaded by the community.</p>
+        <section className="w-full py-24 md:py-40 bg-transparent border-t border-zinc-100 dark:border-zinc-900">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-end mb-16 px-4">
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-[10px] font-black text-indigo-500 uppercase tracking-widest">
+                            <Sparkles className="h-3 w-3" />
+                            Live Archive
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 leading-none">Fresh Additions.</h2>
                     </div>
                     <ClickSpark className="relative inline-flex">
-                        <Link href="/vault" className="hidden sm:flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">
-                            View all <ChevronRight className="h-4 w-4 ml-1" />
+                        <Link href="/vault" className="hidden md:flex items-center text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-indigo-600 transition-colors">
+                            Browse Collection <ChevronRight className="h-3 w-3 ml-2" />
                         </Link>
                     </ClickSpark>
                 </div>
 
-                <div className="bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-none"
+                >
                     {itemsToRender.map((item, i) => (
-                        <div key={item.id || i} className={`flex items-center justify-between p-5 sm:px-6 ${i !== itemsToRender.length - 1 ? 'border-b border-zinc-100 dark:border-zinc-800/60' : ''} hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors group`}>
-                            <div className="flex items-start sm:items-center gap-4">
-                                <div className="mt-0.5 sm:mt-0 p-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg text-zinc-500">
-                                    <FileText className="h-5 w-5" />
+                        <div key={item.id || i} className={`flex items-center justify-between p-6 md:p-8 ${i !== itemsToRender.length - 1 ? 'border-b border-zinc-50 dark:border-zinc-800/40' : ''} hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-all duration-500 group`}>
+                            <div className="flex items-center gap-6 flex-1 min-w-0 pr-6">
+                                <div className="p-4 bg-zinc-100 dark:bg-zinc-900 rounded-2xl text-zinc-400 group-hover:text-indigo-500 group-hover:scale-110 transition-all duration-500">
+                                    <FileText className="h-6 w-6" />
                                 </div>
-                                <div className="flex-1 min-w-0 pr-4">
-                                    <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">{item.title}</h4>
-                                    <div className="text-xs font-medium text-zinc-500 mt-1 flex gap-2 items-center">
-                                        <span className="bg-zinc-200 dark:bg-zinc-800 px-2 py-0.5 rounded-md text-zinc-700 dark:text-zinc-300">{item.type}</span>
-                                        <span>• {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Added recently'}</span>
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-black text-zinc-900 dark:text-zinc-100 text-sm md:text-base truncate group-hover:translate-x-1 transition-transform">{item.title}</h4>
+                                    <div className="flex gap-3 items-center mt-2">
+                                        <span className="text-[9px] font-black uppercase tracking-widest px-2 py-1 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md">
+                                            {item.type}
+                                        </span>
+                                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                                            {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Active Now'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                            {/* Note: In a real app, clicking this triggers a login modal for unauthenticated users */}
+
                             <ClickSpark className="relative ml-auto shrink-0">
                                 <Link
                                     href={item.id ? `/vault?search=${encodeURIComponent(item.title)}` : "/vault"}
-                                    className="p-2 sm:px-4 sm:py-2 text-sm font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center transition-colors cursor-pointer w-full h-full"
+                                    className="p-4 md:px-6 md:py-3 text-[10px] font-black uppercase tracking-widest rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
                                 >
-                                    <span className="hidden sm:inline mr-2">View</span>
+                                    <span className="hidden sm:inline">Explore</span>
                                     <ChevronRight className="h-4 w-4" />
                                 </Link>
                             </ClickSpark>
                         </div>
                     ))}
-                </div>
-                <ClickSpark className="relative sm:hidden w-full mt-6">
-                    <Link href="/vault" className="flex justify-center w-full py-3 border border-zinc-200 dark:border-zinc-800 rounded-xl font-medium text-zinc-700 dark:text-zinc-300 cursor-pointer text-center">
-                        View all additions
-                    </Link>
-                </ClickSpark>
+                </motion.div>
             </div>
         </section>
     );

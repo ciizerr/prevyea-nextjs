@@ -1,16 +1,13 @@
 "use client";
 
-import { Search, Sparkles, Terminal } from "lucide-react";
+import { Search, Sparkles, Terminal, BookOpen, Layers } from "lucide-react";
 import Typewriter from "@/components/reactbits/Typewriter";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
-interface HeroProps {
-    themeColor?: string;
-}
-
-export default function Hero({ themeColor }: HeroProps) {
+export default function Hero() {
     const [query, setQuery] = useState("");
     const router = useRouter();
 
@@ -18,7 +15,6 @@ export default function Hero({ themeColor }: HeroProps) {
         e.preventDefault();
         const sq = query.trim();
         if (sq) {
-            // Check if user is searching for syllabus specifically
             if (sq.toLowerCase().includes("syllabus")) {
                 router.push(`/syllabus?search=${encodeURIComponent(sq)}`);
             } else {
@@ -28,80 +24,97 @@ export default function Hero({ themeColor }: HeroProps) {
     };
 
     return (
-        <section className="w-full relative overflow-hidden flex flex-col items-center justify-center text-center pt-24 pb-16 md:pt-32 md:pb-32 px-4 selection:bg-zinc-800 selection:text-emerald-400">
-            {/* Darker, moodier background glow for the "CLI / Spotlight" feel */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-[1200px] overflow-hidden -z-10 pointer-events-none">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-zinc-400/10 dark:bg-zinc-600/10 blur-[150px] rounded-full mix-blend-screen dark:mix-blend-screen" />
-
-                {/* Subtle Floating Graphics (Mocked with decorative shapes) */}
-                <div className="hidden md:block absolute top-[15%] left-[10%] w-32 h-40 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl rotate-12 opacity-50 backdrop-blur-3xl" />
-                <div className="hidden md:block absolute top-[30%] right-[10%] w-24 h-32 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl -rotate-12 opacity-40 backdrop-blur-3xl" />
+        <section className="w-full relative overflow-hidden flex flex-col items-center justify-center text-center pt-24 pb-16 md:pt-40 md:pb-32 px-4">
+            {/* High-End Ambient Background */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-[1400px] overflow-hidden -z-10 pointer-events-none">
+                <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-indigo-500/10 dark:bg-indigo-600/10 blur-[180px] rounded-full mix-blend-plus-lighter" />
+                <div className="absolute bottom-0 right-[10%] w-[400px] h-[400px] bg-emerald-500/5 dark:bg-emerald-500/5 blur-[120px] rounded-full" />
             </div>
 
-            <div className="max-w-4xl mx-auto space-y-12 relative z-10 w-full mt-4 md:mt-10">
-                {/* Typewriter Header Sequence */}
-                <div className="space-y-4 max-w-3xl mx-auto h-[180px] sm:h-[150px] md:h-[220px] flex flex-col justify-end">
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] text-zinc-900 dark:text-zinc-100">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="max-w-5xl mx-auto space-y-12 relative z-10 w-full"
+            >
+                {/* Badge */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 mb-4 animate-in fade-in slide-in-from-top-4 duration-1000">
+                    <Sparkles className="h-3 w-3 text-amber-500" />
+                    The Official PU Digital Resource Hub
+                </div>
+
+                {/* Main Header */}
+                <div className="space-y-6 max-w-4xl mx-auto min-h-[140px] sm:min-h-[120px] md:min-h-[200px] flex flex-col justify-center">
+                    <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight leading-[0.9] text-zinc-900 dark:text-zinc-50">
                         <Typewriter
                             phrases={[
-                                "Looking for 2023 BCA papers?",
-                                "Need Operating System notes?",
-                                "Lost your syllabus?",
-                                "Tired of begging seniors?",
-                                "Want B.Sc. IT PYQs fast?"
+                                "Access 2024 PYQ Papers.",
+                                "Find Verified Study Notes.",
+                                "Browse Official Syllabus.",
+                                "Built for PU Vocational Core.",
+                                "Your Digital Study Vault."
                             ]}
-                            typingSpeed={50}
-                            deletingSpeed={30}
-                            delayBetweenPhrases={2500}
-                            cursorClassName="text-emerald-500 animate-pulse font-normal opacity-80"
-                            cursorColor={themeColor}
+                            typingSpeed={60}
+                            deletingSpeed={40}
+                            delayBetweenPhrases={3000}
+                            cursorClassName="text-indigo-600 dark:text-indigo-400 font-light opacity-50"
                         />
                     </h1>
                 </div>
 
-                {/* Sleek Command-Line / Spotlight Search */}
-                <div className="w-full max-w-2xl mx-auto mt-6 relative group">
-                    {/* Glowing under-shadow */}
-                    <div className="absolute -inset-1 bg-gradient-to-r from-zinc-500/30 to-zinc-400/30 dark:from-zinc-500/20 dark:to-zinc-600/20 rounded-2xl blur-lg transition duration-500 group-focus-within:opacity-100 group-focus-within:from-emerald-500/30 group-focus-within:to-indigo-500/30 opacity-70"></div>
-
-                    <form onSubmit={handleSearch} className="relative flex items-center shadow-xl rounded-2xl bg-white dark:bg-zinc-950/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 p-1 sm:p-2 transition-all overflow-hidden group-focus-within:border-zinc-300 dark:group-focus-within:border-zinc-600">
-                        <div className="pl-4 pr-2 flex items-center shrink-0">
-                            <Terminal className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
+                {/* Re-imagined Spotlight Search */}
+                <div className="w-full max-w-3xl mx-auto mt-12 relative group p-2">
+                    <div className="absolute -inset-2 bg-gradient-to-r from-indigo-500/10 to-emerald-500/10 dark:from-indigo-600/10 dark:to-emerald-600/10 rounded-[2.5rem] blur-2xl opacity-0 group-focus-within:opacity-100 transition duration-1000" />
+                    
+                    <form onSubmit={handleSearch} className="relative flex items-center shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-none rounded-[2rem] bg-white/80 dark:bg-zinc-950/80 backdrop-blur-2xl border border-zinc-200/60 dark:border-zinc-800/60 p-2 transition-all duration-500 group-focus-within:border-zinc-400/50 dark:group-focus-within:border-zinc-700/50 group-focus-within:scale-[1.02]">
+                        <div className="pl-6 pr-3 flex items-center shrink-0">
+                            <Search className="h-6 w-6 text-zinc-400 group-focus-within:text-indigo-500 transition-colors" />
                         </div>
                         <input
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Search BCA, Sem 4, OS notes..."
-                            className="flex-1 bg-transparent border-none outline-none text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400/80 dark:placeholder:text-zinc-600 font-mono text-sm sm:text-base py-3 sm:py-4 min-w-0"
+                            placeholder="What are you studying today?"
+                            className="flex-1 bg-transparent border-none outline-none text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 font-bold text-lg sm:text-xl py-4 sm:py-5 min-w-0"
                             autoComplete="off"
-                            spellCheck="false"
                         />
-                        <div className="hidden sm:flex items-center gap-1 pr-3 opacity-60 pointer-events-none shrink-0">
-                            <kbd className="font-mono text-[10px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-1.5 py-0.5 rounded text-zinc-500 dark:text-zinc-400">Enter</kbd>
-                            <span className="text-zinc-400 text-[10px] ml-0.5">↵</span>
+                        <div className="hidden sm:flex items-center gap-1.5 pr-4 shrink-0">
+                            <div className="p-2 bg-zinc-100 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                                <Terminal className="h-4 w-4 text-zinc-400" />
+                            </div>
                         </div>
-                        <ClickSpark
-                            sparkColor="#10b981"
-                            sparkSize={8}
-                            sparkRadius={15}
-                            sparkCount={6}
-                            duration={300}
-                            className="shrink-0 pl-1"
-                        >
-                            <button type="submit" className="flex bg-zinc-100 active:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:active:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-medium px-4 py-3 sm:px-6 sm:py-3 rounded-xl transition-all whitespace-nowrap cursor-pointer items-center justify-center">
-                                <Search className="h-4 w-4 sm:hidden" />
-                                <span className="hidden sm:inline">Search</span>
-                                <Sparkles className="h-3.5 w-3.5 ml-1.5 text-zinc-400 hidden sm:inline" />
+                        <ClickSpark className="shrink-0">
+                            <button type="submit" className="bg-zinc-900 dark:bg-zinc-50 text-white dark:text-zinc-950 font-black text-xs uppercase tracking-[0.2em] px-8 py-5 rounded-[1.5rem] transition-all hover:bg-zinc-800 dark:hover:bg-white active:scale-95 shadow-xl shadow-zinc-900/10">
+                                Search
                             </button>
                         </ClickSpark>
                     </form>
+
+                    {/* Quick Tags */}
+                    <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
+                        {['BCA', 'B.Sc IT', 'PYQs 2024', 'OS Notes', 'Semester 4'].map((tag) => (
+                            <button 
+                                key={tag} 
+                                onClick={() => { setQuery(tag); }}
+                                className="px-4 py-2 bg-zinc-100/50 dark:bg-zinc-900/50 hover:bg-white dark:hover:bg-zinc-800 border border-zinc-200/50 dark:border-zinc-800/50 rounded-xl text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all"
+                            >
+                                {tag}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                <p className="text-sm font-medium text-zinc-500 dark:text-zinc-500 mt-4 max-w-xl mx-auto tracking-wide uppercase">
-                    Stop searching. Start Studying.
-                </p>
-            </div>
+                <div className="flex flex-col items-center gap-6 pt-12">
+                     <p className="text-[10px] font-black text-zinc-400 uppercase tracking-[0.4em]">
+                        Empowering Vocational Excellence
+                    </p>
+                    <div className="flex items-center gap-8 opacity-40 grayscale group-hover:grayscale-0 transition-all duration-700">
+                        <BookOpen className="h-6 w-6" />
+                        <Layers className="h-6 w-6" />
+                        <Terminal className="h-6 w-6" />
+                    </div>
+                </div>
+            </motion.div>
         </section>
     );
 }

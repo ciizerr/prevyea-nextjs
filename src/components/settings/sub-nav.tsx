@@ -5,11 +5,11 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { User, Briefcase, ImageIcon, Bell, Key } from "lucide-react";
 
 const SETTINGS_TABS = [
-    { id: "profile", label: "My Profile", icon: User },
-    { id: "roles", label: "Community Roles", icon: Briefcase },
-    { id: "appearance", label: "Look & Feel", icon: ImageIcon },
+    { id: "profile", label: "Profile", icon: User },
+    { id: "roles", label: "Roles", icon: Briefcase },
+    { id: "appearance", label: "Appearance", icon: ImageIcon },
     { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "security", label: "Account", icon: Key },
+    { id: "security", label: "Security", icon: Key },
 ];
 
 export function SettingsSubNav(props: { isMobile?: boolean }) {
@@ -45,11 +45,10 @@ function SettingsSubNavContent({ isMobile = false }: { isMobile?: boolean }) {
                             <button
                                 key={tab.id}
                                 onClick={() => setTab(tab.id)}
-                                className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${
-                                    isActive 
-                                    ? "text-indigo-600 dark:text-indigo-400" 
+                                className={`flex flex-col items-center gap-1 p-2 rounded-2xl transition-all ${isActive
+                                    ? "text-indigo-600 dark:text-indigo-400"
                                     : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-                                }`}
+                                    }`}
                             >
                                 <Icon className={`h-5 w-5 ${isActive ? "scale-110" : ""}`} />
                                 <span className="text-[10px] font-black uppercase tracking-tighter leading-none">{tab.label.split(' ')[0]}</span>
@@ -70,11 +69,10 @@ function SettingsSubNavContent({ isMobile = false }: { isMobile?: boolean }) {
                     <button
                         key={tab.id}
                         onClick={() => setTab(tab.id)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all uppercase tracking-widest ${
-                            isActive
-                                ? "bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                                : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-zinc-800/50"
-                        }`}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all uppercase tracking-widest ${isActive
+                            ? "bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                            : "text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-white/50 dark:hover:bg-zinc-800/50"
+                            }`}
                     >
                         <Icon className="h-3.5 w-3.5" />
                         {tab.label}

@@ -1,4 +1,4 @@
-import { ChevronRight, Upload } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 
@@ -14,45 +14,44 @@ export default function Footer() {
 
             <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col items-center justify-center text-center relative z-10 space-y-12">
 
-                <h2 className="text-6xl md:text-8xl lg:text-[7rem] font-black tracking-tighter leading-[0.9] text-white mix-blend-difference drop-shadow-sm">
+                <h2 className="text-6xl md:text-8xl lg:text-[7rem] font-black tracking-tighter leading-[0.9] text-white mix-blend-difference">
                     Stop searching.<br />
-                    <span className="text-zinc-500">Start studying.</span>
+                    <span className="text-zinc-600">Start studying.</span>
                 </h2>
 
-                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full max-w-2xl mx-auto">
+                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full max-w-lg mx-auto">
                     <ClickSpark className="w-full sm:w-1/2">
-                        <Link href="/vault" className="w-full h-16 bg-white hover:bg-zinc-200 text-black font-bold text-lg rounded-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-white/10">
-                            Enter the Library
-                            <ChevronRight className="h-5 w-5" />
+                        <Link href="/vault" className="w-full h-16 bg-white text-black font-black text-xs uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95 shadow-2xl">
+                            Explore Archive
+                            <ChevronRight className="h-4 w-4" />
                         </Link>
                     </ClickSpark>
 
                     <ClickSpark className="w-full sm:w-1/2">
-                        <Link href="/vault" className="w-full h-16 bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-700 font-bold text-lg rounded-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95">
-                            <Upload className="h-5 w-5" />
-                            Contribute a Paper
+                        <Link href="/vault" className="w-full h-16 bg-zinc-900 text-white border border-zinc-800 font-black text-xs uppercase tracking-[0.2em] rounded-2xl flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95">
+                            Contribute
                         </Link>
                     </ClickSpark>
                 </div>
 
-                <p className="text-zinc-500 font-medium text-sm max-w-md mx-auto">
-                    Join hundreds of vocational students sharing resources and saving semesters.
+                <p className="text-zinc-600 font-black text-[10px] uppercase tracking-[0.4em] max-w-md mx-auto">
+                    A community driven legacy for PU students.
                 </p>
             </div>
 
             {/* Minimalist Legal Bottom Strip */}
-            <div className="w-full max-w-7xl mx-auto mt-24 pt-8 border-t border-zinc-800/50 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-                <div className="flex items-center gap-2 text-zinc-400 font-bold text-xl tracking-tight">
-                    PU Digital Library
+            <div className="w-full max-w-7xl mx-auto mt-24 pt-8 border-t border-zinc-900/50 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                <div className="flex items-center gap-2 text-zinc-400 font-black text-xs uppercase tracking-widest">
+                    PU Library Digital
                 </div>
 
-                <div className="flex items-center gap-6 text-sm text-zinc-500 font-medium">
+                <div className="flex items-center gap-8 text-[10px] text-zinc-600 font-black uppercase tracking-widest">
                     <Link href="/docs#privacy" className="hover:text-zinc-300 transition-colors">Privacy</Link>
                     <Link href="/docs#terms" className="hover:text-zinc-300 transition-colors">Terms</Link>
                     <Link href="/docs#disclaimer" className="hover:text-zinc-300 transition-colors">Disclaimer</Link>
                 </div>
 
-                <div className="text-sm font-medium text-zinc-600">
+                <div className="text-[10px] font-black text-zinc-700 uppercase tracking-widest">
                     © {new Date().getFullYear()} Student Led Initiative.
                 </div>
             </div>

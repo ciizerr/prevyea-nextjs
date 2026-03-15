@@ -161,7 +161,7 @@ export default function NoticeBoardPage() {
                 </div>
 
                 {/* Search & Filter Hub */}
-                <div className="sticky top-6 z-40 flex flex-col sm:flex-row items-center gap-4 p-3 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border border-zinc-200/60 dark:border-zinc-800/60 rounded-[2rem] shadow-2xl shadow-indigo-500/10">
+                <div className="relative flex flex-col sm:flex-row items-center gap-4 p-3 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border border-zinc-200/60 dark:border-zinc-800/60 rounded-[2rem] shadow-2xl shadow-indigo-500/10">
                     <div className="relative w-full sm:w-80">
                         <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
                             <Search className="h-5 w-5 text-zinc-400" />
