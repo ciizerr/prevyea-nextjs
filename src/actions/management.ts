@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { courses, subjects, colleges, users, collegeCourses } from "@/db/schema";
 import { auth } from "@/auth";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 async function checkAdminAccess() {
@@ -81,24 +81,36 @@ export async function createCourseAction(formData: FormData) {
 export async function createSubjectAction(formData: FormData) {
     try {
         await checkAdminAccess();
-        const name = formData.get("name") as string;
+        const nameInput = formData.get("name") as string;
         const courseId = formData.get("courseId") as string;
         const semester = formData.get("semester") as string;
 
-        if (!name || name.trim() === "") throw new Error("Subject name is required");
+        if (!nameInput || nameInput.trim() === "") throw new Error("Subject name is required");
         if (!courseId) throw new Error("Course ID is required");
         if (!semester) throw new Error("Semester is required");
 
-        const id = crypto.randomUUID();
-        await db.insert(subjects).values({
-            id,
-            name: name.trim(),
-            courseId,
-            semester
+        // Split names by comma or newline and clean up
+        const rawNames = nameInput.split(/,|\n/);
+        const namesToCreate = rawNames.map((n) => n.trim()).filter((n) => n.length > 0);
+
+        if (namesToCreate.length === 0) {
+            throw new Error("No valid subject names found");
+        }
+
+        await db.transaction(async (tx) => {
+            for (const n of namesToCreate) {
+                const id = crypto.randomUUID();
+                await tx.insert(subjects).values({
+                    id,
+                    name: n,
+                    courseId,
+                    semester
+                });
+            }
         });
 
         revalidatePath("/management");
-        return { success: true, message: "Subject created successfully!" };
+        return { success: true, message: `Subject(s) created successfully!` };
     } catch (error) {
         console.error("Create Subject Error:", error);
         return { success: false, error: error instanceof Error ? error.message : "Failed to create subject" };
@@ -186,6 +198,45 @@ export async function deleteSubjectAction(id: string) {
     }
 }
 
+export async function bulkDeleteCollegesAction(ids: string[]) {
+    try {
+        await checkAdminAccess();
+        if (!ids || ids.length === 0) return { success: true };
+        await db.delete(colleges).where(inArray(colleges.id, ids));
+        revalidatePath("/management");
+        return { success: true, message: "Colleges deleted successfully" };
+    } catch (error) {
+        console.error("Bulk Delete Colleges Error:", error);
+        return { success: false, error: "Failed to delete colleges" };
+    }
+}
+
+export async function bulkDeleteCoursesAction(ids: string[]) {
+    try {
+        await checkAdminAccess();
+        if (!ids || ids.length === 0) return { success: true };
+        await db.delete(courses).where(inArray(courses.id, ids));
+        revalidatePath("/management");
+        return { success: true, message: "Courses deleted successfully" };
+    } catch (error) {
+        console.error("Bulk Delete Courses Error:", error);
+        return { success: false, error: "Failed to delete courses" };
+    }
+}
+
+export async function bulkDeleteSubjectsAction(ids: string[]) {
+    try {
+        await checkAdminAccess();
+        if (!ids || ids.length === 0) return { success: true };
+        await db.delete(subjects).where(inArray(subjects.id, ids));
+        revalidatePath("/management");
+        return { success: true, message: "Subjects deleted successfully" };
+    } catch (error) {
+        console.error("Bulk Delete Subjects Error:", error);
+        return { success: false, error: "Failed to delete subjects" };
+    }
+}
+
 // ─── File Management ────────────────────────────────────────────────────────
 
 export async function getFilesForManagementAction() {
@@ -257,6 +308,47 @@ export async function deleteFileAction(id: string) {
     }
 }
 
+export async function bulkDeleteFilesAction(ids: string[]) {
+    try {
+        await checkAdminAccess();
+        if (!ids || ids.length === 0) return { success: true };
+
+        const { pyqs } = await import("@/db/schema");
+
+        // Fetch records to get Cloudinary public_ids
+        const records = await db.select({ driveId: pyqs.driveId }).from(pyqs).where(inArray(pyqs.id, ids));
+
+        let hasCloudinaryWarning = false;
+        try {
+            const cloudinary = (await import("cloudinary")).v2;
+            cloudinary.config({ secure: true });
+
+            for (const record of records) {
+                if (record?.driveId) {
+                    const result = await cloudinary.uploader.destroy(record.driveId, { resource_type: "raw" });
+                    if (result.result !== "ok" && result.result !== "not found") {
+                        hasCloudinaryWarning = true;
+                    }
+                }
+            }
+        } catch (err) {
+            hasCloudinaryWarning = true;
+            console.error("Cloudinary bulk delete error:", err);
+        }
+
+        // Delete from DB
+        await db.delete(pyqs).where(inArray(pyqs.id, ids));
+        revalidatePath("/management");
+        revalidatePath("/vault");
+        revalidatePath("/syllabus");
+
+        return { success: true, warning: hasCloudinaryWarning ? "Some files could not be removed from Cloudinary" : null };
+    } catch (error) {
+        console.error("Bulk Delete Files Error:", error);
+        return { success: false, error: "Failed to bulk delete files" };
+    }
+}
+
 export async function updateFileTitleAction(id: string, title: string) {
     try {
         await checkAdminAccess();
@@ -271,4 +363,43 @@ export async function updateFileTitleAction(id: string, title: string) {
         return { success: false, error: "Failed to update file" };
     }
 }
+export async function deleteAllFilesAction() {
+    try {
+        await checkAdminAccess();
+        const { pyqs } = await import("@/db/schema");
 
+        // Fetch all records to get Cloudinary public_ids
+        const allFiles = await db.select({ driveId: pyqs.driveId }).from(pyqs);
+        const publicIds = allFiles.map(f => f.driveId).filter(Boolean) as string[];
+
+        let cloudinaryWarning: string | null = null;
+        if (publicIds.length > 0) {
+            try {
+                const cloudinary = (await import("cloudinary")).v2;
+                cloudinary.config({ secure: true });
+                
+                // Cloudinary limit for delete_resources is 100 per call
+                for (let i = 0; i < publicIds.length; i += 100) {
+                    const chunk = publicIds.slice(i, i + 100);
+                    // Using api.delete_resources since it's more efficient for bulk
+                    await cloudinary.api.delete_resources(chunk, { resource_type: "raw" });
+                }
+            } catch (err) {
+                console.error("Cloudinary empty error:", err);
+                cloudinaryWarning = "Failed to remove some files from Cloudinary storage.";
+            }
+        }
+
+        // Delete all records from DB
+        await db.delete(pyqs);
+        
+        revalidatePath("/management");
+        revalidatePath("/vault");
+        revalidatePath("/syllabus");
+        
+        return { success: true, message: "All files deleted successfully", warning: cloudinaryWarning };
+    } catch (error) {
+        console.error("Delete All Files Error:", error);
+        return { success: false, error: "Failed to delete all files" };
+    }
+}

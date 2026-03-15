@@ -5,10 +5,10 @@ import { eq, desc } from "drizzle-orm";
 import { users, courses, colleges, subjects, collegeCourses } from "@/db/schema";
 import { Building2, GraduationCap, BookOpen, Plus, FileText } from "lucide-react";
 
-import { createCollegeAction, createCourseAction, deleteCollegeAction, deleteCourseAction, deleteSubjectAction } from "@/actions/management";
+import { createCollegeAction, createCourseAction, deleteCollegeAction, bulkDeleteCollegesAction, deleteCourseAction, bulkDeleteCoursesAction, deleteSubjectAction, bulkDeleteSubjectsAction } from "@/actions/management";
 import CreateSubjectClientForm from "@/components/management/subject-form";
-import { ConfirmDeleteButton } from "@/components/management/confirm-delete-button";
 import ManageFilesSection from "@/components/management/manage-files-section";
+import { CollegeList, CourseList, SubjectList } from "@/components/management/management-lists";
 
 export default async function ManagementPage() {
     const session = await auth();
@@ -65,19 +65,11 @@ export default async function ManagementPage() {
 
                     <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800/60">
                         <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">Total Colleges: {allColleges.length}</p>
-                        <div className="flex flex-wrap gap-2">
-                            {allColleges.map(c => (
-                                <span key={c.id} className="text-xs bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-lg text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
-                                    {c.name}
-                                    <ConfirmDeleteButton
-                                        label={c.name}
-                                        entityType="College"
-                                        warning="This will also remove all college-course associations. Subjects and files in those courses may become orphaned."
-                                        action={async () => { "use server"; await deleteCollegeAction(c.id); }}
-                                    />
-                                </span>
-                            ))}
-                        </div>
+                        <CollegeList 
+                            allColleges={allColleges} 
+                            deleteAction={async (id) => { "use server"; await deleteCollegeAction(id); }} 
+                            bulkDeleteAction={async (ids) => { "use server"; await bulkDeleteCollegesAction(ids); }}
+                        />
                     </div>
                 </div>
 
@@ -113,29 +105,13 @@ export default async function ManagementPage() {
 
                     <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800/60">
                         <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3">Total Courses: {allCourses.length}</p>
-                        <div className="flex flex-wrap gap-2">
-                            {allCourses.map(c => {
-                                const mappedCols = allCollegeCourses.filter(cc => cc.courseId === c.id)
-                                    .map(cc => allColleges.find(col => col.id === cc.collegeId)?.name)
-                                    .filter(Boolean).join(", ");
-                                return (
-                                    <span key={c.id} className="text-xs bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-900/30 px-3 py-2 rounded-lg flex flex-col items-start gap-1 shadow-sm relative pr-8">
-                                        <span className="font-black text-sm">{c.name}</span>
-                                        <span className="opacity-80 text-[10px] bg-white dark:bg-emerald-900/50 px-2 py-0.5 rounded font-medium border border-emerald-100 dark:border-emerald-800 shrink-0">{mappedCols || "No College Links"}</span>
-                                        <span className="opacity-80 text-[10px] font-bold">{c.totalSemesters} Semesters</span>
-                                        <span className="absolute top-2 right-2">
-                                            <ConfirmDeleteButton
-                                                label={c.name}
-                                                entityType="Course"
-                                                warning="This will delete all subjects and files associated with this course."
-                                                action={async () => { "use server"; await deleteCourseAction(c.id); }}
-                                                iconSize="md"
-                                            />
-                                        </span>
-                                    </span>
-                                );
-                            })}
-                        </div>
+                        <CourseList 
+                            allCourses={allCourses} 
+                            allColleges={allColleges} 
+                            allCollegeCourses={allCollegeCourses} 
+                            deleteAction={async (id) => { "use server"; await deleteCourseAction(id); }} 
+                            bulkDeleteAction={async (ids) => { "use server"; await bulkDeleteCoursesAction(ids); }} 
+                        />
                     </div>
                 </div>
 
@@ -148,26 +124,13 @@ export default async function ManagementPage() {
                     <CreateSubjectClientForm allCourses={allCourses} />
 
                     <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800/60 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                        <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3 sticky top-0 bg-white dark:bg-zinc-900 py-1">Total Subjects: {allSubjects.length}</p>
-                        <div className="flex flex-wrap gap-2">
-                            {allSubjects.map(s => {
-                                const course = allCourses.find(c => c.id === s.courseId);
-                                return (
-                                    <span key={s.id} className="text-xs bg-amber-50 text-amber-800 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-200/50 dark:border-amber-900/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 relative pr-8">
-                                        <span className="font-bold">{s.name}</span>
-                                        <span className="opacity-60 text-[10px] bg-white dark:bg-black/20 px-1 rounded">{course?.name} · {s.semester}</span>
-                                        <span className="absolute top-1/2 -translate-y-1/2 right-2">
-                                            <ConfirmDeleteButton
-                                                label={`${s.name} (${course?.name} · ${s.semester})`}
-                                                entityType="Subject"
-                                                warning="All files uploaded under this subject will become orphaned (not visible in Vault)."
-                                                action={async () => { "use server"; await deleteSubjectAction(s.id); }}
-                                            />
-                                        </span>
-                                    </span>
-                                );
-                            })}
-                        </div>
+                        <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-3 sticky top-0 bg-white dark:bg-zinc-900 py-1 z-10">Total Subjects: {allSubjects.length}</p>
+                        <SubjectList 
+                            allSubjects={allSubjects} 
+                            allCourses={allCourses} 
+                            deleteAction={async (id) => { "use server"; await deleteSubjectAction(id); }} 
+                            bulkDeleteAction={async (ids) => { "use server"; await bulkDeleteSubjectsAction(ids); }} 
+                        />
                     </div>
                 </div>
 

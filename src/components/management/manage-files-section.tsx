@@ -8,6 +8,8 @@ import {
 import {
     getFilesForManagementAction,
     deleteFileAction,
+    bulkDeleteFilesAction,
+    deleteAllFilesAction,
     updateFileTitleAction,
 } from "@/actions/management";
 
@@ -100,6 +102,7 @@ export default function ManageFilesSection() {
     const [editingTitle, setEditingTitle] = useState("");
 
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
     const [isPending, startTransition] = useTransition();
 
@@ -125,6 +128,46 @@ export default function ManageFilesSection() {
             await deleteFileAction(id);
             setFiles(prev => prev.filter(f => f.id !== id));
             setConfirmDeleteId(null);
+            if (selectedIds.has(id)) {
+                const next = new Set(selectedIds);
+                next.delete(id);
+                setSelectedIds(next);
+            }
+        });
+    };
+
+    const handleBulkDelete = () => {
+        if (selectedIds.size === 0) return;
+        if (!confirm(`Are you sure you want to delete ${selectedIds.size} file(s)? This action cannot be undone.`)) return;
+
+        startTransition(async () => {
+            await bulkDeleteFilesAction(Array.from(selectedIds));
+            setFiles(prev => prev.filter(f => !selectedIds.has(f.id)));
+            setSelectedIds(new Set());
+        });
+    };
+
+    const toggleSelection = (id: string) => {
+        const next = new Set(selectedIds);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        setSelectedIds(next);
+    };
+
+    const toggleAll = () => {
+        if (selectedIds.size === filteredFiles.length) setSelectedIds(new Set());
+        else setSelectedIds(new Set(filteredFiles.map(f => f.id)));
+    };
+
+    const handleDeleteAll = () => {
+        if (!confirm("CRITICAL ACTION: Are you sure you want to delete EVERY file in the library? This will wipe the Cloudinary storage and database records for ALL files. This cannot be undone.")) return;
+        
+        startTransition(async () => {
+            const res = await deleteAllFilesAction();
+            if (res.success) {
+                setFiles([]);
+                setSelectedIds(new Set());
+            }
         });
     };
 
@@ -161,6 +204,26 @@ export default function ManageFilesSection() {
                         <span className="text-sm font-medium text-zinc-400 ml-1">({files.length} total)</span>
                     </h3>
                     <div className="flex flex-wrap items-center gap-2">
+                        {selectedIds.size > 0 && (
+                            <button
+                                onClick={handleBulkDelete}
+                                disabled={isPending}
+                                className="text-sm font-bold bg-red-100 hover:bg-red-200 text-red-700 dark:bg-red-500/10 dark:hover:bg-red-500/20 dark:text-red-400 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors mr-2"
+                            >
+                                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                                Delete Selected ({selectedIds.size})
+                            </button>
+                        )}
+                        {files.length > 0 && (
+                            <button
+                                onClick={handleDeleteAll}
+                                disabled={isPending}
+                                className="text-sm font-bold bg-zinc-900 hover:bg-black text-white dark:bg-zinc-800 dark:hover:bg-zinc-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+                            >
+                                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
+                                Empty All
+                            </button>
+                        )}
                         {/* Type filter */}
                         <div className="relative">
                             <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className={inputClass}>
@@ -183,6 +246,22 @@ export default function ManageFilesSection() {
                         </div>
                     </div>
                 </div>
+
+                {/* Bulk Select All */}
+                {filteredFiles.length > 0 && !loading && (
+                    <div className="flex items-center gap-2 mb-3 px-1">
+                        <input
+                            type="checkbox"
+                            checked={selectedIds.size === filteredFiles.length && filteredFiles.length > 0}
+                            onChange={toggleAll}
+                            className="w-4 h-4 text-blue-600 rounded border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800"
+                            id="selectAllFiles"
+                        />
+                        <label htmlFor="selectAllFiles" className="text-sm font-semibold text-zinc-600 dark:text-zinc-400 cursor-pointer select-none border-b border-transparent hover:border-zinc-300">
+                            Select All
+                        </label>
+                    </div>
+                )}
 
                 {/* Search */}
                 <div className="relative mb-5">
@@ -211,27 +290,36 @@ export default function ManageFilesSection() {
                         {filteredFiles.map(file => (
                             <div
                                 key={file.id}
-                                className="p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
+                                className={`p-4 rounded-2xl border transition-colors flex gap-3 ${selectedIds.has(file.id) ? 'border-red-400 dark:border-red-600 bg-red-50 dark:bg-red-500/10' : 'border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 hover:border-zinc-200 dark:hover:border-zinc-700'}`}
                             >
-                                {/* Row 1: Title / Edit input */}
-                                <div className="mb-1.5">
-                                    {editingId === file.id ? (
-                                        <input
-                                            value={editingTitle}
-                                            onChange={e => setEditingTitle(e.target.value)}
-                                            onKeyDown={e => {
-                                                if (e.key === "Enter") handleEditSave(file.id);
-                                                if (e.key === "Escape") setEditingId(null);
-                                            }}
-                                            autoFocus
-                                            className="w-full px-3 py-1.5 rounded-lg border border-blue-400 dark:border-blue-600 bg-white dark:bg-zinc-900 text-sm font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-                                        />
-                                    ) : (
-                                        <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 truncate leading-snug">
-                                            {file.title}
-                                        </p>
-                                    )}
+                                <div className="pt-1 select-none">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedIds.has(file.id)}
+                                        onChange={() => toggleSelection(file.id)}
+                                        className="w-4 h-4 text-blue-600 rounded border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800"
+                                    />
                                 </div>
+                                <div className="flex-1 min-w-0">
+                                    {/* Row 1: Title / Edit input */}
+                                    <div className="mb-1.5">
+                                        {editingId === file.id ? (
+                                            <input
+                                                value={editingTitle}
+                                                onChange={e => setEditingTitle(e.target.value)}
+                                                onKeyDown={e => {
+                                                    if (e.key === "Enter") handleEditSave(file.id);
+                                                    if (e.key === "Escape") setEditingId(null);
+                                                }}
+                                                autoFocus
+                                                className="w-full px-3 py-1.5 rounded-lg border border-blue-400 dark:border-blue-600 bg-white dark:bg-zinc-900 text-sm font-semibold text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                                            />
+                                        ) : (
+                                            <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 truncate leading-snug">
+                                                {file.title}
+                                            </p>
+                                        )}
+                                    </div>
 
                                 {/* Row 2: Meta */}
                                 <p className="text-xs text-zinc-400 truncate mb-2.5">
@@ -299,6 +387,7 @@ export default function ManageFilesSection() {
                                                 </button>
                                             </>
                                         )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

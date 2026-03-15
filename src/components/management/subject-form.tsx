@@ -26,13 +26,14 @@ export default function CreateSubjectClientForm({ allCourses }: SubjectFormProps
         <form action={async (formData) => { await createSubjectAction(formData); return; }} className="space-y-4 max-w-2xl">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2 md:col-span-2">
-                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Subject Name</label>
-                    <input
-                        type="text"
+                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Subject Name(s)</label>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">You can add multiple subjects at once by separating them with commas or new lines.</p>
+                    <textarea
                         name="name"
                         required
-                        placeholder="e.g. Operating Systems"
-                        className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-amber-500/50 outline-none"
+                        rows={3}
+                        placeholder="e.g. Operating Systems, Computer Networks"
+                        className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-amber-500/50 outline-none resize-y"
                     />
                 </div>
                 <div className="space-y-2">
