@@ -6,6 +6,7 @@ import Providers from "@/components/providers";
 import ServiceWorkerRegistration from "@/components/sw-register";
 import PWAInstallPrompt from "@/components/pwa-install-prompt";
 import CommandPalette from "@/components/layout/command-palette";
+import { Toaster } from "sonner";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -71,12 +72,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Providers>
-            {children}
-            <CommandPalette />
-            <ServiceWorkerRegistration />
-            <PWAInstallPrompt />
-          </Providers>
+            <Providers>
+              {children}
+              <CommandPalette />
+              <ServiceWorkerRegistration />
+              <PWAInstallPrompt />
+              <Toaster position="top-center" richColors />
+            </Providers>
         </ThemeProvider>
       </body>
     </html>

@@ -35,6 +35,36 @@ export async function getNoticesAction() {
     }
 }
 
+export async function getNoticeByIdAction(id: string) {
+    try {
+        const result = await db
+            .select({
+                id: notices.id,
+                title: notices.title,
+                content: notices.content,
+                type: notices.type,
+                createdAt: notices.createdAt,
+                updatedAt: notices.updatedAt,
+                expiresAt: notices.expiresAt,
+                authorId: notices.authorId,
+                authorName: users.name,
+                authorRole: users.role,
+                authorUsername: users.username,
+            })
+            .from(notices)
+            .leftJoin(users, eq(notices.authorId, users.id))
+            .where(eq(notices.id, id))
+            .get();
+
+        if (!result) return { success: false, error: "Notice not found." };
+
+        return { success: true, data: result };
+    } catch (error) {
+        console.error("Failed to fetch notice by ID:", error);
+        return { success: false, error: "An unexpected error occurred." };
+    }
+}
+
 export async function createNoticeAction(formData: FormData) {
     try {
         const session = await auth();

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, Bug, Loader2 } from "lucide-react";
 import { createReportAction } from "@/actions/reports";
+import { toast } from "sonner";
 
 interface ReportBugModalProps {
     isOpen: boolean;
@@ -22,15 +23,15 @@ export function ReportBugModal({ isOpen, onClose }: ReportBugModalProps) {
         try {
             const res = await createReportAction(title, description);
             if (res.success) {
-                alert("Bug report submitted successfully! Thank you for your help.");
+                toast.success("Bug report submitted successfully! Thank you for your help.");
                 setTitle("");
                 setDescription("");
                 onClose();
             } else {
-                alert(res.error || "Failed to submit report");
+                toast.error(res.error || "Failed to submit report");
             }
         } catch {
-            alert("An unexpected error occurred.");
+            toast.error("An unexpected error occurred.");
         } finally {
             setLoading(false);
         }

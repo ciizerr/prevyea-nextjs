@@ -21,6 +21,7 @@ import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getCoursesAction, getSubjectsAction, getFilesAction, incrementDownloadAction } from "@/actions/curriculum";
 import PDFViewer from "@/components/pdf-viewer";
 import { UploadModal } from "@/components/dashboard/upload-modal";
+import { toast } from "sonner";
 
 type CourseType = {
     id: string;
@@ -491,7 +492,7 @@ export default function VaultPage() {
                                     onClick={() => {
                                         const url = `${window.location.origin}/v/${selectedPaper.id}`;
                                         navigator.clipboard.writeText(url);
-                                        alert("Link copied to clipboard!");
+                                        toast.success("Link copied to clipboard!");
                                     }}
                                     className="p-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-5 group"
                                 >

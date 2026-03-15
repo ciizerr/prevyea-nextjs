@@ -325,23 +325,31 @@ export default async function Image({ params }: { params: { username: string } }
                         </div>
 
                         {/* Social Row */}
-                        <div style={{ display: "flex", gap: "12px", marginTop: "30px" }}>
+                        <div style={{ display: "flex", gap: "16px", marginTop: "30px" }}>
                             {userProfile.github && (
-                                <div style={{ display: "flex", alignItems: "center", gap: "10px", background: "#f4f4f5", padding: "12px 20px", borderRadius: "20px" }}>
-                                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#18181b" }} />
-                                    <span style={{ fontSize: 18, color: "#3f3f46", fontWeight: 800 }}>GitHub</span>
+                                <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "#f8fafc", padding: "12px 24px", borderRadius: "24px", border: "1px solid #e2e8f0" }}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                                    </svg>
+                                    <span style={{ fontSize: 20, color: "#334155", fontWeight: 800 }}>GitHub</span>
                                 </div>
                             )}
                             {userProfile.instagram && (
-                                <div style={{ display: "flex", alignItems: "center", gap: "10px", background: "#f4f4f5", padding: "12px 20px", borderRadius: "20px" }}>
-                                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#db2777" }} />
-                                    <span style={{ fontSize: 18, color: "#3f3f46", fontWeight: 800 }}>Instagram</span>
+                                <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "#fff1f2", padding: "12px 24px", borderRadius: "24px", border: "1px solid #ffe4e6" }}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                                    </svg>
+                                    <span style={{ fontSize: 20, color: "#334155", fontWeight: 800 }}>Instagram</span>
                                 </div>
                             )}
                             {userProfile.discord && (
-                                <div style={{ display: "flex", alignItems: "center", gap: "10px", background: "#f4f4f5", padding: "12px 20px", borderRadius: "20px" }}>
-                                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#4f46e5" }} />
-                                    <span style={{ fontSize: 18, color: "#3f3f46", fontWeight: 800 }}>Discord</span>
+                                <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "#eef2ff", padding: "12px 24px", borderRadius: "24px", border: "1px solid #e0e7ff" }}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                    </svg>
+                                    <span style={{ fontSize: 20, color: "#334155", fontWeight: 800 }}>Discord</span>
                                 </div>
                             )}
                         </div>

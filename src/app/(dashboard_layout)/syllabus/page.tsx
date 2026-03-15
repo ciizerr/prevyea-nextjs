@@ -8,6 +8,7 @@ import { getCoursesAction, getSubjectsAction, getFilesAction } from "@/actions/c
 import PDFViewer from "@/components/pdf-viewer";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 
 type CourseType = {
     id: string;
@@ -224,7 +225,7 @@ export default function SyllabusPage() {
             };
         } catch (error) {
             console.error("Failed to generate PDF", error);
-            alert("Failed to initialize print window.");
+            toast.error("Failed to initialize print window.");
             setDownloadingPdf(false);
         }
     };
@@ -385,7 +386,7 @@ export default function SyllabusPage() {
                                                     onClick={() => {
                                                         const url = `${window.location.origin}/s/${activeSubjectId}`;
                                                         navigator.clipboard.writeText(url);
-                                                        alert("Link copied to clipboard!");
+                                                        toast.success("Link copied to clipboard!");
                                                     }}
                                                     className="w-full sm:w-auto px-6 py-5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 rounded-2xl font-black flex items-center justify-center gap-3 transition-all active:scale-95 text-[11px] uppercase tracking-widest group shadow-sm"
                                                 >

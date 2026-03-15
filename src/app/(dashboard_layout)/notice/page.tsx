@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Calendar, BellRing, Trophy, GraduationCap, ChevronRight, Plus, Loader2, Pencil, Archive, ChevronDown, Trash2, Megaphone, User, Info } from "lucide-react";
+import { Search, Calendar, BellRing, Trophy, GraduationCap, ChevronRight, Plus, Loader2, Pencil, Archive, ChevronDown, Trash2, Megaphone, User, Info, Share2 } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { useSession } from "next-auth/react";
 import { getNoticesAction, getArchivedNoticesAction, deleteNoticeAction } from "@/actions/notice";
@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 
 dayjs.extend(relativeTime);
 
@@ -95,8 +96,9 @@ export default function NoticeBoardPage() {
             } else {
                 setNotices(prev => prev.filter(n => n.id !== id));
             }
+            toast.success("Notice deleted successfully");
         } else {
-            alert(res.error || "Failed to delete notice");
+            toast.error(res.error || "Failed to delete notice");
         }
         setDeletingId(null);
     }
@@ -240,6 +242,17 @@ export default function NoticeBoardPage() {
                                             </div>
 
                                             <div className="flex items-center gap-3">
+                                                <button
+                                                    onClick={() => {
+                                                        const url = `${window.location.origin}/n/${notice.id}`;
+                                                        navigator.clipboard.writeText(url);
+                                                        toast.success("Notice link copied!");
+                                                    }}
+                                                    className="p-2.5 rounded-xl text-zinc-400 hover:text-indigo-600 hover:bg-white dark:hover:bg-zinc-800 transition-all"
+                                                    title="Share Notice"
+                                                >
+                                                    <Share2 className="w-4 h-4" />
+                                                </button>
                                                 {isOwner && (
                                                     <div className="flex items-center gap-1 px-2 py-1 bg-zinc-100 dark:bg-zinc-900/50 rounded-2xl border border-zinc-200 dark:border-zinc-800">
                                                         <button
