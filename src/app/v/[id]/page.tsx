@@ -95,7 +95,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
                     <PDFViewer 
                         url={paper.viewLink} 
                         downloadUrl={paper.downloadLink}
-                        fileLabel={`${paper.year} ${paper.title}`}
+                        fileLabel={`${paper.year} - ${paper.title}`}
                     />
                 </div>
 

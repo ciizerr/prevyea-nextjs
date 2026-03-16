@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Download, Sparkles } from "lucide-react";
+import MarkdownExportButton from "@/components/markdown-export-button";
 
 interface SyllabusPageProps {
     params: Promise<{ id: string }>;
@@ -98,16 +99,30 @@ export default async function SharedSyllabusPage({ params }: SyllabusPageProps) 
                         </div>
                     </div>
 
-                    {syllabusFile && !isMarkdown && (
-                        <a
-                            href={syllabusFile.downloadLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-10 py-5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-2xl flex items-center justify-center gap-3 hover:scale-105 transition-all active:scale-95 shrink-0"
-                        >
-                            <Download className="w-4 h-4" />
-                            Download PDF
-                        </a>
+                    {syllabusFile && (
+                        <div className="flex items-center gap-4">
+                            {isMarkdown ? (
+                                <MarkdownExportButton 
+                                    elementId="markdown-content"
+                                    fileName={`${subject.name} - Syllabus`}
+                                    headerData={{
+                                        title: subject.name,
+                                        course: subject.courseName || undefined,
+                                        semester: subject.semester || undefined
+                                    }}
+                                />
+                            ) : (
+                                <a
+                                    href={syllabusFile.downloadLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-10 py-5 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-2xl flex items-center justify-center gap-3 hover:scale-105 transition-all active:scale-95 shrink-0"
+                                >
+                                    <Download className="w-4 h-4" />
+                                    Download PDF
+                                </a>
+                            )}
+                        </div>
                     )}
                 </div>
 
@@ -121,12 +136,16 @@ export default async function SharedSyllabusPage({ params }: SyllabusPageProps) 
                             <Link href="/vault" className="text-[11px] font-black uppercase tracking-widest text-blue-500">Request Integration</Link>
                         </div>
                     ) : isMarkdown ? (
-                        <div className="w-full bg-white dark:bg-zinc-950/40 p-8 md:p-16 rounded-[3rem] border border-zinc-200 dark:border-zinc-800/60 prose prose-zinc dark:prose-invert max-w-none shadow-2xl overflow-x-auto selection:bg-blue-100 dark:selection:bg-blue-900/40">
+                        <div id="markdown-content" className="w-full bg-white dark:bg-zinc-950/40 p-8 md:p-16 rounded-[3rem] border border-zinc-200 dark:border-zinc-800/60 prose prose-zinc dark:prose-invert max-w-none shadow-2xl overflow-x-auto selection:bg-blue-100 dark:selection:bg-blue-900/40">
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent || ""}</ReactMarkdown>
                         </div>
                     ) : (
                         <div className="bg-white dark:bg-zinc-950/40 rounded-[3rem] border border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden h-[850px]">
-                            <PDFViewer url={syllabusFile.viewLink} />
+                            <PDFViewer 
+                                url={syllabusFile.viewLink} 
+                                downloadUrl={syllabusFile.downloadLink}
+                                fileLabel={`${subject.name} - Syllabus`}
+                            />
                         </div>
                     )}
                 </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import { User, CheckCircle2, XCircle, Loader2, Link2, Camera, Trash2, Instagram, MessageSquare, Github, Briefcase, Key } from "lucide-react";
+import { User, CheckCircle2, XCircle, Loader2, Link2, Camera, Trash2, Briefcase, Key } from "lucide-react";
+import { SimpleInstagram, SimpleGithub, SimpleDiscord } from "@/components/si-icons";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getUserProfileAction, updateProfileAction } from "@/actions/user";
 import { getCoursesAction } from "@/actions/curriculum";
@@ -351,7 +352,7 @@ function SettingsContent() {
                                         {/* Social Section */}
                                         <section className="space-y-6">
                                             <div className="flex items-center gap-3 pb-2 border-b border-zinc-200 dark:border-zinc-800/60">
-                                                <Instagram className="h-4 w-4 text-pink-500" />
+                                                <SimpleInstagram size={16} className="text-[#E4405F]" />
                                                 <h3 className="text-sm font-black uppercase tracking-widest text-zinc-900 dark:text-white">Social Presence</h3>
                                             </div>
                                             <div className="space-y-4">
@@ -359,7 +360,7 @@ function SettingsContent() {
                                                     <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Instagram</label>
                                                     <div className="relative">
                                                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                            <Instagram className="h-4 w-4 text-pink-500" />
+                                                            <SimpleInstagram size={14} className="text-[#E4405F]" />
                                                         </div>
                                                         <input
                                                             type="text"
@@ -375,7 +376,7 @@ function SettingsContent() {
                                                     <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Discord</label>
                                                     <div className="relative">
                                                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                            <MessageSquare className="h-4 w-4 text-indigo-500" />
+                                                            <SimpleDiscord size={14} className="text-[#5865F2]" />
                                                         </div>
                                                         <input
                                                             type="text"
@@ -391,7 +392,7 @@ function SettingsContent() {
                                                     <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">GitHub</label>
                                                     <div className="relative">
                                                         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                            <Github className="h-4 w-4 text-zinc-700 dark:text-zinc-300" />
+                                                            <SimpleGithub size={14} className="text-[#181717] dark:text-white" />
                                                         </div>
                                                         <input
                                                             type="text"

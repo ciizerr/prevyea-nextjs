@@ -4,9 +4,11 @@ import { db } from "@/db";
 import { users, pyqs, courses } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { User, ShieldCheck, GraduationCap, FileType, ExternalLink, Instagram, MessageSquare, Github, ArrowLeft, Trophy, Calendar, Sparkles } from "lucide-react";
+import { User, ShieldCheck, GraduationCap, FileType, ExternalLink, ArrowLeft, Trophy, Calendar, Sparkles } from "lucide-react";
+import { SimpleInstagram, SimpleGithub, SimpleDiscord } from "@/components/si-icons";
 import Link from "next/link";
 import dayjs from "dayjs";
+import ShareProfile from "@/components/share-profile";
 
 interface ProfilePageProps {
     params: Promise<{
@@ -20,6 +22,7 @@ interface PyqDoc {
     type: string | null;
     year: number;
     viewLink: string;
+    subjectId: string;
     createdAt: Date | null;
 }
 
@@ -107,9 +110,12 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
                         <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                         Back to Dashboard
                     </Link>
-                    <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Public Profile</span>
+                    <div className="flex items-center gap-4 sm:gap-6">
+                        <ShareProfile username={userProfile.username!} variant="minimal" />
+                        <div className="hidden sm:flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Public Profile</span>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -200,19 +206,19 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
                                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2">
                                     {userProfile.instagram && (
                                         <a href={`https://instagram.com/${userProfile.instagram}`} target="_blank" rel="noreferrer" className="flex items-center gap-2.5 px-5 py-2.5 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-2xl text-sm font-bold transition-all text-zinc-700 dark:text-zinc-300">
-                                            <Instagram className="w-4 h-4 text-pink-500" />
+                                            <SimpleInstagram size={16} className="text-[#E4405F]" />
                                             <span>Instagram</span>
                                         </a>
                                     )}
                                     {userProfile.github && (
                                         <a href={`https://github.com/${userProfile.github}`} target="_blank" rel="noreferrer" className="flex items-center gap-2.5 px-5 py-2.5 bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-2xl text-sm font-bold transition-all text-zinc-700 dark:text-zinc-300">
-                                            <Github className="w-4 h-4 text-zinc-900 dark:text-zinc-100" />
+                                            <SimpleGithub size={16} className="text-[#181717] dark:text-white" />
                                             <span>GitHub</span>
                                         </a>
                                     )}
                                     {userProfile.discord && (
                                         <div className="flex items-center gap-2.5 px-5 py-2.5 bg-zinc-100 dark:bg-zinc-900 rounded-2xl text-sm font-bold text-zinc-700 dark:text-zinc-300 cursor-help" title={`Discord: ${userProfile.discord}`}>
-                                            <MessageSquare className="w-4 h-4 text-indigo-500" />
+                                            <SimpleDiscord size={16} className="text-[#5865F2]" />
                                             <span>Discord</span>
                                         </div>
                                     )}
@@ -247,8 +253,7 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
                             {pyqsList.map((doc: PyqDoc) => (
                                 <Link 
                                     key={doc.id}
-                                    href={doc.viewLink}
-                                    target="_blank"
+                                    href={doc.type === "Syllabus" ? `/s/${doc.subjectId}` : `/v/${doc.id}`}
                                     className="group flex items-center bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1 hover:border-blue-500/50 transition-all duration-300 overflow-hidden relative"
                                 >
                                     {/* Decorative subtle background icon */}

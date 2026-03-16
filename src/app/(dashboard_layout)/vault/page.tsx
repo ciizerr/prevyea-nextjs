@@ -514,7 +514,7 @@ export default function VaultPage() {
                             <PDFViewer
                                 url={selectedPaper.viewLink}
                                 downloadUrl={selectedPaper.downloadLink}
-                                fileLabel={`${selectedPaper.title} ● ${selectedPaper.year}`}
+                                fileLabel={`${selectedPaper.year} - ${selectedPaper.title}`}
                                 onDownload={() => {
                                     setPapers(prev => prev.map((p) =>
                                         p.id === selectedPaper.id
