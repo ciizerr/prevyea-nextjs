@@ -139,6 +139,14 @@ export const verificationTokens = sqliteTable("verificationToken", {
     expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
 });
 
+// Holidays Table
+export const holidays = sqliteTable("holidays", {
+    date: text("date").primaryKey(), // Using YYYY-MM-DD string
+    name: text("name").notNull(),
+    year: integer("year").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
+});
+
 // Relationships
 import { relations } from "drizzle-orm";
 

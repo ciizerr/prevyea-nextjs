@@ -1,10 +1,11 @@
 "use client";
 
-import { Search, Bell, LogOut, Settings, User, Loader2, CheckCheck, LogIn, Command, Sparkles } from "lucide-react";
+import { Search, Bell, LogOut, Settings, User, Loader2, CheckCheck, LogIn, Command, Sparkles, CalendarDays } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { SettingsSubNav } from "@/components/settings/sub-nav";
+import { HolidaysCalendar } from "@/components/dashboard/holidays-calendar";
 import Link from "next/link";
 import Image from "next/image";
 import { getNotificationsAction, markAsReadAction, markAllAsReadAction, clearNotificationsAction } from "@/actions/notifications";
@@ -32,6 +33,7 @@ export function Header({ isMobile = false }: HeaderProps) {
     const isLoggedIn = status === "authenticated";
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const pathname = usePathname();
 
@@ -40,6 +42,7 @@ export function Header({ isMobile = false }: HeaderProps) {
 
     const profileRef = useRef<HTMLDivElement>(null);
     const notificationsRef = useRef<HTMLDivElement>(null);
+    const calendarRef = useRef<HTMLDivElement>(null);
 
     // Close dropdowns when clicking outside
     useEffect(() => {
@@ -49,6 +52,9 @@ export function Header({ isMobile = false }: HeaderProps) {
             }
             if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
                 setIsNotificationsOpen(false);
+            }
+            if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+                setIsCalendarOpen(false);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
@@ -177,6 +183,39 @@ export function Header({ isMobile = false }: HeaderProps) {
                         <Search className="h-5 w-5" />
                     </button>
                 )}
+                {/* Calendar Module - Available to all */}
+                <div ref={calendarRef} className="relative">
+                    <button
+                        onClick={() => {
+                            const newState = !isCalendarOpen;
+                            setIsCalendarOpen(newState);
+                            if(newState) {
+                                setIsNotificationsOpen(false);
+                                setIsProfileOpen(false);
+                            }
+                        }}
+                        className={`group p-2.5 rounded-2xl transition-all relative ${
+                            isCalendarOpen 
+                            ? 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100 dark:border-amber-500/20 shadow-lg shadow-amber-500/10' 
+                            : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-900 border border-transparent'
+                        }`}
+                        title="Academic Calendar"
+                    >
+                        <CalendarDays className="h-5 w-5" />
+                    </button>
+
+                    {isCalendarOpen && (
+                        <>
+                            {/* Mobile Backdrop */}
+                            <div className="fixed inset-0 z-40 sm:hidden" onClick={() => setIsCalendarOpen(false)} />
+                            
+                            <div className="fixed left-4 right-4 top-20 sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-4 sm:w-[380px] lg:w-[400px] h-[calc(100dvh-7rem)] sm:h-[550px] sm:max-h-[85vh] bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-none overflow-hidden animate-in fade-in zoom-in-95 sm:slide-in-from-top-4 duration-300 z-50">
+                                <HolidaysCalendar />
+                            </div>
+                        </>
+                    )}
+                </div>
+
                 {isLoggedIn ? (
                     <>
                         {/* Notifications Module */}
@@ -185,7 +224,10 @@ export function Header({ isMobile = false }: HeaderProps) {
                                 onClick={() => {
                                     const newState = !isNotificationsOpen;
                                     setIsNotificationsOpen(newState);
-                                    if (newState && isLoggedIn) fetchNotifications();
+                                    if (newState) {
+                                        setIsCalendarOpen(false);
+                                        if (isLoggedIn) fetchNotifications();
+                                    }
                                 }}
                                 className={`group p-2.5 rounded-2xl transition-all relative ${
                                     isNotificationsOpen 
@@ -200,7 +242,7 @@ export function Header({ isMobile = false }: HeaderProps) {
                             </button>
 
                             {isNotificationsOpen && (
-                                <div className="absolute right-0 mt-4 w-80 sm:w-[420px] bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300 z-50">
+                                <div className="absolute right-0 mt-4 w-[340px] max-w-[90vw] sm:w-[420px] max-h-[85vh] flex flex-col bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-none overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300 z-50">
                                     <div className="p-6 border-b border-zinc-100 dark:border-zinc-800/60 flex items-center justify-between">
                                         <div className="space-y-1">
                                             <h3 className="font-black text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
@@ -293,7 +335,13 @@ export function Header({ isMobile = false }: HeaderProps) {
                         {/* Profile Module */}
                         <div ref={profileRef} className="relative">
                             <button
-                                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                onClick={() => {
+                                    setIsProfileOpen(!isProfileOpen);
+                                    if (!isProfileOpen) {
+                                        setIsNotificationsOpen(false);
+                                        setIsCalendarOpen(false);
+                                    }
+                                }}
                                 className="group flex items-center gap-3 p-1 rounded-2xl transition-all active:scale-95"
                             >
                                 <div className="relative">

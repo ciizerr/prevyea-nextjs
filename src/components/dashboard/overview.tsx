@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { FileDown, FolderOpen, TrendingUp, FileText, ChevronRight, Clock, Sparkles, Trophy, Plus, ArrowUpRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { FileDown, FolderOpen, TrendingUp, FileText, ChevronRight, Clock, Sparkles, Trophy, Plus, ArrowUpRight, AlertCircle } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { UploadModal } from "./upload-modal";
 import Link from "next/link";
+import { getHolidays } from "@/actions/holidays";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import type { DashboardUpload } from "@/actions/dashboard";
@@ -29,6 +30,18 @@ export function DashboardOverview({
     recentUploads
 }: DashboardOverviewProps) {
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+    const [todayHoliday, setTodayHoliday] = useState<string | null>(null);
+
+    useEffect(() => {
+        const todayStr = dayjs().format("YYYY-MM-DD");
+        const currentYear = dayjs().year();
+        getHolidays(currentYear).then(data => {
+            const todayHol = data.find((h: { date: string, name: string }) => h.date === todayStr);
+            if (todayHol) {
+                setTodayHoliday(todayHol.name);
+            }
+        });
+    }, []);
 
     return (
         <div className="relative space-y-12 animate-in fade-in slide-in-from-bottom-6 duration-700 pb-20 selection:bg-blue-100 dark:selection:bg-blue-900/40">
@@ -38,6 +51,24 @@ export function DashboardOverview({
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 dark:bg-blue-500/5 blur-[120px] rounded-full animate-pulse" />
                 <div className="absolute bottom-0 right-0 w-[30%] h-[30%] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[100px] rounded-full" />
             </div>
+
+            {/* Holiday Closing Banner */}
+            {todayHoliday && (
+                <div className="relative group overflow-hidden bg-rose-500/10 border border-rose-500/20 rounded-3xl p-6 sm:p-8 animate-in fade-in slide-in-from-top-4 duration-700">
+                    <div className="absolute inset-0 bg-gradient-to-r from-rose-500/10 via-rose-500/5 to-transparent blur-xl pointer-events-none" />
+                    <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4">
+                        <div className="w-12 h-12 rounded-[1.2rem] bg-rose-500 flex items-center justify-center text-white shrink-0 shadow-[0_0_20px_rgba(244,63,94,0.4)]">
+                            <AlertCircle className="w-6 h-6 animate-pulse" />
+                        </div>
+                        <div className="flex-1">
+                            <h3 className="text-xl font-black text-rose-600 dark:text-rose-400">Campus is Closed</h3>
+                            <p className="text-sm font-bold text-rose-500/80 dark:text-rose-300">
+                                Today is observed as <span className="text-rose-600 dark:text-rose-300 font-black uppercase tracking-wider">{todayHoliday}</span>. There are no ongoing classes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Premium Welcome Header */}
             <div className="relative group overflow-hidden rounded-[2.5rem] bg-zinc-900 dark:bg-zinc-950 border border-white/10 shadow-2xl">

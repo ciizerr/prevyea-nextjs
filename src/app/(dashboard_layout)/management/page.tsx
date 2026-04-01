@@ -2,13 +2,14 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { eq, desc } from "drizzle-orm";
-import { users, courses, colleges, subjects, collegeCourses } from "@/db/schema";
-import { Building2, GraduationCap, BookOpen, Plus, FileText } from "lucide-react";
+import { users, courses, colleges, subjects, collegeCourses, holidays } from "@/db/schema";
+import { Building2, GraduationCap, BookOpen, Plus, FileText, CalendarDays } from "lucide-react";
 
 import { createCollegeAction, createCourseAction, deleteCollegeAction, bulkDeleteCollegesAction, deleteCourseAction, bulkDeleteCoursesAction, deleteSubjectAction, bulkDeleteSubjectsAction } from "@/actions/management";
 import CreateSubjectClientForm from "@/components/management/subject-form";
 import ManageFilesSection from "@/components/management/manage-files-section";
 import { CollegeList, CourseList, SubjectList } from "@/components/management/management-lists";
+import HolidayManagement from "@/components/management/holiday-management";
 
 export default async function ManagementPage() {
     const session = await auth();
@@ -21,11 +22,12 @@ export default async function ManagementPage() {
 
     if (currentUser?.role !== "ADMIN") redirect("/dashboard");
 
-    const [allColleges, allCourses, allSubjects, allCollegeCourses] = await Promise.all([
+    const [allColleges, allCourses, allSubjects, allCollegeCourses, allHolidays] = await Promise.all([
         db.query.colleges.findMany({ orderBy: desc(colleges.id) }),
         db.query.courses.findMany({ orderBy: desc(courses.id) }),
         db.query.subjects.findMany({ orderBy: desc(subjects.id) }),
-        db.select().from(collegeCourses)
+        db.select().from(collegeCourses),
+        db.query.holidays.findMany({ orderBy: desc(holidays.date) }),
     ]);
 
     const inputClass = "w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 outline-none";
@@ -146,6 +148,20 @@ export default async function ManagementPage() {
                         </div>
                     </div>
                     <ManageFilesSection />
+                </div>
+
+                {/* HOLIDAYS CALENDAR MANAGEMENT */}
+                <div className="lg:col-span-2">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="bg-amber-100 dark:bg-amber-500/10 p-2 rounded-xl text-amber-600 dark:text-amber-500">
+                            <CalendarDays className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-100">Holiday Calendar</h2>
+                            <p className="text-sm text-zinc-500">Manage academic dates, breaks, and holidays dynamically.</p>
+                        </div>
+                    </div>
+                    <HolidayManagement allHolidays={allHolidays} />
                 </div>
 
             </div>
