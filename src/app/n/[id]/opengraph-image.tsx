@@ -13,6 +13,18 @@ export const size = {
 
 export const contentType = "image/png";
 
+function stripMarkdown(text: string) {
+    if (!text) return "";
+    return text
+        .replace(/!\[.*?\]\(.*?\)/g, '') // Remove Markdown images entirely
+        .replace(/<img[^>]*>/g, '') // Specifically remove HTML images
+        .replace(/<[^>]*>?/gm, '') // Remove HTML tags
+        .replace(/[#_*~`>]/g, '') // Remove markdown characters
+        .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Extract text from links
+        .replace(/\n+/g, ' ') // Replace newlines with space
+        .trim();
+}
+
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const { data: notice } = await getNoticeByIdAction(id);
@@ -154,7 +166,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
                             maxHeight: "110px",
                             overflow: "hidden",
                         }}>
-                            <span>{notice.content.length > 250 ? notice.content.substring(0, 250) + "..." : notice.content}</span>
+                            <span>{stripMarkdown(notice.content).length > 250 ? stripMarkdown(notice.content).substring(0, 250) + "..." : stripMarkdown(notice.content)}</span>
                         </div>
                     </div>
 

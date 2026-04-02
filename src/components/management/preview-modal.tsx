@@ -5,6 +5,7 @@ import { X, FileText, Loader2 } from "lucide-react";
 import PDFViewer from "@/components/pdf-viewer";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { fetchMarkdownContent } from "@/actions/curriculum";
 
 interface PreviewModalProps {
@@ -110,7 +111,7 @@ function MarkdownPreview({ url }: { url: string }) {
     return (
         <div className="h-full overflow-y-auto p-6 md:p-10 bg-white dark:bg-zinc-950">
             <article className="prose prose-zinc dark:prose-invert max-w-none prose-headings:font-black prose-a:text-blue-500 dark:prose-a:text-blue-400">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                     {markdownContent || ""}
                 </ReactMarkdown>
             </article>

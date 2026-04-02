@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import PDFViewer from "@/components/pdf-viewer";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Download, Sparkles } from "lucide-react";
 import MarkdownExportButton from "@/components/markdown-export-button";
@@ -137,7 +138,7 @@ export default async function SharedSyllabusPage({ params }: SyllabusPageProps) 
                         </div>
                     ) : isMarkdown ? (
                         <div id="markdown-content" className="w-full bg-white dark:bg-zinc-950/40 p-8 md:p-16 rounded-[3rem] border border-zinc-200 dark:border-zinc-800/60 prose prose-zinc dark:prose-invert max-w-none shadow-2xl overflow-x-auto selection:bg-blue-100 dark:selection:bg-blue-900/40">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent || ""}</ReactMarkdown>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{markdownContent || ""}</ReactMarkdown>
                         </div>
                     ) : (
                         <div className="bg-white dark:bg-zinc-950/40 rounded-[3rem] border border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden h-[850px]">

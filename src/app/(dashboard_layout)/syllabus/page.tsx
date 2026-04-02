@@ -8,6 +8,7 @@ import { getCoursesAction, getSubjectsAction, getFilesAction } from "@/actions/c
 import PDFViewer from "@/components/pdf-viewer";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { toast } from "sonner";
 import MarkdownExportButton from "@/components/markdown-export-button";
 
@@ -359,7 +360,7 @@ export default function SyllabusPage() {
                                                     </div>
                                                 ) : (
                                                     <div id="markdown-content" className="w-full bg-zinc-50/50 dark:bg-zinc-950/30 p-8 md:p-14 rounded-[3rem] border border-zinc-100 dark:border-zinc-800/60 prose prose-zinc dark:prose-invert max-w-none selection:bg-indigo-100 dark:selection:bg-indigo-900/40 shadow-inner overflow-x-auto break-words">
-                                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdownContent || ""}</ReactMarkdown>
+                                                        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{markdownContent || ""}</ReactMarkdown>
                                                     </div>
                                                 )}
                                             </>

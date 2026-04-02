@@ -5,6 +5,7 @@ import { X, Loader2, Send, Eye, PenLine, Clock } from "lucide-react";
 import { createNoticeAction, updateNoticeAction } from "@/actions/notice";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 interface NoticeData {
     id: string;
@@ -169,7 +170,7 @@ export function NoticeFormModal({ isOpen, onClose, onSuccess, editData }: Notice
                         ) : (
                             <div className="min-h-[200px] px-5 py-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-y-auto prose prose-zinc dark:prose-invert prose-sm max-w-none">
                                 {content.trim() ? (
-                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{content}</ReactMarkdown>
                                 ) : (
                                     <p className="text-zinc-400 italic text-sm">Nothing to preview yet...</p>
                                 )}

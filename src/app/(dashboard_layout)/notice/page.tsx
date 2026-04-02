@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import { toast } from "sonner";
 
 dayjs.extend(relativeTime);
@@ -283,7 +284,7 @@ export default function NoticeBoardPage() {
 
                                         <div className="space-y-6">
                                             <div className={`prose prose-lg dark:prose-invert prose-zinc max-w-none transition-all duration-300 relative ${isExpanded ? "" : "line-clamp-4 mask-fade-bottom"}`}>
-                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>{notice.content}</ReactMarkdown>
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{notice.content}</ReactMarkdown>
                                                 {!isExpanded && <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white dark:from-zinc-950 to-transparent pointer-events-none" />}
                                             </div>
 

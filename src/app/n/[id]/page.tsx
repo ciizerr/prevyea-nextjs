@@ -6,9 +6,22 @@ import { ArrowLeft, Calendar, User, Megaphone, Trophy, GraduationCap, ShieldChec
 import dayjs from "dayjs";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 interface NoticePageProps {
     params: Promise<{ id: string }>;
+}
+
+function stripMarkdown(text: string) {
+    if (!text) return "";
+    return text
+        .replace(/!\[.*?\]\(.*?\)/g, '') // Remove Markdown images entirely
+        .replace(/<img[^>]*>/g, '') // Specifically remove HTML images
+        .replace(/<[^>]*>?/gm, '') // Remove other HTML tags
+        .replace(/[#_*~`>]/g, '') // Remove markdown characters
+        .replace(/\[(.*?)\]\(.*?\)/g, '$1') // Extract text from links
+        .replace(/\n+/g, ' ') // Replace newlines with space
+        .trim();
 }
 
 export async function generateMetadata({ params }: NoticePageProps): Promise<Metadata> {
@@ -21,12 +34,14 @@ export async function generateMetadata({ params }: NoticePageProps): Promise<Met
         };
     }
 
+    const cleanDescription = stripMarkdown(notice.content).slice(0, 160);
+
     return {
         title: `${notice.title} | PU Library Notice`,
-        description: notice.content.slice(0, 160),
+        description: cleanDescription,
         openGraph: {
             title: notice.title,
-            description: notice.content.slice(0, 160),
+            description: cleanDescription,
             type: "article",
             images: [
                 {
@@ -120,7 +135,7 @@ export default async function SharedNoticePage({ params }: NoticePageProps) {
                     </div>
                     
                     <div className="prose prose-xl prose-zinc dark:prose-invert max-w-none">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{notice.content}</ReactMarkdown>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{notice.content}</ReactMarkdown>
                     </div>
 
                     {notice.expiresAt && (
