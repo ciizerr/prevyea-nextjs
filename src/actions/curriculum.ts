@@ -98,6 +98,20 @@ export async function incrementDownloadAction(pyqId: string) {
     }
 }
 
+export async function incrementViewAction(pyqId: string) {
+    try {
+        if (!pyqId) return { success: false };
+        await db
+            .update(pyqs)
+            .set({ views: sql`${pyqs.views} + 1` })
+            .where(eq(pyqs.id, pyqId));
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to increment view count:", error);
+        return { success: false };
+    }
+}
+
 export async function fetchMarkdownContent(url: string) {
     try {
         if (!url) return { success: false, error: "No URL provided" };

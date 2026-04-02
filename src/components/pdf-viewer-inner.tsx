@@ -13,6 +13,7 @@ interface PDFViewerInnerProps {
     downloadUrl?: string;
     onDownload?: () => void;
     fileLabel?: string;
+    extraInfo?: React.ReactNode;
 }
 
 export default function PDFViewerInner({
@@ -20,6 +21,7 @@ export default function PDFViewerInner({
     downloadUrl,
     onDownload,
     fileLabel,
+    extraInfo,
 }: PDFViewerInnerProps) {
     const [numPages, setNumPages] = useState<number>();
     const [scale, setScale] = useState<number>(1.0);
@@ -70,6 +72,12 @@ export default function PDFViewerInner({
                         </span>
                     )}
                 </div>
+
+                {extraInfo && (
+                    <div className="flex-1 flex justify-center items-center px-2 min-w-0">
+                        {extraInfo}
+                    </div>
+                )}
 
                 {downloadUrl && (
                     <button

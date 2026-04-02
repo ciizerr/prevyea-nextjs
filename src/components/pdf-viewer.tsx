@@ -22,6 +22,7 @@ interface PDFViewerProps {
     downloadUrl?: string;
     onDownload?: () => void;
     fileLabel?: string;
+    extraInfo?: React.ReactNode;
 }
 
 export default function PDFViewer(props: PDFViewerProps) {
