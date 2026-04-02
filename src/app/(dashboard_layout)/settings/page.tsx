@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
-import { User, CheckCircle2, XCircle, Loader2, Link2, Camera, Trash2, Briefcase, Key } from "lucide-react";
+import { useState, useEffect, useTransition, useRef } from "react";
+import { useSession } from "next-auth/react";
+import { User, CheckCircle2, XCircle, Loader2, Link2, Camera, Trash2, Briefcase, Key, RefreshCcw } from "lucide-react";
 import { SimpleInstagram, SimpleGithub, SimpleDiscord } from "@/components/si-icons";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getUserProfileAction, updateProfileAction } from "@/actions/user";
@@ -46,6 +47,7 @@ export default function SettingsPage() {
 }
 
 function SettingsContent() {
+    const { data: session, update } = useSession();
     const searchParams = useSearchParams();
     const activeTab = searchParams.get("tab") || "profile";
 
@@ -56,6 +58,7 @@ function SettingsContent() {
     const [isPending, startTransition] = useTransition();
     const [status, setStatus] = useState<{ success: boolean; message: string } | null>(null);
     const [showUrlInput, setShowUrlInput] = useState(false);
+    const syncTriedRef = useRef(false);
 
     // Roles state
     const [roleApps, setRoleApps] = useState<RoleApp[]>([]);
@@ -103,6 +106,21 @@ function SettingsContent() {
         }
         load();
     }, []);
+
+    // Session Sync Effect: Keep client-side session role and image updated with database
+    useEffect(() => {
+        if (!profile || !session?.user || syncTriedRef.current) return;
+        
+        // @ts-expect-error - session user typings
+        const sessionRole = session.user.role || "USER";
+        const sessionImage = session.user.image;
+
+        if (sessionRole !== profile.role || sessionImage !== profile.image) {
+            console.log("Syncing session...");
+            syncTriedRef.current = true;
+            update();
+        }
+    }, [profile, session, update]);
 
     const handleSave = () => {
         setStatus(null);
@@ -336,7 +354,7 @@ function SettingsContent() {
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Account Type</label>
-                                                <div className="px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/40">
+                                                <div className="flex items-center justify-between px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900/40">
                                                     <span className={`inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${profile.role === "ADMIN" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
                                                         profile.role === "MODERATOR" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" :
                                                             profile.role === "REVIEWER" ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400" :
@@ -344,6 +362,19 @@ function SettingsContent() {
                                                         }`}>
                                                         {profile.role === "ADMIN" ? "Administrator" : profile.role === "MODERATOR" ? "Moderator" : profile.role === "REVIEWER" ? "Reviewer" : "Student"}
                                                     </span>
+
+                                                    {/* Manual Sync Button if session is out of sync */}
+                                                    {/* @ts-expect-error - user role check */}
+                                                    {(session?.user?.role !== profile.role || session?.user?.image !== profile.image) && (
+                                                        <button
+                                                            onClick={() => update()}
+                                                            title="Sync Account State"
+                                                            className="flex items-center gap-1.5 px-2 py-1 text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition-all"
+                                                        >
+                                                            <RefreshCcw className="h-3.5 w-3.5" />
+                                                            Sync
+                                                        </button>
+                                                    )}
                                                 </div>
                                                 <p className="text-[11px] text-zinc-500 font-medium">Special roles provide additional platform capabilities.</p>
                                             </div>
