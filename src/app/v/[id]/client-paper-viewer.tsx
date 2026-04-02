@@ -7,7 +7,19 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import { incrementDownloadAction } from "@/actions/curriculum";
 
-export function ClientPaperViewer({ paper }: { paper: any }) {
+interface PaperData {
+    id: string;
+    viewLink: string;
+    downloadLink: string;
+    year: number;
+    title: string;
+    uploaderUsername?: string | null;
+    views?: number | null;
+    downloads?: number | null;
+    createdAt: Date | string | null;
+}
+
+export function ClientPaperViewer({ paper }: { paper: PaperData }) {
     const [downloads, setDownloads] = useState(paper.downloads || 0);
 
     const handleDownload = async () => {

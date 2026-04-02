@@ -80,10 +80,6 @@ export default function VaultPage() {
                 const allCourses = res.data as CourseType[];
                 const uniqueCourses = Array.from(new Map(allCourses.map(c => [c.id, c])).values());
                 setDbCourses(uniqueCourses);
-                if (uniqueCourses.length > 0) {
-                    setActiveCourseId(uniqueCourses[0].id);
-                    setActiveSem("Sem 1");
-                }
             }
             setLoadingCourses(false);
         }
@@ -103,9 +99,6 @@ export default function VaultPage() {
             if (res.success && res.data) {
                 const fetchedSubjects = res.data as SubjectType[];
                 setDbSubjects(fetchedSubjects);
-                if (fetchedSubjects.length > 0) {
-                    setActiveSubjectId(fetchedSubjects[0].id);
-                }
             }
             setLoadingSubjects(false);
         }
@@ -406,17 +399,29 @@ export default function VaultPage() {
 
 
 
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center py-40 text-center space-y-10 bg-zinc-50 dark:bg-zinc-950/20 border-2 border-dashed border-zinc-100 dark:border-zinc-800/40 rounded-[4rem]">
-                                        <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800 text-zinc-200 dark:text-zinc-800">
-                                            <FolderOpen className="h-12 w-12" />
-                                        </div>
-                                        <div className="space-y-4">
-                                            <h3 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic">No Papers Found</h3>
-                                            <p className="text-zinc-400 dark:text-zinc-500 max-w-sm mx-auto font-medium leading-relaxed">
-                                                No papers have been uploaded for this selection yet.
-                                            </p>
-                                        </div>
+                                        ) : !activeSubjectId ? (
+                                            <div className="flex flex-col items-center justify-center py-40 text-center space-y-10 bg-indigo-50/50 dark:bg-indigo-950/10 border border-indigo-100 dark:border-indigo-900/30 rounded-[4rem]">
+                                                <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-indigo-100/50 dark:border-indigo-900/50 text-indigo-400 dark:text-indigo-500">
+                                                    <LayoutGrid className="h-12 w-12" />
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <h3 className="text-3xl font-black text-indigo-950 dark:text-indigo-100 tracking-tighter uppercase italic">Select Library</h3>
+                                                    <p className="text-indigo-600/60 dark:text-indigo-400/60 max-w-sm mx-auto font-medium leading-relaxed">
+                                                        Please select a Course, Semester, and Subject from the sidebar to fetch resources.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center py-40 text-center space-y-10 bg-zinc-50 dark:bg-zinc-950/20 border-2 border-dashed border-zinc-100 dark:border-zinc-800/40 rounded-[4rem]">
+                                                <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800 text-zinc-200 dark:text-zinc-800">
+                                                    <FolderOpen className="h-12 w-12" />
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <h3 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic">No Papers Found</h3>
+                                                    <p className="text-zinc-400 dark:text-zinc-500 max-w-sm mx-auto font-medium leading-relaxed">
+                                                        No papers have been uploaded for this selection yet.
+                                                    </p>
+                                                </div>
                                         <button
                                             onClick={() => setIsUploadModalOpen(true)}
                                             className="px-10 py-5 bg-indigo-500 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-indigo-500/20 hover:scale-[1.05] active:scale-95 transition-all"

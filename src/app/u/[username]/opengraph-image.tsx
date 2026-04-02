@@ -90,7 +90,7 @@ export default async function Image({ params }: { params: { username: string } }
                 eq(pyqs.status, "APPROVED")
             )
         );
-    
+
     const totalContributions = contributions[0]?.value || 0;
 
     return new ImageResponse(
@@ -152,14 +152,14 @@ export default async function Image({ params }: { params: { username: string } }
                 >
                     {/* Avatar with Glow/Border */}
                     <div style={{ display: "flex", position: "relative", width: 220, height: 220 }}>
-                        <div 
-                            style={{ 
-                                position: "absolute", 
-                                inset: -20, 
-                                background: "rgba(59, 130, 246, 0.15)", 
+                        <div
+                            style={{
+                                position: "absolute",
+                                inset: -20,
+                                background: "rgba(59, 130, 246, 0.15)",
                                 filter: "blur(30px)",
                                 borderRadius: "80px"
-                            }} 
+                            }}
                         />
                         {userProfile.image ? (
                             // eslint-disable-next-line @next/next/no-img-element
@@ -194,7 +194,7 @@ export default async function Image({ params }: { params: { username: string } }
                                 {userProfile.username?.[0]?.toUpperCase() || "U"}
                             </div>
                         )}
-                        
+
                         {userProfile.role === "ADMIN" && (
                             <div
                                 style={{
@@ -278,7 +278,7 @@ export default async function Image({ params }: { params: { username: string } }
                                     </svg>
                                     <span style={{ fontSize: 13, color: "#a1a1aa", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>Uploads</span>
                                 </div>
-                                <span style={{ display: "flex", fontSize: 36, color: "#18181b", fontWeight: 900 }}>{totalContributions} Items</span>
+                                <span style={{ display: "flex", fontSize: 36, color: "#18181b", fontWeight: 900 }}>{totalContributions}</span>
                             </div>
                             <div
                                 style={{
@@ -328,26 +328,24 @@ export default async function Image({ params }: { params: { username: string } }
                         <div style={{ display: "flex", gap: "16px", marginTop: "30px" }}>
                             {userProfile.github && (
                                 <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "#f8fafc", padding: "12px 24px", borderRadius: "24px", border: "1px solid #e2e8f0" }}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#181717">
+                                        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.011-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
                                     </svg>
                                     <span style={{ fontSize: 20, color: "#334155", fontWeight: 800 }}>GitHub</span>
                                 </div>
                             )}
                             {userProfile.instagram && (
                                 <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "#fff1f2", padding: "12px 24px", borderRadius: "24px", border: "1px solid #ffe4e6" }}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#E4405F">
+                                        <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zM12 5.837a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z" />
                                     </svg>
                                     <span style={{ fontSize: 20, color: "#334155", fontWeight: 800 }}>Instagram</span>
                                 </div>
                             )}
                             {userProfile.discord && (
                                 <div style={{ display: "flex", alignItems: "center", gap: "12px", background: "#eef2ff", padding: "12px 24px", borderRadius: "24px", border: "1px solid #e0e7ff" }}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#5865F2">
+                                        <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037 19.736 19.736 0 00-4.885 1.515.069.069 0 00-.032.027C.533 9.048-.32 13.572.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028 14.09 14.09 0 001.226-1.994.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.054-3.03.076.076 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.086 2.157 2.419 0 1.334-.947 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.086 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z" />
                                     </svg>
                                     <span style={{ fontSize: 20, color: "#334155", fontWeight: 800 }}>Discord</span>
                                 </div>
@@ -361,7 +359,7 @@ export default async function Image({ params }: { params: { username: string } }
                     <div style={{ height: "1px", width: "40px", background: "#e4e4e7" }} />
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img 
+                        <img
                             src={logoData}
                             alt="Logo"
 

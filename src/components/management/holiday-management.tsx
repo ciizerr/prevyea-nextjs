@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useTransition } from "react";
-import { ChevronLeft, ChevronRight, CalendarDays, Plus, Trash2, X, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Trash2, X, Sparkles } from "lucide-react";
 import dayjs from "dayjs";
 import { addHolidays, deleteHoliday } from "@/actions/holidays";
 import { toast } from "sonner";

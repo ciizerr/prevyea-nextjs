@@ -59,10 +59,6 @@ export default function SyllabusPage() {
                 const allCourses = res.data as CourseType[];
                 const uniqueCourses = Array.from(new Map(allCourses.map(c => [c.id, c])).values());
                 setDbCourses(uniqueCourses);
-                if (uniqueCourses.length > 0) {
-                    setActiveCourseId(uniqueCourses[0].id);
-                    setActiveSem("Sem 1");
-                }
             }
             setLoadingCourses(false);
         }
@@ -82,9 +78,6 @@ export default function SyllabusPage() {
             if (res.success && res.data) {
                 const fetchedSubjects = res.data as SubjectType[];
                 setDbSubjects(fetchedSubjects);
-                if (fetchedSubjects.length > 0) {
-                    setActiveSubjectId(fetchedSubjects[0].id);
-                }
             }
             setLoadingSubjects(false);
         }
@@ -369,6 +362,18 @@ export default function SyllabusPage() {
                                                 <PDFViewer url={syllabusFile.viewLink} />
                                             </div>
                                         )
+                                    ) : !activeSubjectId ? (
+                                        <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-blue-50/50 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/30 rounded-[4rem] space-y-8">
+                                            <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-blue-100/50 dark:border-blue-900/50 text-blue-400 dark:text-blue-500">
+                                                <BookOpen className="h-12 w-12" />
+                                            </div>
+                                            <div className="space-y-4">
+                                                <h3 className="text-3xl font-black text-blue-950 dark:text-blue-100 tracking-tighter uppercase italic">Select Subject</h3>
+                                                <p className="text-blue-600/60 dark:text-blue-400/60 max-w-xs mx-auto font-medium leading-relaxed">
+                                                    Select a curriculum path from the sidebar to load the official syllabus.
+                                                </p>
+                                            </div>
+                                        </div>
                                     ) : (
                                         <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-zinc-50 dark:bg-zinc-950/20 border-2 border-dashed border-zinc-100 dark:border-zinc-800/40 rounded-[4rem] space-y-8">
                                             <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800 text-zinc-200 dark:text-zinc-800">
