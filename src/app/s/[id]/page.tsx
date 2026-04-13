@@ -138,7 +138,31 @@ export default async function SharedSyllabusPage({ params }: SyllabusPageProps) 
                         </div>
                     ) : isMarkdown ? (
                         <div id="markdown-content" className="w-full bg-white dark:bg-zinc-950/40 p-8 md:p-16 rounded-[3rem] border border-zinc-200 dark:border-zinc-800/60 prose prose-zinc dark:prose-invert max-w-none shadow-2xl overflow-x-auto selection:bg-blue-100 dark:selection:bg-blue-900/40">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{markdownContent || ""}</ReactMarkdown>
+                            <ReactMarkdown 
+                                remarkPlugins={[remarkGfm]} 
+                                rehypePlugins={[rehypeRaw]}
+                                components={{
+                                    table: ({ children }) => (
+                                        <div className="my-8 overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                                            <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+                                                {children}
+                                            </table>
+                                        </div>
+                                    ),
+                                    th: ({ children }) => (
+                                        <th className="bg-zinc-50 dark:bg-zinc-900/50 px-4 py-3 text-left text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100 border-b border-zinc-200 dark:border-zinc-800">
+                                            {children}
+                                        </th>
+                                    ),
+                                    td: ({ children }) => (
+                                        <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800/50">
+                                            {children}
+                                        </td>
+                                    ),
+                                }}
+                            >
+                                {markdownContent || ""}
+                            </ReactMarkdown>
                         </div>
                     ) : (
                         <div className="bg-white dark:bg-zinc-950/40 rounded-[3rem] border border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden h-[850px]">

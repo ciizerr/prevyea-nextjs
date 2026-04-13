@@ -284,7 +284,31 @@ export default function NoticeBoardPage() {
 
                                         <div className="space-y-6">
                                             <div className={`prose prose-lg dark:prose-invert prose-zinc max-w-none transition-all duration-300 relative ${isExpanded ? "" : "line-clamp-4 mask-fade-bottom"}`}>
-                                                <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{notice.content}</ReactMarkdown>
+                                                <ReactMarkdown 
+                                                    remarkPlugins={[remarkGfm]} 
+                                                    rehypePlugins={[rehypeRaw]}
+                                                    components={{
+                                                        table: ({ children }) => (
+                                                            <div className="my-6 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/50">
+                                                                <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+                                                                    {children}
+                                                                </table>
+                                                            </div>
+                                                        ),
+                                                        th: ({ children }) => (
+                                                            <th className="bg-zinc-50 dark:bg-zinc-900/50 px-3 py-2 text-left text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100 border-b border-zinc-200 dark:border-zinc-800">
+                                                                {children}
+                                                            </th>
+                                                        ),
+                                                        td: ({ children }) => (
+                                                            <td className="px-3 py-2 text-xs text-zinc-600 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800/50">
+                                                                {children}
+                                                            </td>
+                                                        ),
+                                                    }}
+                                                >
+                                                    {notice.content}
+                                                </ReactMarkdown>
                                                 {!isExpanded && <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white dark:from-zinc-950 to-transparent pointer-events-none" />}
                                             </div>
 

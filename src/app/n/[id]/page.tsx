@@ -85,7 +85,7 @@ export default async function SharedNoticePage({ params }: NoticePageProps) {
                 <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full" />
             </div>
 
-            <main className="relative z-10 max-w-4xl mx-auto px-6 pt-10 pb-20">
+            <main className="relative z-10 max-w-7xl mx-auto px-6 pt-10 pb-20">
                 {/* Navigation Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
                     <div className="space-y-4">
@@ -135,7 +135,31 @@ export default async function SharedNoticePage({ params }: NoticePageProps) {
                     </div>
                     
                     <div className="prose prose-xl prose-zinc dark:prose-invert max-w-none">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{notice.content}</ReactMarkdown>
+                        <ReactMarkdown 
+                            remarkPlugins={[remarkGfm]} 
+                            rehypePlugins={[rehypeRaw]}
+                            components={{
+                                table: ({ children }) => (
+                                    <div className="my-8 overflow-x-auto rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                                        <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
+                                            {children}
+                                        </table>
+                                    </div>
+                                ),
+                                th: ({ children }) => (
+                                    <th className="bg-zinc-50 dark:bg-zinc-900/50 px-4 py-3 text-left text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100 border-b border-zinc-200 dark:border-zinc-800">
+                                        {children}
+                                    </th>
+                                ),
+                                td: ({ children }) => (
+                                    <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400 border-b border-zinc-100 dark:border-zinc-800/50">
+                                        {children}
+                                    </td>
+                                ),
+                            }}
+                        >
+                            {notice.content}
+                        </ReactMarkdown>
                     </div>
 
                     {notice.expiresAt && (
