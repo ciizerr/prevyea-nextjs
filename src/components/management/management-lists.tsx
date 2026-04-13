@@ -7,6 +7,7 @@ import { ConfirmDeleteButton } from "./confirm-delete-button";
 type College = { id: string; name: string; };
 type Course = { id: string; name: string; totalSemesters: number; };
 type Subject = { id: string; name: string; courseId: string; semester: string; };
+type Routine = { id: string; courseId: string; courseName: string | null; semester: string; dayOfWeek: number; schedule: string; };
 
 function BulkHeader({ 
     selectedCount, 
@@ -252,6 +253,47 @@ export function SubjectList({
                     );
                 })}
             </div>
+        </div>
+    );
+}
+
+export function RoutineList({ 
+    allRoutines, 
+    deleteAction 
+}: { 
+    allRoutines: Routine[]; 
+    deleteAction: (id: string) => Promise<unknown>; 
+}) {
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {allRoutines.map(r => (
+                <div key={r.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 relative group shadow-sm hover:shadow-md transition-all">
+                    <div className="flex justify-between items-start mb-2">
+                        <div className="space-y-1">
+                            <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase rounded">
+                                {r.courseName || "Unknown Course"}
+                            </span>
+                            <h4 className="font-bold text-zinc-900 dark:text-zinc-100">{days[r.dayOfWeek]} · {r.semester}</h4>
+                        </div>
+                        <ConfirmDeleteButton
+                            label={`${r.courseName} ${r.semester} ${days[r.dayOfWeek]}`}
+                            entityType="Routine Entry"
+                            action={async () => await deleteAction(r.id)}
+                            iconSize="sm"
+                        />
+                    </div>
+                    <div className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed italic border-l-2 border-indigo-500/20 pl-3 mt-2">
+                        {r.schedule}
+                    </div>
+                </div>
+            ))}
+            {allRoutines.length === 0 && (
+                <div className="col-span-full py-10 text-center text-zinc-400 font-medium bg-zinc-50 dark:bg-zinc-900/40 rounded-2xl border-2 border-dashed border-zinc-200 dark:border-zinc-800">
+                    No routines synced to the platform yet.
+                </div>
+            )}
         </div>
     );
 }

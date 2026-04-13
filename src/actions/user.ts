@@ -13,9 +13,10 @@ export async function completeOnboardingAction(formData: FormData) {
         const username = formData.get("username") as string;
         const collegeId = formData.get("collegeId") as string;
         const courseId = formData.get("courseId") as string;
+        const semester = formData.get("semester") as string;
         const sessionPayload = formData.get("session") as string;
 
-        if (!username || !courseId || !sessionPayload || !collegeId) {
+        if (!username || !courseId || !sessionPayload || !collegeId || !semester) {
             throw new Error("Missing required fields.");
         }
 
@@ -49,7 +50,8 @@ export async function completeOnboardingAction(formData: FormData) {
                 username: username.toLowerCase(),
                 collegeId: collegeId,
                 course: courseId,
-                session: sessionPayload
+                session: sessionPayload,
+                semester: semester
             })
             .where(eq(users.id, session.user.id));
 
@@ -88,6 +90,7 @@ export async function getUserProfileAction() {
                 github: user.github ?? "",
                 notifyPyqs: user.notifyPyqs ?? true,
                 notifyNotices: user.notifyNotices ?? true,
+                semester: user.semester ?? "",
             }
         };
     } catch (error) {
@@ -109,6 +112,7 @@ export async function updateProfileAction(formData: FormData) {
         const instagram = formData.get("instagram") as string;
         const discord = formData.get("discord") as string;
         const github = formData.get("github") as string;
+        const semester = formData.get("semester") as string;
 
         if (!name?.trim()) {
             throw new Error("Name is required.");
@@ -124,6 +128,7 @@ export async function updateProfileAction(formData: FormData) {
                 instagram: instagram?.trim() || null,
                 discord: discord?.trim() || null,
                 github: github?.trim() || null,
+                semester: semester || null,
             })
             .where(eq(users.id, session.user.id));
 

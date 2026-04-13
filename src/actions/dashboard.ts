@@ -59,6 +59,11 @@ export async function getDashboardData() {
         const rankIndex = leaderboardQuery.findIndex(l => l.uploaderId === userId);
         const userRank = rankIndex !== -1 ? rankIndex + 1 : "Unranked";
 
+        // Fetch User Info for Routine
+        const currentUser = await db.query.users.findFirst({
+            where: eq(users.id, userId),
+        });
+
         // Fetch recent global uploads
         const recentUploads = await db.select({
             id: pyqs.id,
@@ -88,7 +93,9 @@ export async function getDashboardData() {
                 totalUploads,
                 pendingUploads,
                 userRank,
-                recentUploads: recentUploads as DashboardUpload[]
+                recentUploads: recentUploads as DashboardUpload[],
+                userCourseId: currentUser?.course || null,
+                userSemester: currentUser?.semester || null
             }
         };
     } catch (error) {

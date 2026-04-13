@@ -22,6 +22,7 @@ export default function OnboardingModal() {
 
     const [selectedCollegeId, setSelectedCollegeId] = useState("");
     const [selectedCourseId, setSelectedCourseId] = useState("");
+    const [selectedSemester, setSelectedSemester] = useState("");
     const [selectedSession, setSelectedSession] = useState("");
 
     // Determine if modal should show
@@ -123,7 +124,8 @@ export default function OnboardingModal() {
                                 onChange={(e) => {
                                     setSelectedCollegeId(e.target.value);
                                     setSelectedCourseId(""); // Reset course
-                                    setSelectedSession(""); // Reset sem
+                                    setSelectedSemester(""); // Reset sem
+                                    setSelectedSession(""); // Reset session
                                 }}
                                 className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none"
                             >
@@ -143,6 +145,7 @@ export default function OnboardingModal() {
                                     value={selectedCourseId}
                                     onChange={(e) => {
                                         setSelectedCourseId(e.target.value);
+                                        setSelectedSemester("");
                                         setSelectedSession("");
                                     }}
                                     disabled={!selectedCollegeId}
@@ -155,18 +158,35 @@ export default function OnboardingModal() {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">Session</label>
-                                <input
-                                    name="session"
-                                    type="text"
+                                <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">Semester</label>
+                                <select
+                                    name="semester"
                                     required
-                                    value={selectedSession}
-                                    onChange={(e) => setSelectedSession(e.target.value)}
-                                    placeholder="e.g. 2023-2027"
+                                    value={selectedSemester}
+                                    onChange={(e) => setSelectedSemester(e.target.value)}
                                     disabled={!selectedCourseId}
-                                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50"
-                                />
+                                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none disabled:opacity-50"
+                                >
+                                    <option value="" disabled>{selectedCourseId ? "Select Sem" : "Select Course"}</option>
+                                    {Array.from({ length: (courses.find(c => c.id === selectedCourseId) as any)?.totalSemesters || 0 }).map((_, i) => (
+                                        <option key={i} value={`Sem ${i + 1}`}>Sem {i + 1}</option>
+                                    ))}
+                                </select>
                             </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">Session</label>
+                            <input
+                                name="session"
+                                type="text"
+                                required
+                                value={selectedSession}
+                                onChange={(e) => setSelectedSession(e.target.value)}
+                                placeholder="e.g. 2023-2027"
+                                disabled={!selectedCourseId}
+                                className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50"
+                            />
                         </div>
                     </div>
 

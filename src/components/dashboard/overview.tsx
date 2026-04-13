@@ -9,6 +9,7 @@ import { getHolidays } from "@/actions/holidays";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import type { DashboardUpload } from "@/actions/dashboard";
+import { RoutineCard } from "./routine-card";
 
 dayjs.extend(relativeTime);
 
@@ -19,6 +20,8 @@ interface DashboardOverviewProps {
     pendingUploads: number;
     userRank: number | string;
     recentUploads: DashboardUpload[];
+    userCourseId?: string | null;
+    userSemester?: string | null;
 }
 
 export function DashboardOverview({
@@ -27,7 +30,9 @@ export function DashboardOverview({
     totalUploads,
     pendingUploads,
     userRank,
-    recentUploads
+    recentUploads,
+    userCourseId,
+    userSemester
 }: DashboardOverviewProps) {
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const [todayHoliday, setTodayHoliday] = useState<string | null>(null);
@@ -52,7 +57,6 @@ export function DashboardOverview({
                 <div className="absolute bottom-0 right-0 w-[30%] h-[30%] bg-indigo-500/10 dark:bg-indigo-500/5 blur-[100px] rounded-full" />
             </div>
 
-            {/* Holiday Closing Banner */}
             {todayHoliday && (
                 <div className="relative group overflow-hidden bg-rose-500/10 border border-rose-500/20 rounded-3xl p-6 sm:p-8 animate-in fade-in slide-in-from-top-4 duration-700">
                     <div className="absolute inset-0 bg-gradient-to-r from-rose-500/10 via-rose-500/5 to-transparent blur-xl pointer-events-none" />
@@ -68,6 +72,11 @@ export function DashboardOverview({
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Daily Routine Card */}
+            {!todayHoliday && (
+                <RoutineCard courseId={userCourseId} semester={userSemester} />
             )}
 
             {/* Premium Welcome Header */}

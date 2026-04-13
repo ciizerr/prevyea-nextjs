@@ -10,6 +10,8 @@ import CreateSubjectClientForm from "@/components/management/subject-form";
 import ManageFilesSection from "@/components/management/manage-files-section";
 import { CollegeList, CourseList, SubjectList } from "@/components/management/management-lists";
 import HolidayManagement from "@/components/management/holiday-management";
+import RoutineManagement from "@/components/management/routine-management";
+import { getAllRoutines, deleteRoutineAction, deleteAllRoutinesAction } from "@/actions/routines";
 
 export default async function ManagementPage() {
     const session = await auth();
@@ -22,13 +24,15 @@ export default async function ManagementPage() {
 
     if (currentUser?.role !== "ADMIN") redirect("/dashboard");
 
-    const [allColleges, allCourses, allSubjects, allCollegeCourses, allHolidays] = await Promise.all([
+    const [allColleges, allCourses, allSubjects, allCollegeCourses, allHolidays, routinesRes] = await Promise.all([
         db.query.colleges.findMany({ orderBy: desc(colleges.id) }),
         db.query.courses.findMany({ orderBy: desc(courses.id) }),
         db.query.subjects.findMany({ orderBy: desc(subjects.id) }),
         db.select().from(collegeCourses),
         db.query.holidays.findMany({ orderBy: desc(holidays.date) }),
+        getAllRoutines(),
     ]);
+    const allRoutines = routinesRes.success && routinesRes.data ? routinesRes.data : [];
 
     const inputClass = "w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 outline-none";
 
@@ -162,6 +166,15 @@ export default async function ManagementPage() {
                         </div>
                     </div>
                     <HolidayManagement allHolidays={allHolidays} />
+                </div>
+
+                {/* ROUTINE MANAGEMENT */}
+                <div className="lg:col-span-2">
+                    <RoutineManagement 
+                        allRoutines={allRoutines} 
+                        deleteAction={async (id) => { "use server"; await deleteRoutineAction(id); }} 
+                        deleteAllAction={async () => { "use server"; await deleteAllRoutinesAction(); }}
+                    />
                 </div>
 
             </div>

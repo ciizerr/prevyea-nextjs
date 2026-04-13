@@ -43,6 +43,7 @@ export const users = sqliteTable("users", {
     github: text("github"),
     notifyPyqs: integer("notify_pyqs", { mode: "boolean" }).default(true),
     notifyNotices: integer("notify_notices", { mode: "boolean" }).default(true),
+    semester: text("semester"),
     createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
@@ -147,6 +148,16 @@ export const holidays = sqliteTable("holidays", {
     createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
+// Routines Table
+export const routines = sqliteTable("routines", {
+    id: text("id").primaryKey(),
+    courseId: text("course_id").notNull().references(() => courses.id, { onDelete: "cascade" }),
+    semester: text("semester").notNull(), // e.g., "Sem 3"
+    dayOfWeek: integer("day_of_week").notNull(), // 0-6 (Sunday-Saturday)
+    schedule: text("schedule").notNull(), // e.g., "OS (10:00-11:00 AM), DBMS (11:00-12:00 PM)"
+    createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
+});
+
 // Relationships
 import { relations } from "drizzle-orm";
 
@@ -170,6 +181,7 @@ export const coursesRelations = relations(courses, ({ many }) => ({
     collegeCourses: many(collegeCourses),
     subjects: many(subjects),
     pyqs: many(pyqs),
+    routines: many(routines),
 }));
 
 export const collegeCoursesRelations = relations(collegeCourses, ({ one }) => ({
@@ -208,5 +220,12 @@ export const notificationsRelations = relations(notifications, ({ one }) => ({
     user: one(users, {
         fields: [notifications.userId],
         references: [users.id],
+    }),
+}));
+
+export const routinesRelations = relations(routines, ({ one }) => ({
+    course: one(courses, {
+        fields: [routines.courseId],
+        references: [courses.id],
     }),
 }));

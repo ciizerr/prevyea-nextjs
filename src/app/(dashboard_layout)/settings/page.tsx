@@ -29,6 +29,7 @@ interface UserProfile {
     github?: string;
     notifyPyqs: boolean;
     notifyNotices: boolean;
+    semester: string;
 }
 
 import { Suspense } from "react";
@@ -67,6 +68,7 @@ function SettingsContent() {
     const [name, setName] = useState("");
     const [imageUrl, setImageUrl] = useState("");
     const [selectedCourse, setSelectedCourse] = useState("");
+    const [selectedSemester, setSelectedSemester] = useState("");
     const [selectedSession, setSelectedSession] = useState("");
     const [selectedCollege, setSelectedCollege] = useState("");
     const [instagram, setInstagram] = useState("");
@@ -87,6 +89,7 @@ function SettingsContent() {
                 setName(p.name || "");
                 setImageUrl(p.image || "");
                 setSelectedCourse(p.course || "");
+                setSelectedSemester(p.semester || "");
                 setSelectedSession(p.session || "");
                 setSelectedCollege(p.collegeId || "");
                 setInstagram(p.instagram || "");
@@ -129,6 +132,7 @@ function SettingsContent() {
             formData.append("name", name);
             if (imageUrl) formData.append("image", imageUrl);
             if (selectedCourse) formData.append("course", selectedCourse);
+            if (selectedSemester) formData.append("semester", selectedSemester);
             if (selectedSession) formData.append("session", selectedSession);
             if (selectedCollege) formData.append("collegeId", selectedCollege);
             if (instagram) formData.append("instagram", instagram);
@@ -140,7 +144,7 @@ function SettingsContent() {
                 setStatus({ success: true, message: "Profile updated successfully!" });
                 setShowUrlInput(false);
                 if (profile) setProfile({
-                    ...profile, name, image: imageUrl, course: selectedCourse, session: selectedSession, collegeId: selectedCollege,
+                    ...profile, name, image: imageUrl, course: selectedCourse, semester: selectedSemester, session: selectedSession, collegeId: selectedCollege,
                     instagram, discord, github
                 });
             } else {
@@ -154,6 +158,7 @@ function SettingsContent() {
             setName(profile.name || "");
             setImageUrl(profile.image || "");
             setSelectedCourse(profile.course || "");
+            setSelectedSemester(profile.semester || "");
             setSelectedSession(profile.session || "");
             setSelectedCollege(profile.collegeId || "");
             setInstagram(profile.instagram || "");
@@ -317,6 +322,7 @@ function SettingsContent() {
                                                             value={selectedCourse}
                                                             onChange={(e) => {
                                                                 setSelectedCourse(e.target.value);
+                                                                setSelectedSemester("");
                                                                 setSelectedSession(""); 
                                                             }}
                                                             disabled={!selectedCollege}
@@ -329,16 +335,30 @@ function SettingsContent() {
                                                         </select>
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Session</label>
-                                                        <input
-                                                            type="text"
-                                                            value={selectedSession}
-                                                            onChange={(e) => setSelectedSession(e.target.value)}
+                                                        <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Semester</label>
+                                                        <select
+                                                            value={selectedSemester}
+                                                            onChange={(e) => setSelectedSemester(e.target.value)}
                                                             disabled={!selectedCourse}
-                                                            placeholder="e.g. 2023-2027"
-                                                            className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium disabled:opacity-50"
-                                                        />
+                                                            className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium appearance-none disabled:opacity-50"
+                                                        >
+                                                            <option value="">{selectedCourse ? "Select Semester" : "Select Course First"}</option>
+                                                            {Array.from({ length: (courses.find(c => c.id === selectedCourse) as any)?.totalSemesters || 0 }).map((_, i) => (
+                                                                <option key={i} value={`Sem ${i + 1}`}>Sem {i + 1}</option>
+                                                            ))}
+                                                        </select>
                                                     </div>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-sm font-bold text-zinc-700 dark:text-zinc-300">Session</label>
+                                                    <input
+                                                        type="text"
+                                                        value={selectedSession}
+                                                        onChange={(e) => setSelectedSession(e.target.value)}
+                                                        disabled={!selectedCourse}
+                                                        placeholder="e.g. 2023-2027"
+                                                        className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none transition-all font-medium disabled:opacity-50"
+                                                    />
                                                 </div>
                                             </div>
                                         </section>
