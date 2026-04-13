@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, Calendar, Sparkles } from "lucide-react";
+import { Calendar, Sparkles } from "lucide-react";
 import dayjs from "dayjs";
 import { getTodayRoutine } from "@/actions/routines";
 import { getCoursesAction } from "@/actions/curriculum";
@@ -13,7 +13,7 @@ interface RoutineCardProps {
 
 export function RoutineCard({ courseId, semester: initialSemester }: RoutineCardProps) {
     const [routine, setRoutine] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(!!(courseId && initialSemester));
     const [selectedSemester, setSelectedSemester] = useState(initialSemester || "");
     const [courseInfo, setCourseInfo] = useState<{ totalSemesters: number } | null>(null);
 
@@ -29,15 +29,9 @@ export function RoutineCard({ courseId, semester: initialSemester }: RoutineCard
     }, [courseId]);
 
     useEffect(() => {
-        let isMounted = true;
-        
-        if (!courseId || !selectedSemester) {
-            setRoutine(null);
-            setLoading(false);
-            return;
-        }
+        if (!courseId || !selectedSemester) return;
 
-        setLoading(true);
+        let isMounted = true;
         const dayOfWeek = dayjs().day();
         
         getTodayRoutine(courseId, selectedSemester, dayOfWeek).then(data => {
@@ -90,7 +84,6 @@ export function RoutineCard({ courseId, semester: initialSemester }: RoutineCard
     if (!courseId) return null;
 
     const sessionList = routine ? routine.split(",").map(s => parseSession(s.trim())) : [];
-    const currentTime = dayjs().format("h:mm A");
 
     return (
         <div className="relative group overflow-hidden bg-white/40 dark:bg-zinc-950/40 backdrop-blur-md border border-indigo-500/10 rounded-3xl p-4 sm:p-5 animate-in fade-in slide-in-from-top-4 duration-1000">
@@ -116,7 +109,11 @@ export function RoutineCard({ courseId, semester: initialSemester }: RoutineCard
 
                     <select 
                         value={selectedSemester} 
-                        onChange={(e) => setSelectedSemester(e.target.value)}
+                        onChange={(e) => {
+                            setLoading(true);
+                            setRoutine(null);
+                            setSelectedSemester(e.target.value);
+                        }}
                         className="bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-lg px-3 py-1.5 text-[10px] font-black text-zinc-500 dark:text-zinc-400 outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all cursor-pointer h-8"
                     >
                         <option value="">Semester</option>

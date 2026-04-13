@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileDown, FolderOpen, TrendingUp, FileText, ChevronRight, Clock, Sparkles, Trophy, Plus, ArrowUpRight, AlertCircle } from "lucide-react";
+import { FileDown, FolderOpen, TrendingUp, FileText, ChevronRight, Clock, Sparkles, Trophy, Plus, ArrowUpRight, AlertCircle, X } from "lucide-react";
 import ClickSpark from "@/components/reactbits/ClickSpark";
 import { UploadModal } from "./upload-modal";
 import Link from "next/link";
@@ -36,6 +36,21 @@ export function DashboardOverview({
 }: DashboardOverviewProps) {
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const [todayHoliday, setTodayHoliday] = useState<string | null>(null);
+    const [showWelcome, setShowWelcome] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        // Check session storage to see if welcome banner was dismissed
+        const isDismissed = sessionStorage.getItem("welcome-banner-dismissed");
+        const timer = setTimeout(() => {
+            setShowWelcome(isDismissed !== "true");
+        }, 0);
+        return () => clearTimeout(timer);
+    }, []);
+
+    const handleDismissWelcome = () => {
+        setShowWelcome(false);
+        sessionStorage.setItem("welcome-banner-dismissed", "true");
+    };
 
     useEffect(() => {
         const todayStr = dayjs().format("YYYY-MM-DD");
@@ -80,61 +95,69 @@ export function DashboardOverview({
             )}
 
             {/* Premium Welcome Header */}
-            <div className="relative group overflow-hidden rounded-[2.5rem] bg-zinc-900 dark:bg-zinc-950 border border-white/10 shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20 pointer-events-none" />
+            {showWelcome && (
+                <div className="relative group overflow-hidden rounded-[2.5rem] bg-zinc-900 dark:bg-zinc-950 border border-white/10 shadow-2xl">
+                    <button 
+                        onClick={handleDismissWelcome}
+                        className="absolute top-6 right-6 z-20 p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-zinc-400 hover:text-white transition-all hover:rotate-90"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-purple-600/20 pointer-events-none" />
 
-                {/* Visual Flair */}
-                <div className="absolute top-0 right-0 w-full h-full">
-                    <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-blue-500/20 blur-[120px] rounded-full animate-pulse" />
-                    <div className="absolute bottom-[-20%] left-[20%] w-64 h-64 bg-purple-500/20 blur-[100px] rounded-full" />
-                </div>
-
-                <div className="relative z-10 p-8 md:p-14 flex flex-col md:flex-row items-center justify-between gap-10">
-                    <div className="flex-1 space-y-6 text-center md:text-left">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-[10px] font-black uppercase tracking-widest">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            Personal Portal
-                        </div>
-                        <div className="space-y-4">
-                            <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-[1.1]">
-                                Welcome back,<br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-                                    {userName}
-                                </span>
-                            </h1>
-                            <p className="text-zinc-400 text-lg md:text-xl max-w-xl font-medium leading-relaxed">
-                                Join our thriving community of Patna University students. Share resources, help your peers, and build your legacy.
-                            </p>
-                        </div>
-
-                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-4">
-
-                            <Link href="/vault" className="bg-white text-zinc-950 hover:bg-zinc-100 px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center gap-3">
-                                <FolderOpen className="h-5 w-5" />
-                                Explore Library
-                            </Link>
-
-                            <Link href="/leaderboard" className="bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md text-white px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
-                                <Trophy className="h-5 w-5 text-yellow-400" />
-                                Hall of Fame
-                            </Link>
-                        </div>
+                    {/* Visual Flair */}
+                    <div className="absolute top-0 right-0 w-full h-full">
+                        <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-blue-500/20 blur-[120px] rounded-full animate-pulse" />
+                        <div className="absolute bottom-[-20%] left-[20%] w-64 h-64 bg-purple-500/20 blur-[100px] rounded-full" />
                     </div>
 
-                    <div className="hidden lg:flex relative shrink-0">
-                        {/* Decorative Bento Illustration Placeholder */}
-                        <div className="relative w-72 h-72 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-[3rem] p-8 rotate-3 group-hover:rotate-0 transition-transform duration-500 shadow-2xl flex flex-col items-center justify-center text-white overflow-hidden">
-                            <div className="absolute inset-0 bg-white/10 blur-3xl rounded-full translate-x-1/2 translate-y-1/2" />
-                            <Sparkles className="w-20 h-20 mb-4 opacity-50 animate-bounce" />
-                            <div className="text-center">
-                                <p className="font-black text-2xl">PU Library</p>
-                                <p className="text-xs font-bold opacity-70 uppercase tracking-widest pt-1">Patna University</p>
+                    <div className="relative z-10 p-8 md:p-14 flex flex-col md:flex-row items-center justify-between gap-10">
+                        <div className="flex-1 space-y-6 text-center md:text-left">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-[10px] font-black uppercase tracking-widest">
+                                <Sparkles className="w-3.5 h-3.5" />
+                                Personal Portal
+                            </div>
+                            <div className="space-y-4">
+                                <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight leading-[1.1]">
+                                    Welcome back,<br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+                                        {userName}
+                                    </span>
+                                </h1>
+                                <p className="text-zinc-400 text-lg md:text-xl max-w-xl font-medium leading-relaxed">
+                                    Join our thriving community of Patna University students. Share resources, help your peers, and build your legacy.
+                                </p>
+                            </div>
+
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-4">
+
+                                <Link href="/vault" className="bg-white text-zinc-950 hover:bg-zinc-100 px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center gap-3">
+                                    <FolderOpen className="h-5 w-5" />
+                                    Explore Library
+                                </Link>
+
+                                <Link href="/leaderboard" className="bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md text-white px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
+                                    <Trophy className="h-5 w-5 text-yellow-400" />
+                                    Hall of Fame
+                                </Link>
                             </div>
                         </div>
-                        <div className="absolute -inset-4 bg-blue-500/20 blur-3xl -z-10 rounded-full" />
+
+                        <div className="hidden lg:flex relative shrink-0">
+                            {/* Decorative Bento Illustration Placeholder */}
+                            <div className="relative w-72 h-72 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-[3rem] p-8 rotate-3 group-hover:rotate-0 transition-transform duration-500 shadow-2xl flex flex-col items-center justify-center text-white overflow-hidden">
+                                <div className="absolute inset-0 bg-white/10 blur-3xl rounded-full translate-x-1/2 translate-y-1/2" />
+                                <Sparkles className="w-20 h-20 mb-4 opacity-50 animate-bounce" />
+                                <div className="text-center">
+                                    <p className="font-black text-2xl">PU Library</p>
+                                    <p className="text-xs font-bold opacity-70 uppercase tracking-widest pt-1">Patna University</p>
+                                </div>
+                            </div>
+                            <div className="absolute -inset-4 bg-blue-500/20 blur-3xl -z-10 rounded-full" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* Bento-Style Metric Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
