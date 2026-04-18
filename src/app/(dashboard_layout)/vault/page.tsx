@@ -264,7 +264,7 @@ export default function VaultPage() {
                                         <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Subjects</span>
                                     </div>
 
-                                    <div className="flex flex-col gap-1.5 overflow-y-auto max-h-[400px] scrollbar-hide pr-1 min-h-[100px] relative">
+                                    <div className="grid grid-cols-2 gap-2 overflow-y-auto max-h-[400px] scrollbar-hide pr-1 min-h-[100px] relative">
                                         {loadingSubjects ? (
                                             <div className="absolute inset-0 flex items-center justify-center">
                                                 <Loader2 className="h-6 w-6 animate-spin text-indigo-500 opacity-20" />
@@ -285,7 +285,7 @@ export default function VaultPage() {
                                                 </button>
                                             ))
                                         ) : (
-                                            <div className="text-center py-10 opacity-40">
+                                            <div className="col-span-2 text-center py-10 opacity-40">
                                                 <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">No subjects found</p>
                                             </div>
                                         )}
