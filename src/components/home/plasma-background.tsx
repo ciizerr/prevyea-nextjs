@@ -9,7 +9,7 @@ const Plasma = dynamic(() => import("@/components/reactbits/Plasma"), {
 
 export default function PlasmaBackground() {
     const [plasmaColor, setPlasmaColor] = useState<string | undefined>(undefined);
-    const [isMobile, setIsMobile] = useState(false);
+    const [isLowPower, setIsLowPower] = useState(false);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -20,16 +20,17 @@ export default function PlasmaBackground() {
             setPlasmaColor(color);
         }, 0);
 
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth < 768);
+        const checkDevice = () => {
+            // Disable WebGL Plasma on tablets and mobile (< 1024px) for performance
+            setIsLowPower(window.innerWidth < 1024);
         };
 
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
+        checkDevice();
+        window.addEventListener("resize", checkDevice);
 
         return () => {
             clearTimeout(timer);
-            window.removeEventListener("resize", checkMobile);
+            window.removeEventListener("resize", checkDevice);
         };
     }, []);
 
@@ -38,8 +39,8 @@ export default function PlasmaBackground() {
         return <div className="fixed inset-0 -z-50 bg-zinc-50 dark:bg-zinc-950 transition-opacity duration-500" />;
     }
 
-    // On mobile devices, use a lightweight, static CSS background instead of heavy WebGL
-    if (isMobile) {
+    // On mobile/tablet devices, use a lightweight, static CSS background instead of heavy WebGL
+    if (isLowPower) {
         return (
             <div className="fixed inset-0 -z-50 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 transition-opacity duration-500" />
         );

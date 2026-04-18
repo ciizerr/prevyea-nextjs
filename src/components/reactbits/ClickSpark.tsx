@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useTheme } from 'next-themes';
 
 interface ClickSparkProps {
@@ -37,10 +37,20 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   const sparksRef = useRef<Spark[]>([]);
   const animationIdRef = useRef<number | null>(null);
   const { resolvedTheme } = useTheme();
+  const [isMobile, setIsMobile] = useState(false);
 
   const activeSparkColor = sparkColor || (resolvedTheme === 'light' ? '#000' : '#fff');
 
+  // Detect mobile to skip canvas entirely for performance
   useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -71,7 +81,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
       ro.disconnect();
       clearTimeout(resizeTimeout);
     };
-  }, []);
+  }, [isMobile]);
 
   const easeFunc = useCallback(
     (t: number) => {
@@ -92,6 +102,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   const playAnimationRef = useRef<() => void>(() => {});
 
   useEffect(() => {
+    if (isMobile) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -146,9 +157,10 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
         animationIdRef.current = null;
       }
     };
-  }, [activeSparkColor, sparkSize, sparkRadius, extraScale, duration, easeFunc]);
+  }, [isMobile, activeSparkColor, sparkSize, sparkRadius, extraScale, duration, easeFunc]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+    if (isMobile) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -166,6 +178,11 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     sparksRef.current.push(...newSparks);
     playAnimationRef.current();
   };
+
+  // On mobile, just render children without canvas overlay
+  if (isMobile) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <div className={className} onClick={handleClick}>
