@@ -13,9 +13,9 @@ const nunito = Nunito({
   subsets: ["latin"],
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL 
-  ? process.env.NEXT_PUBLIC_APP_URL 
-  : process.env.NEXT_PUBLIC_VERCEL_URL 
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+  ? process.env.NEXT_PUBLIC_APP_URL
+  : process.env.NEXT_PUBLIC_VERCEL_URL
     ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
     : "http://localhost:3000";
 
@@ -63,6 +63,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="4MbvFMjLTtglVTgNPS1jcYGnG94opIsQVjpRGXFjXFQ" />
         <link rel="apple-touch-icon" href="/img-512x512.webp" />
       </head>
       <body className={`${nunito.variable} font-sans antialiased bg-zinc-50 dark:bg-[#0a0a0a] text-zinc-900 dark:text-zinc-50 min-h-screen`}>
@@ -72,13 +73,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-            <Providers>
-              {children}
-              <CommandPalette />
-              <ServiceWorkerRegistration />
-              <PWAInstallPrompt />
-              <Toaster position="top-center" richColors />
-            </Providers>
+          <Providers>
+            {children}
+            <CommandPalette />
+            <ServiceWorkerRegistration />
+            <PWAInstallPrompt />
+            <Toaster position="top-center" richColors />
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

@@ -46,14 +46,14 @@ function AnimatedCounter({ value, suffix = "", label }: AnimatedCounterProps) {
     );
 }
 
-export default function LibraryStats({ stats }: { stats?: { pyqsCount: number, subjectsCount: number } }) {
+export default function LibraryStats({ stats }: { stats?: { pyqsCount: number, subjectsCount: number, usersCount: number } }) {
     return (
         <section className="w-full py-14 md:py-20 bg-white dark:bg-[#0a0a0a] border-y border-zinc-200/50 dark:border-zinc-800/50 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="grid grid-cols-3 gap-2 md:gap-4 divide-x divide-zinc-200 dark:divide-zinc-800">
                     <AnimatedCounter value={stats?.pyqsCount || 100} suffix="+" label="PDFs Archived" />
                     <AnimatedCounter value={stats?.subjectsCount || 5} suffix="+" label="Vocational Subjects" />
-                    <AnimatedCounter value={0} suffix="" label="Hours Wasted" />
+                    <AnimatedCounter value={stats?.usersCount || 13} suffix="+" label="Users Joined" />
                 </div>
             </div>
         </section>

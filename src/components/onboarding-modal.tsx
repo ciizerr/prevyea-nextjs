@@ -17,7 +17,7 @@ export default function OnboardingModal() {
     const [dismissed, setDismissed] = useState(false);
 
     // Dynamic Curriculum State
-    const [courses, setCourses] = useState<{ id: string; name: string; collegeId: string | null }[]>([]);
+    const [courses, setCourses] = useState<{ id: string; name: string; collegeId: string | null; totalSemesters?: number }[]>([]);
     const [colleges, setColleges] = useState<{ id: string; name: string }[]>([]);
 
     const [selectedCollegeId, setSelectedCollegeId] = useState("");
@@ -168,7 +168,7 @@ export default function OnboardingModal() {
                                     className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none disabled:opacity-50"
                                 >
                                     <option value="" disabled>{selectedCourseId ? "Select Sem" : "Select Course"}</option>
-                                    {Array.from({ length: (courses.find(c => c.id === selectedCourseId) as any)?.totalSemesters || 0 }).map((_, i) => (
+                                    {Array.from({ length: courses.find(c => c.id === selectedCourseId)?.totalSemesters || 0 }).map((_, i) => (
                                         <option key={i} value={`Sem ${i + 1}`}>Sem {i + 1}</option>
                                     ))}
                                 </select>

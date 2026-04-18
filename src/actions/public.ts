@@ -8,14 +8,16 @@ export async function getLandingStats() {
     try {
         const pyqsCountResult = await db.select({ value: count(pyqs.id) }).from(pyqs).where(eq(pyqs.status, "APPROVED"));
         const subjectsCountResult = await db.select({ value: count(subjects.id) }).from(subjects);
+        const usersCountResult = await db.select({ value: count(users.id) }).from(users);
 
         return {
             pyqsCount: pyqsCountResult[0].value,
             subjectsCount: subjectsCountResult[0].value,
+            usersCount: usersCountResult[0].value,
         };
     } catch (error) {
         console.error("Failed to fetch landing stats:", error);
-        return { pyqsCount: 500, subjectsCount: 10 }; // Fallback numbers
+        return { pyqsCount: 500, subjectsCount: 10, usersCount: 13 }; // Fallback numbers
     }
 }
 
