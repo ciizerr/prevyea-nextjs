@@ -28,7 +28,7 @@ export function Sidebar({ isOpen, isMobileOpen, onToggle, onMobileClose }: Sideb
     const allLinks = [
         { name: "Overview", href: "/dashboard", icon: LayoutDashboard, public: false },
         { name: "Leaderboard", href: "/leaderboard", icon: Trophy, public: true },
-        { name: "The Vault (PYQs)", href: "/vault", icon: FolderOpen, public: true },
+        { name: "Library", href: "/vault", icon: FolderOpen, public: true },
         { name: "Syllabus", href: "/syllabus", icon: BookOpen, public: true },
         { name: "Notice Board", href: "/notice", icon: Megaphone, public: true },
     ];

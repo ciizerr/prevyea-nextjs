@@ -43,7 +43,7 @@ export default function ClientNavbar({ session }: ClientNavbarProps) {
                         {/* Center: Navigation Links */}
                         <div className="hidden md:flex items-center gap-2">
                             <Link href="/vault" className="text-[11px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-300 px-4 py-2 rounded-xl transition-all">
-                                Archive
+                                Library
                             </Link>
                             <Link href="/syllabus" className="text-[11px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-300 px-4 py-2 rounded-xl transition-all">
                                 Syllabus

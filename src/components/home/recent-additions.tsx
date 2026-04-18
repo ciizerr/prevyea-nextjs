@@ -21,7 +21,7 @@ export default function RecentAdditions({ pyqs }: { pyqs?: { id?: string; title:
                     <div className="space-y-1.5 md:space-y-2">
                         <div className="flex items-center gap-2 text-[9px] md:text-[10px] font-black text-indigo-500 uppercase tracking-widest">
                             <Sparkles className="h-3 w-3" />
-                            Live Archive
+                            Live Library
                         </div>
                         <h2 className="text-2xl md:text-3xl lg:text-5xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 leading-none">Fresh Additions.</h2>
                     </div>

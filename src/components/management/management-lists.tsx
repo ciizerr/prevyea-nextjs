@@ -244,7 +244,7 @@ export function SubjectList({
                                     <ConfirmDeleteButton
                                         label={`${s.name} (${course?.name} · ${s.semester})`}
                                         entityType="Subject"
-                                        warning="All files uploaded under this subject will become orphaned (not visible in Vault)."
+                                        warning="All files uploaded under this subject will become orphaned (not visible in Library)."
                                         action={async () => await deleteAction(s.id)}
                                     />
                                 </span>

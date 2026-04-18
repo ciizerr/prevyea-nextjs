@@ -48,7 +48,7 @@ export default function Hero() {
                                 "Find Verified Study Notes.",
                                 "Browse Official Syllabus.",
                                 "Built for PU Vocational Core.",
-                                "Your Digital Study Vault."
+                                "Your Digital Study Library."
                             ]}
                             typingSpeed={60}
                             deletingSpeed={40}

@@ -60,7 +60,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
                             className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-indigo-500 transition-all group"
                         >
                             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                            Back to Vault
+                            Back to Library
                         </Link>
                         <div className="space-y-4">
                             <h1 className="text-4xl md:text-6xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter italic uppercase leading-none">
@@ -116,11 +116,11 @@ export default async function PaperPage({ params }: PaperPageProps) {
                     <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center">
                         <FileText className="w-4 h-4 text-white" />
                     </div>
-                    <span className="text-[11px] font-black uppercase tracking-widest whitespace-nowrap">PU Digital Library Vault</span>
+                    <span className="text-[11px] font-black uppercase tracking-widest whitespace-nowrap">PU Digital Library</span>
                 </div>
                 <div className="w-px h-6 bg-white/20 dark:bg-black/10" />
                 <Link href="/" className="text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity">
-                    Join Archive
+                    Join Library
                 </Link>
             </div>
         </div>

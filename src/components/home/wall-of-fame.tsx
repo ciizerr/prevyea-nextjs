@@ -36,7 +36,7 @@ export default function WallOfFame({ leaderboard }: { leaderboard?: LeaderboardU
                         Library Contributors
                     </div>
                     <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 leading-none">
-                        Legends of the Archive.
+                        Legends of the Library.
                     </h2>
                     <p className="text-sm md:text-lg text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto font-medium">
                         The ultimate flex? Empowering your juniors. Join the leaderboard by contributing verified study material.

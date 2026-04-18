@@ -109,7 +109,7 @@ export default function StruggleVsSolution() {
                         <div className="mt-6 md:mt-8 pt-4">
                             <ClickSpark className="w-full">
                                 <Link href="/vault" className="w-full bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-black text-[10px] md:text-xs uppercase tracking-wider md:tracking-[0.2em] py-4 md:py-5 rounded-xl md:rounded-[1.5rem] shadow-2xl transition-all flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95">
-                                    Enter the Vault
+                                    Enter the Library
                                     <Check className="h-4 w-4" />
                                 </Link>
                             </ClickSpark>

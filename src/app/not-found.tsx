@@ -147,7 +147,7 @@ export default function NotFound() {
               className="group w-full flex justify-center items-center py-5 px-10 bg-white dark:bg-transparent border-2 border-zinc-200 dark:border-zinc-800 rounded-[2rem] text-[11px] font-black uppercase tracking-[0.25em] text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-zinc-400 dark:hover:border-zinc-600 transition-all gap-4"
             >
               <Search className="h-4 w-4 transition-transform group-hover:scale-110" />
-              Browse The Vault
+              Browse The Library
             </Link>
           </div>
         </div>

@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 const COMMANDS = [
-    { id: "archive", name: "Browse Archive", icon: FileText, shortcut: "A", href: "/vault" },
+    { id: "archive", name: "Browse Library", icon: FileText, shortcut: "A", href: "/vault" },
     { id: "syllabus", name: "Official Syllabus", icon: BookOpen, shortcut: "S", href: "/syllabus" },
     { id: "notice", name: "Internal Notices", icon: Sparkles, shortcut: "N", href: "/notice" },
     { id: "dashboard", name: "User Dashboard", icon: LayoutDashboard, shortcut: "D", href: "/dashboard" },

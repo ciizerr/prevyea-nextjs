@@ -15,10 +15,10 @@ import {
     CheckCircle2,
     Share2,
     X,
-    Eye
+    Eye,
+    ChevronDown
 } from "lucide-react";
 import { motion } from "framer-motion";
-import ClickSpark from "@/components/reactbits/ClickSpark";
 import { getCoursesAction, getSubjectsAction, getFilesAction, incrementDownloadAction, incrementViewAction } from "@/actions/curriculum";
 import PDFViewer from "@/components/pdf-viewer";
 import { UploadModal } from "@/components/dashboard/upload-modal";
@@ -58,6 +58,7 @@ export default function VaultPage() {
 
     const [selectedPaperIndex, setSelectedPaperIndex] = useState<number | null>(null);
     const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+    const [resourceType, setResourceType] = useState<"PYQ" | "Notes" | "All">("All");
 
     // Dynamic Data States
     const [dbCourses, setDbCourses] = useState<CourseType[]>([]);
@@ -66,7 +67,6 @@ export default function VaultPage() {
     const selectedPaper = selectedPaperIndex !== null ? papers[selectedPaperIndex] : null;
 
     // Loading States
-    const [loadingCourses, setLoadingCourses] = useState(true);
     const [loadingSubjects, setLoadingSubjects] = useState(false);
     const [loadingPapers, setLoadingPapers] = useState(false);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
@@ -81,7 +81,6 @@ export default function VaultPage() {
                 const uniqueCourses = Array.from(new Map(allCourses.map(c => [c.id, c])).values());
                 setDbCourses(uniqueCourses);
             }
-            setLoadingCourses(false);
         }
         fetchInitialData();
     }, []);
@@ -113,7 +112,8 @@ export default function VaultPage() {
                 return;
             }
             setLoadingPapers(true);
-            const res = await getFilesAction(activeSubjectId, ["PYQ", "Notes"]);
+            const filters = resourceType === "All" ? ["PYQ", "Notes"] : [resourceType];
+            const res = await getFilesAction(activeSubjectId, filters as ("PYQ" | "Notes")[]);
             if (res.success && res.data) {
                 const formattedPapers: Paper[] = res.data.map((p: {
                     id: string; title: string; type: string; year: number; uploaderId: string | null; uploaderName: string | null; uploaderUsername: string | null; downloads: number | null; views: number | null; createdAt: Date | null; viewLink: string; downloadLink: string;
@@ -155,7 +155,7 @@ export default function VaultPage() {
             setLoadingPapers(false);
         }
         fetchFiles();
-    }, [activeSubjectId]);
+    }, [activeSubjectId, resourceType]);
 
     const activeCourse = dbCourses.find(c => c.id === activeCourseId);
 
@@ -182,12 +182,34 @@ export default function VaultPage() {
 
                             {/* Branding / Title */}
                             <div className="space-y-1 pl-2">
-                                <h1 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic leading-none">Vault</h1>
-                                <p className="text-[10px] font-black text-indigo-500 dark:text-indigo-400 tracking-[0.3em] uppercase opacity-70">View Papers</p>
+                                <h1 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic leading-none">Library</h1>
+                                <p className="text-[10px] font-black text-indigo-500 dark:text-indigo-400 tracking-[0.3em] uppercase opacity-70">Browse PYQs & Notes</p>
                             </div>
 
                             {/* Resource Card */}
                             <div className="bg-zinc-50 dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800/60 rounded-[2.5rem] p-6 shadow-2xl space-y-8">
+
+                                {/* Resource Type Toggle */}
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3 px-2">
+                                        <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
+                                        <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Resource Type</span>
+                                    </div>
+                                    <div className="flex bg-white dark:bg-zinc-950/50 p-1 rounded-2xl border border-zinc-100 dark:border-zinc-800/50">
+                                        {(["All", "PYQ", "Notes"] as const).map((type) => (
+                                            <button
+                                                key={type}
+                                                onClick={() => setResourceType(type)}
+                                                className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-xl ${resourceType === type
+                                                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-lg"
+                                                    : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                                                    }`}
+                                            >
+                                                {type}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
 
                                 {/* Program Selection */}
                                 <div className="space-y-4">
@@ -195,46 +217,43 @@ export default function VaultPage() {
                                         <div className="w-1.5 h-6 bg-indigo-500 rounded-full" />
                                         <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Select Course</span>
                                     </div>
-                                    <div className="flex flex-col gap-2 p-1.5 bg-white dark:bg-zinc-950/50 rounded-3xl border border-zinc-100 dark:border-zinc-800/50">
-                                        {loadingCourses ? (
-                                            <div className="p-10 flex flex-col items-center justify-center w-full gap-3">
-                                                <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />
-                                            </div>
-                                        ) : dbCourses.map(c => (
-                                            <button
-                                                key={c.id}
-                                                onClick={() => { setActiveCourseId(c.id); setActiveSem("Sem 1"); }}
-                                                className={`w-full py-3 px-5 rounded-2xl text-[11px] font-black transition-all text-left flex items-center justify-between group uppercase tracking-widest ${activeCourseId === c.id
-                                                    ? "bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xl scale-[1.02]"
-                                                    : "text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900/80"
-                                                    }`}
-                                            >
-                                                <span className="truncate">{c.name}</span>
-                                                {activeCourseId === c.id && <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />}
-                                            </button>
-                                        ))}
+                                    <div className="relative">
+                                        <select
+                                            value={activeCourseId}
+                                            onChange={(e) => {
+                                                setActiveCourseId(e.target.value);
+                                                setActiveSem("Sem 1");
+                                            }}
+                                            className="w-full px-5 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/50 text-[11px] font-black uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-indigo-500/50 appearance-none transition-all pr-10 text-zinc-900 dark:text-zinc-100"
+                                        >
+                                            <option value="" disabled>Choose Course</option>
+                                            {dbCourses.map((c) => (
+                                                <option key={c.id} value={c.id}>{c.name}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
                                     </div>
                                 </div>
 
-                                {/* Semester Grid */}
+                                {/* Semester Dropdown */}
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-3 px-2">
                                         <div className="w-1.5 h-6 bg-emerald-500 rounded-full" />
                                         <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Semester</span>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-2 max-h-[160px] overflow-y-auto scrollbar-hide pr-1">
-                                        {computedSemesters.map(sem => (
-                                            <button
-                                                key={sem}
-                                                onClick={() => setActiveSem(sem)}
-                                                className={`py-3 rounded-2xl text-[10px] font-black transition-all text-center uppercase tracking-widest border ${activeSem === sem
-                                                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                                                    : "bg-white dark:bg-zinc-950/30 border-zinc-100 dark:border-zinc-800/60 text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600"
-                                                    }`}
-                                            >
-                                                {sem}
-                                            </button>
-                                        ))}
+                                    <div className="relative">
+                                        <select
+                                            value={activeSem}
+                                            disabled={!activeCourseId}
+                                            onChange={(e) => setActiveSem(e.target.value)}
+                                            className="w-full px-5 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950/50 text-[11px] font-black uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none transition-all pr-10 text-zinc-900 dark:text-zinc-100 disabled:opacity-30 disabled:cursor-not-allowed"
+                                        >
+                                            <option value="" disabled>Select Sem</option>
+                                            {computedSemesters.map((sem) => (
+                                                <option key={sem} value={sem}>{sem}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
                                     </div>
                                 </div>
 
@@ -245,7 +264,7 @@ export default function VaultPage() {
                                         <span className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em]">Subjects</span>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-2 overflow-y-auto max-h-[300px] scrollbar-hide pr-1 min-h-[100px] relative">
+                                    <div className="flex flex-col gap-1.5 overflow-y-auto max-h-[400px] scrollbar-hide pr-1 min-h-[100px] relative">
                                         {loadingSubjects ? (
                                             <div className="absolute inset-0 flex items-center justify-center">
                                                 <Loader2 className="h-6 w-6 animate-spin text-indigo-500 opacity-20" />
@@ -255,19 +274,18 @@ export default function VaultPage() {
                                                 <button
                                                     key={subject.id}
                                                     onClick={() => setActiveSubjectId(subject.id)}
-                                                    className={`w-full py-4 px-4 rounded-xl text-[10px] transition-all text-left flex items-center gap-3 group border ${activeSubjectId === subject.id
-                                                        ? "bg-indigo-500 text-white font-black border-transparent shadow-lg shadow-indigo-500/20"
-                                                        : "bg-white dark:bg-zinc-950/20 text-zinc-400 border-zinc-100 dark:border-zinc-800/60 hover:text-zinc-900 dark:hover:text-zinc-100 hover:border-zinc-300 dark:hover:border-zinc-600"
+                                                    className={`w-full py-3.5 px-4 rounded-xl text-[10px] transition-all text-left flex items-center gap-3 group ${activeSubjectId === subject.id
+                                                        ? "bg-zinc-950 text-white dark:bg-zinc-100 dark:text-zinc-950 shadow-xl font-black"
+                                                        : "bg-white dark:bg-zinc-950/20 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800/50"
                                                         }`}
                                                 >
-                                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${activeSubjectId === subject.id ? "bg-white/20" : "bg-zinc-100 dark:bg-zinc-800"}`}>
-                                                        <BookOpen className="h-4 w-4" />
-                                                    </div>
-                                                    <span className="line-clamp-3 uppercase tracking-tight font-black leading-tight flex-1" title={subject.name}>{subject.name}</span>
+                                                    <BookOpen className={`h-3.5 w-3.5 shrink-0 ${activeSubjectId === subject.id ? "text-indigo-400" : "text-zinc-400 opacity-40 group-hover:opacity-100"}`} />
+                                                    <span className="line-clamp-2 uppercase tracking-tight leading-tight flex-1" title={subject.name}>{subject.name}</span>
+                                                    {activeSubjectId === subject.id && <div className="w-1 h-1 rounded-full bg-indigo-500" />}
                                                 </button>
                                             ))
                                         ) : (
-                                            <div className="col-span-2 text-center py-10 opacity-40">
+                                            <div className="text-center py-10 opacity-40">
                                                 <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">No subjects found</p>
                                             </div>
                                         )}
@@ -275,16 +293,6 @@ export default function VaultPage() {
                                 </div>
                             </div>
 
-                            {/* Action Button */}
-                            <ClickSpark>
-                                <button
-                                    onClick={() => setIsUploadModalOpen(true)}
-                                    className="w-full group py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-[2rem] font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all"
-                                >
-                                    <Upload className="h-4 w-4" />
-                                    Upload Paper
-                                </button>
-                            </ClickSpark>
                         </div>
                     </aside>
 
@@ -310,7 +318,7 @@ export default function VaultPage() {
                                         </div>
                                         <div className="space-y-3">
                                             <h2 className="text-3xl md:text-5xl font-black text-zinc-900 dark:text-white tracking-tighter leading-none uppercase italic">
-                                                {dbSubjects.find(s => s.id === activeSubjectId)?.name || "Papers"}
+                                                {dbSubjects.find(s => s.id === activeSubjectId)?.name || (resourceType === "All" ? "Library" : resourceType + "s")}
                                             </h2>
                                             <p className="text-lg font-medium text-zinc-500 dark:text-zinc-400 max-w-2xl">
                                                 {loadingPapers ? (
@@ -319,7 +327,7 @@ export default function VaultPage() {
                                                         Loading...
                                                     </span>
                                                 ) : (
-                                                    `Viewing ${papers.length} papers for this subject.`
+                                                    `Viewing ${papers.length} ${resourceType === "All" ? "resources" : resourceType.toLowerCase() + "s"} for this subject.`
                                                 )}
                                             </p>
                                         </div>
@@ -377,13 +385,12 @@ export default function VaultPage() {
                                                             {paper.title} <span className="text-zinc-400 dark:text-zinc-600 px-0.5 font-normal">●</span> {paper.year}
                                                         </h3>
                                                         <div className={`flex items-center gap-2 shrink-0 opacity-75 ${viewMode === "list" ? "mt-0" : "mt-1.5"}`}>
-                                                            <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border transition-colors ${
-                                                                paper.type.toLowerCase().includes('pyq') 
-                                                                    ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/30 group-hover:bg-indigo-500/25" 
-                                                                    : paper.type.toLowerCase().includes('note')
-                                                                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 group-hover:bg-emerald-500/25"
-                                                                        : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 group-hover:bg-amber-500/25"
-                                                            }`}>
+                                                            <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border transition-colors ${paper.type.toLowerCase().includes('pyq')
+                                                                ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/30 group-hover:bg-indigo-500/25"
+                                                                : paper.type.toLowerCase().includes('note')
+                                                                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 group-hover:bg-emerald-500/25"
+                                                                    : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 group-hover:bg-amber-500/25"
+                                                                }`}>
                                                                 {paper.type}
                                                             </span>
                                                             <span className="text-[10px] font-bold text-zinc-400 truncate max-w-[80px]">by {paper.author}</span>
@@ -399,29 +406,29 @@ export default function VaultPage() {
 
 
 
-                                        ) : !activeSubjectId ? (
-                                            <div className="flex flex-col items-center justify-center py-40 text-center space-y-10 bg-indigo-50/50 dark:bg-indigo-950/10 border border-indigo-100 dark:border-indigo-900/30 rounded-[4rem]">
-                                                <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-indigo-100/50 dark:border-indigo-900/50 text-indigo-400 dark:text-indigo-500">
-                                                    <LayoutGrid className="h-12 w-12" />
-                                                </div>
-                                                <div className="space-y-4">
-                                                    <h3 className="text-3xl font-black text-indigo-950 dark:text-indigo-100 tracking-tighter uppercase italic">Select Library</h3>
-                                                    <p className="text-indigo-600/60 dark:text-indigo-400/60 max-w-sm mx-auto font-medium leading-relaxed">
-                                                        Please select a Course, Semester, and Subject from the sidebar to fetch resources.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="flex flex-col items-center justify-center py-40 text-center space-y-10 bg-zinc-50 dark:bg-zinc-950/20 border-2 border-dashed border-zinc-100 dark:border-zinc-800/40 rounded-[4rem]">
-                                                <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800 text-zinc-200 dark:text-zinc-800">
-                                                    <FolderOpen className="h-12 w-12" />
-                                                </div>
-                                                <div className="space-y-4">
-                                                    <h3 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic">No Papers Found</h3>
-                                                    <p className="text-zinc-400 dark:text-zinc-500 max-w-sm mx-auto font-medium leading-relaxed">
-                                                        No papers have been uploaded for this selection yet.
-                                                    </p>
-                                                </div>
+                                ) : !activeSubjectId ? (
+                                    <div className="flex flex-col items-center justify-center py-40 text-center space-y-10 bg-indigo-50/50 dark:bg-indigo-950/10 border border-indigo-100 dark:border-indigo-900/30 rounded-[4rem]">
+                                        <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-indigo-100/50 dark:border-indigo-900/50 text-indigo-400 dark:text-indigo-500">
+                                            <BookOpen className="h-12 w-12" />
+                                        </div>
+                                        <div className="space-y-4">
+                                            <h3 className="text-3xl font-black text-indigo-950 dark:text-indigo-100 tracking-tighter uppercase italic">Select Subject</h3>
+                                            <p className="text-indigo-600/60 dark:text-indigo-400/60 max-w-sm mx-auto font-medium leading-relaxed">
+                                                Please select a Course, Semester, and Subject from the sidebar to browse resources in the Library.
+                                            </p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center py-40 text-center space-y-10 bg-zinc-50 dark:bg-zinc-950/20 border-2 border-dashed border-zinc-100 dark:border-zinc-800/40 rounded-[4rem]">
+                                        <div className="w-28 h-28 bg-white dark:bg-zinc-900/50 rounded-[2.5rem] flex items-center justify-center shadow-xl border border-zinc-100 dark:border-zinc-800 text-zinc-200 dark:text-zinc-800">
+                                            <FolderOpen className="h-12 w-12" />
+                                        </div>
+                                        <div className="space-y-4">
+                                            <h3 className="text-3xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter uppercase italic">No {resourceType === "All" ? "Resources" : resourceType} Found</h3>
+                                            <p className="text-zinc-400 dark:text-zinc-500 max-w-sm mx-auto font-medium leading-relaxed">
+                                                No {resourceType.toLowerCase() === "all" ? "papers or notes" : resourceType.toLowerCase()} have been uploaded for this selection yet.
+                                            </p>
+                                        </div>
                                         <button
                                             onClick={() => setIsUploadModalOpen(true)}
                                             className="px-10 py-5 bg-indigo-500 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-indigo-500/20 hover:scale-[1.05] active:scale-95 transition-all"
@@ -460,7 +467,7 @@ export default function VaultPage() {
                                         <div className="hidden sm:flex items-center gap-1.5 shrink-0">
                                             <span>by</span>
                                             {selectedPaper.authorUsername ? (
-                                                <Link 
+                                                <Link
                                                     href={`/u/${selectedPaper.authorUsername}`}
                                                     className="text-zinc-900 dark:text-zinc-100 hover:text-indigo-500 transition-colors underline decoration-zinc-300 dark:decoration-zinc-700 underline-offset-4"
                                                 >
@@ -544,7 +551,7 @@ export default function VaultPage() {
                                         <div className="flex items-center gap-1.5 shrink-0">
                                             <span className="opacity-70">by</span>
                                             {selectedPaper.authorUsername ? (
-                                                <Link 
+                                                <Link
                                                     href={`/u/${selectedPaper.authorUsername}`}
                                                     className="text-zinc-700 dark:text-zinc-200 hover:text-indigo-500 transition-colors underline decoration-zinc-300 dark:decoration-zinc-700 underline-offset-4"
                                                 >

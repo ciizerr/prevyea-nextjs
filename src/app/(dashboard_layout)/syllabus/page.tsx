@@ -325,7 +325,7 @@ export default function SyllabusPage() {
                                                         className="w-full sm:w-auto px-10 py-5 bg-zinc-950 dark:bg-zinc-100 text-white dark:text-zinc-950 rounded-2xl font-black flex items-center justify-center gap-3 shadow-2xl transition-all active:scale-95 text-[11px] uppercase tracking-widest"
                                                     >
                                                         <Download className="h-4 w-4" />
-                                                        Download Archive
+                                                        Download Library
                                                     </a>
                                                 )}
                                             </ClickSpark>
@@ -386,7 +386,7 @@ export default function SyllabusPage() {
                                                 </p>
                                             </div>
                                             <Link href="/vault" className="inline-flex items-center gap-3 text-[11px] font-black text-indigo-500 uppercase tracking-[0.2em] hover:gap-5 transition-all">
-                                                Go to Vault <ChevronRight className="w-4 h-4" />
+                                                Go to Library <ChevronRight className="w-4 h-4" />
                                             </Link>
                                         </div>
                                     )}

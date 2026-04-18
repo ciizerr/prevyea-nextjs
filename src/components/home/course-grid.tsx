@@ -26,7 +26,7 @@ export default function CourseGrid() {
                             <div className="inline-flex items-center justify-center p-3 md:p-4 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl md:rounded-2xl mb-5 md:mb-8 border border-indigo-100/50 dark:border-indigo-500/20">
                                 <ShieldCheck className="h-6 w-6 md:h-8 md:w-8" />
                             </div>
-                            <h3 className="text-2xl md:text-4xl font-black text-zinc-900 dark:text-white mb-2 md:mb-4 tracking-tight">The Digital Vault</h3>
+                            <h3 className="text-2xl md:text-4xl font-black text-zinc-900 dark:text-white mb-2 md:mb-4 tracking-tight">The Digital Library</h3>
                             <p className="text-sm md:text-lg text-zinc-500 dark:text-zinc-400 max-w-md font-medium leading-relaxed">
                                 Access a decade of verified past papers and curated study material, organized by semester.
                             </p>
@@ -34,7 +34,7 @@ export default function CourseGrid() {
 
                         <div className="relative z-10 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/60 pt-4 md:pt-6 mt-4 md:mt-0">
                             <span className="text-[10px] md:text-xs font-black uppercase tracking-wider md:tracking-[0.2em] text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
-                                Enter the Vault <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                                Enter the Library <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                             </span>
                             <div className="flex -space-x-2">
                                 {[1,2,3].map(i => (

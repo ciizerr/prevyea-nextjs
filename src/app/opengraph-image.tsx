@@ -102,7 +102,7 @@ export default async function Image() {
                     >
                         <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#10b981" }} />
                         <span style={{ fontSize: 14, fontWeight: 900, color: "#71717a", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                            The Community Vault
+                            The Community Library
                         </span>
                     </div>
 
