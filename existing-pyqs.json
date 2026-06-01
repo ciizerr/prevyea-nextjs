@@ -1,0 +1,492 @@
+[
+  {
+    "id": "d11b81f1-aa74-452c-8cef-83024f7409cf",
+    "title": "Core Course 4: Computer System Architecture",
+    "year": 2026,
+    "semester": "Sem 2",
+    "subjectId": "7b84e5e4-af0f-4d6b-8a3b-d8dcc4b5bf22",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-4"
+  },
+  {
+    "id": "2c1495b0-903b-42eb-b872-88b4c1063ce2",
+    "title": "Core Course 3: Programming in Java",
+    "year": 2026,
+    "semester": "Sem 2",
+    "subjectId": "1930ecc2-6e72-482a-894d-c99d192933d3",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-3"
+  },
+  {
+    "id": "eab5421a-955f-4e1e-bd60-2390ad1c79d6",
+    "title": "Core Course 2: Programming Techniques Using C",
+    "year": 2026,
+    "semester": "Sem 1",
+    "subjectId": "7bffea76-c218-4cb5-a883-0065947cb7fe",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-2"
+  },
+  {
+    "id": "ea197a85-b901-45e0-9705-394761bdecf6",
+    "title": "CC-1: Computer Fundamentals and Organizations",
+    "year": 2026,
+    "semester": "Sem 1",
+    "subjectId": "d2205ab5-a4cf-4813-9720-511431042b01",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-1"
+  },
+  {
+    "id": "da962356-3b71-471d-b6cd-afd6d33874c4",
+    "title": "CC-5: Python Programming",
+    "year": 2026,
+    "semester": "Sem 3",
+    "subjectId": "4be33bdc-732f-4ea5-9159-55bfeb4d97d0",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-5"
+  },
+  {
+    "id": "f0db21a5-fd90-42e7-bd17-bc5c431a84b5",
+    "title": "CC-6: Operating Systems",
+    "year": 2026,
+    "semester": "Sem 3",
+    "subjectId": "dac75a78-ef0c-49d0-9105-cf43fd3e6909",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-6"
+  },
+  {
+    "id": "3427d125-c6c8-42c0-9eb6-9f42da398873",
+    "title": "CC-7: Structured System Analysis and Design",
+    "year": 2026,
+    "semester": "Sem 3",
+    "subjectId": "7217a303-070b-4657-9c8e-9ce6ccc343df",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-7"
+  },
+  {
+    "id": "a2d66009-0f04-4af6-9549-8a4415eedf24",
+    "title": "CC-8: Computer Networks",
+    "year": 2026,
+    "semester": "Sem 4",
+    "subjectId": "703f3961-6e8f-4a46-98e9-b6054f6080c9",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-8"
+  },
+  {
+    "id": "6f361d72-3390-4c54-aff0-19785f07c8e2",
+    "title": "CC-9: VB.NET",
+    "year": 2026,
+    "semester": "Sem 4",
+    "subjectId": "ab0148dc-3744-4ab3-b9ea-73677dea6cf0",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-9"
+  },
+  {
+    "id": "7d19c6ea-a5d7-4a3d-95ac-2bfa50b3bee4",
+    "title": "CC-10: RDBMS and Oracle",
+    "year": 2026,
+    "semester": "Sem 4",
+    "subjectId": "028a1502-e388-4de7-a937-fc415eb2c372",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-10"
+  },
+  {
+    "id": "bb456f02-1c04-4ec8-be9a-964ccf9e170a",
+    "title": "CC-11: Data Structures",
+    "year": 2026,
+    "semester": "Sem 5",
+    "subjectId": "263781f7-13ad-49d1-8632-3eae70025c5d",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-11"
+  },
+  {
+    "id": "41b31a88-9c6d-44a4-b4c8-d428f1e264c1",
+    "title": "CC-12: Introduction to Big Data Analytics",
+    "year": 2026,
+    "semester": "Sem 5",
+    "subjectId": "1927f0ee-fd2e-4066-84d5-36bb682f6c0c",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-12"
+  },
+  {
+    "id": "71e0ab97-de6f-407e-b1ba-ebf968ace725",
+    "title": "CC-13: Web Technologies",
+    "year": 2026,
+    "semester": "Sem 6",
+    "subjectId": "31d7982b-223f-4c33-963a-c87a6a79ce87",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-13"
+  },
+  {
+    "id": "d2cb46e4-41fe-4faf-a96a-369140904ea8",
+    "title": "CC-14: Android and App Development",
+    "year": 2026,
+    "semester": "Sem 6",
+    "subjectId": "24905635-75d1-44a3-b44e-dad81305d8ec",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-14"
+  },
+  {
+    "id": "83663fa5-10ab-4729-85c8-b6bde707f14e",
+    "title": "AECC I: English Composition",
+    "year": 2026,
+    "semester": "Sem 1",
+    "subjectId": "a31e60bf-fc81-49a0-b033-3c9d687f41cd",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "AECC-1"
+  },
+  {
+    "id": "32ac88f1-d7b8-4cc2-a23b-9213b898bc63",
+    "title": "AECC II: Environmental Science",
+    "year": 2026,
+    "semester": "Sem 2",
+    "subjectId": "2a1932b7-e2b1-46ec-ab39-cf44cf3282dc",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "AECC-2"
+  },
+  {
+    "id": "68102a22-7319-465a-bb5e-a2dfdf87fc1d",
+    "title": "Generic Elective Course: Mathematics 2",
+    "year": 2026,
+    "semester": "Sem 2",
+    "subjectId": "330daa76-7eff-4c6d-b0c8-0356ae5feaf6",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "GE-2"
+  },
+  {
+    "id": "7d6c545d-7c32-44dc-9f21-30369bfbba24",
+    "title": "Generic Elective Course: Mathematics",
+    "year": 2026,
+    "semester": "Sem 1",
+    "subjectId": "10ed98b3-dca7-46db-994a-ecb62ca0cccf",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "GE-1"
+  },
+  {
+    "id": "45daea5e-2e83-40ed-ab32-2cfb9548db3a",
+    "title": "Generic Elective Course: Statistics",
+    "year": 2026,
+    "semester": "Sem 3",
+    "subjectId": "5796aee3-93b9-439f-b4d4-f71499f39e1e",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "GE-3"
+  },
+  {
+    "id": "1e1e1222-8c11-4586-82c4-ce1f4bb00fd1",
+    "title": "Generic Elective Course: Statistics 2",
+    "year": 2026,
+    "semester": "Sem 4",
+    "subjectId": "08a800be-ca44-43d8-a028-fb496f63095f",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "GE-4"
+  },
+  {
+    "id": "cdba49f7-01ce-48c6-a412-3b9698d25d08",
+    "title": "cc-3 notes",
+    "year": 2025,
+    "semester": "Sem 2",
+    "subjectId": "1930ecc2-6e72-482a-894d-c99d192933d3",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-3"
+  },
+  {
+    "id": "fd21eda3-ed14-46b2-8fd1-92eddc3355e2",
+    "title": "PYQ - SEC 1",
+    "year": 2026,
+    "semester": "Sem 3",
+    "subjectId": "7b5b1c5a-02c6-4c1d-bf43-693e4c5759d4",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "SEC-1"
+  },
+  {
+    "id": "4448051c-baac-4050-accf-96cfe38cbf57",
+    "title": "Evs_law paper",
+    "year": 2021,
+    "semester": "Sem 3",
+    "subjectId": "7b5b1c5a-02c6-4c1d-bf43-693e4c5759d4",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "SEC-1"
+  },
+  {
+    "id": "7faa7a93-cbd0-46b9-abda-00ad25d7be09",
+    "title": "Statistics Paper",
+    "year": 2024,
+    "semester": "Sem 3",
+    "subjectId": "5796aee3-93b9-439f-b4d4-f71499f39e1e",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "GE-3"
+  },
+  {
+    "id": "b2814b02-e3a6-42e0-8650-e3a4dbcede44",
+    "title": "Ssad assignment ",
+    "year": 2026,
+    "semester": "Sem 3",
+    "subjectId": "7217a303-070b-4657-9c8e-9ce6ccc343df",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-7"
+  },
+  {
+    "id": "8e66cf6f-1f18-4fbe-a60e-b08f749714b2",
+    "title": "CC-5",
+    "year": 2023,
+    "semester": "Sem 3",
+    "subjectId": "4be33bdc-732f-4ea5-9159-55bfeb4d97d0",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-5"
+  },
+  {
+    "id": "6e5d33ee-532b-4135-a064-db0d40f81758",
+    "title": "CC-5",
+    "year": 2022,
+    "semester": "Sem 3",
+    "subjectId": "4be33bdc-732f-4ea5-9159-55bfeb4d97d0",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-5"
+  },
+  {
+    "id": "fabb3600-b5d1-4118-b509-70107d925e05",
+    "title": "cc-5",
+    "year": 2024,
+    "semester": "Sem 3",
+    "subjectId": "4be33bdc-732f-4ea5-9159-55bfeb4d97d0",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-5"
+  },
+  {
+    "id": "a6d86431-6128-4e45-a69f-db4d1d0bb28a",
+    "title": "cc-5 (2021)",
+    "year": 2021,
+    "semester": "Sem 3",
+    "subjectId": "4be33bdc-732f-4ea5-9159-55bfeb4d97d0",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-5"
+  },
+  {
+    "id": "45abb78b-cb21-42c7-9d6f-00ff2da96189",
+    "title": "cc-06 (2024)",
+    "year": 2024,
+    "semester": "Sem 3",
+    "subjectId": "dac75a78-ef0c-49d0-9105-cf43fd3e6909",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-6"
+  },
+  {
+    "id": "e44ca7a2-a49f-4d85-b36e-699b5200ea7b",
+    "title": "CC - 06 (2023)",
+    "year": 2023,
+    "semester": "Sem 3",
+    "subjectId": "dac75a78-ef0c-49d0-9105-cf43fd3e6909",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-6"
+  },
+  {
+    "id": "4eea22a6-861f-41c7-9eff-6a8074791925",
+    "title": "CC-06 (2022)",
+    "year": 2022,
+    "semester": "Sem 3",
+    "subjectId": "dac75a78-ef0c-49d0-9105-cf43fd3e6909",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-6"
+  },
+  {
+    "id": "e59b4243-9859-4d0a-8acb-a2f6ee67e600",
+    "title": "CC - 06 (2021)",
+    "year": 2021,
+    "semester": "Sem 3",
+    "subjectId": "dac75a78-ef0c-49d0-9105-cf43fd3e6909",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-6"
+  },
+  {
+    "id": "b88695c4-8e54-4319-bb6a-430725fa8e91",
+    "title": "CC - 07 (2023)",
+    "year": 2023,
+    "semester": "Sem 3",
+    "subjectId": "7217a303-070b-4657-9c8e-9ce6ccc343df",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-7"
+  },
+  {
+    "id": "d65cbd64-ccd2-4bf1-8b4e-e6d8746b107d",
+    "title": "CC-07 (2024)",
+    "year": 2024,
+    "semester": "Sem 3",
+    "subjectId": "7217a303-070b-4657-9c8e-9ce6ccc343df",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-7"
+  },
+  {
+    "id": "f192e913-a21f-4e6a-b4cb-59eaedaf9190",
+    "title": "CC-07 (2022)",
+    "year": 2022,
+    "semester": "Sem 3",
+    "subjectId": "7217a303-070b-4657-9c8e-9ce6ccc343df",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-7"
+  },
+  {
+    "id": "36827ec9-6cc6-4f59-b3cf-6cb5b2220049",
+    "title": "CC-07 (2021)",
+    "year": 2021,
+    "semester": "Sem 3",
+    "subjectId": "7217a303-070b-4657-9c8e-9ce6ccc343df",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-7"
+  },
+  {
+    "id": "fc2ae848-1dc6-4ed0-b61c-5263f9fd7beb",
+    "title": "ge -03 (2024)",
+    "year": 2024,
+    "semester": "Sem 3",
+    "subjectId": "5796aee3-93b9-439f-b4d4-f71499f39e1e",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "GE-3"
+  },
+  {
+    "id": "b1773644-1c87-41fe-b73e-3423b28712ff",
+    "title": "ge -03 (2022)",
+    "year": 2022,
+    "semester": "Sem 3",
+    "subjectId": "5796aee3-93b9-439f-b4d4-f71499f39e1e",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "GE-3"
+  },
+  {
+    "id": "9af7ef09-1335-48c5-b5e5-c52e86b15d01",
+    "title": "GE -03 (2023)",
+    "year": 2023,
+    "semester": "Sem 3",
+    "subjectId": "5796aee3-93b9-439f-b4d4-f71499f39e1e",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "GE-3"
+  },
+  {
+    "id": "1d4fb112-11c0-440b-8eef-4d27faed41ae",
+    "title": "sec - 1 (2024)",
+    "year": 2024,
+    "semester": "Sem 3",
+    "subjectId": "7b5b1c5a-02c6-4c1d-bf43-693e4c5759d4",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "SEC-1"
+  },
+  {
+    "id": "c3f8ffa6-a2d8-423f-aaae-34aee934cbcc",
+    "title": "SEC -1 (2023)",
+    "year": 2023,
+    "semester": "Sem 3",
+    "subjectId": "7b5b1c5a-02c6-4c1d-bf43-693e4c5759d4",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "SEC-1"
+  },
+  {
+    "id": "85d99042-f8d2-4259-8808-31f03c295720",
+    "title": "SEC - 1 (2022)",
+    "year": 2022,
+    "semester": "Sem 3",
+    "subjectId": "7b5b1c5a-02c6-4c1d-bf43-693e4c5759d4",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "SEC-1"
+  },
+  {
+    "id": "b9513097-356c-4f53-b3b1-ad3ecbcf1d02",
+    "title": "CC - 03",
+    "year": 2020,
+    "semester": "Sem 2",
+    "subjectId": "1930ecc2-6e72-482a-894d-c99d192933d3",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-3"
+  },
+  {
+    "id": "dab9c26e-b451-4c57-9530-c703265b17a7",
+    "title": "CC - 03",
+    "year": 2021,
+    "semester": "Sem 2",
+    "subjectId": "1930ecc2-6e72-482a-894d-c99d192933d3",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-3"
+  },
+  {
+    "id": "3446cc5a-a3c5-4407-aa4e-e8ea5461b22b",
+    "title": "cc - 03",
+    "year": 2022,
+    "semester": "Sem 2",
+    "subjectId": "1930ecc2-6e72-482a-894d-c99d192933d3",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-3"
+  },
+  {
+    "id": "cbcb14e1-a9a7-4663-ade7-98cce969299f",
+    "title": "cc - 03",
+    "year": 2023,
+    "semester": "Sem 2",
+    "subjectId": "1930ecc2-6e72-482a-894d-c99d192933d3",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-3"
+  },
+  {
+    "id": "457c6191-147e-470a-b605-c9fe4a6b8b98",
+    "title": "CC - 03",
+    "year": 2024,
+    "semester": "Sem 2",
+    "subjectId": "1930ecc2-6e72-482a-894d-c99d192933d3",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "CC-3"
+  },
+  {
+    "id": "26859c34-8cd5-4fbe-aafb-7493ebdce2bb",
+    "title": "SEC - 2 Syllabus",
+    "year": 2020,
+    "semester": "Sem 4",
+    "subjectId": "a30d7b03-4eac-42e9-a583-42c7d21a1c4b",
+    "courseId": "833abe29-ca11-4a36-b391-9cc2a83ee4b0",
+    "courseName": "BCA",
+    "subjectName": "SEC-2"
+  }
+]

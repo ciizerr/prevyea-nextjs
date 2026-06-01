@@ -1,0 +1,737 @@
+[
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2021,
+    "url": "/sem5/dse1/2021.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2020,
+    "url": "/sem5/dse1/2020.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2021,
+    "url": "/sem5/cc11/2021.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2020,
+    "url": "/sem5/cc11/2020.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2024,
+    "url": "/sem5/dse1/2024.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2023,
+    "url": "/sem5/dse1/2023.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2022,
+    "url": "/sem5/dse1/2022.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2021,
+    "url": "/sem5/dse2/2021.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2020,
+    "url": "/sem5/dse2/2020.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2023,
+    "url": "/sem5/cc11/2023.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2024,
+    "url": "/sem5/cc12/2024.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2023,
+    "url": "/sem5/cc12/2023.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2022,
+    "url": "/sem5/cc12/2022.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2024,
+    "url": "/sem5/cc11/2024.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2022,
+    "url": "/sem5/cc11/2022.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2021,
+    "url": "/sem5/cc12/2021.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2020,
+    "url": "/sem5/cc12/2020.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2024,
+    "url": "/sem5/dse2/2024.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2023,
+    "url": "/sem5/dse2/2023.pdf"
+  },
+  {
+    "file": "SemFive.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2022,
+    "url": "/sem5/dse2/2022.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "ge1",
+    "year": 2021,
+    "url": "/sem1/ge1/2021.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "ge1",
+    "year": 2020,
+    "url": "/sem1/ge1/2020.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc1",
+    "year": 2021,
+    "url": "/sem1/cc1/2021.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc1",
+    "year": 2020,
+    "url": "/sem1/cc1/2020.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "ge1",
+    "year": 2024,
+    "url": "/sem1/ge1/2024.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "ge1",
+    "year": 2023,
+    "url": "/sem1/ge1/2023.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "ge1",
+    "year": 2022,
+    "url": "/sem1/ge1/2022.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "aecc1",
+    "year": 2021,
+    "url": "/sem1/aecc1/2021.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "aecc1",
+    "year": 2020,
+    "url": "/sem1/aecc1/2020.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc1",
+    "year": 2023,
+    "url": "/sem1/cc1/2023.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc2",
+    "year": 2024,
+    "url": "/sem1/cc2/2024.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc2",
+    "year": 2023,
+    "url": "/sem1/cc2/2023.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc2",
+    "year": 2022,
+    "url": "/sem1/cc2/2022.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc1",
+    "year": 2024,
+    "url": "/sem1/cc1/2024.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc1",
+    "year": 2022,
+    "url": "/sem1/cc1/2022.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc2",
+    "year": 2021,
+    "url": "/sem1/cc2/2021.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "cc2",
+    "year": 2020,
+    "url": "/sem1/cc2/2020.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "aecc11",
+    "year": 2024,
+    "url": "/sem1/aecc11/2024.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "aecc1",
+    "year": 2023,
+    "url": "/sem1/aecc1/2023.pdf"
+  },
+  {
+    "file": "SemOne.jsx",
+    "semester": "sem1",
+    "subject": "aecc1",
+    "year": 2022,
+    "url": "/sem1/aecc1/2022.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2021,
+    "url": "/sem5/dse1/2021.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2020,
+    "url": "/sem5/dse1/2020.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2021,
+    "url": "/sem5/cc11/2021.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2020,
+    "url": "/sem5/cc11/2020.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2024,
+    "url": "/sem5/dse1/2024.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2023,
+    "url": "/sem5/dse1/2023.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse1",
+    "year": 2022,
+    "url": "/sem5/dse1/2022.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2021,
+    "url": "/sem5/dse2/2021.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2020,
+    "url": "/sem5/dse2/2020.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2023,
+    "url": "/sem5/cc11/2023.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2024,
+    "url": "/sem5/cc12/2024.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2023,
+    "url": "/sem5/cc12/2023.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2022,
+    "url": "/sem5/cc12/2022.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2024,
+    "url": "/sem5/cc11/2024.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc11",
+    "year": 2022,
+    "url": "/sem5/cc11/2022.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2021,
+    "url": "/sem5/cc12/2021.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "cc12",
+    "year": 2020,
+    "url": "/sem5/cc12/2020.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2024,
+    "url": "/sem5/dse2/2024.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2023,
+    "url": "/sem5/dse2/2023.pdf"
+  },
+  {
+    "file": "SemSix.jsx",
+    "semester": "sem5",
+    "subject": "dse2",
+    "year": 2022,
+    "url": "/sem5/dse2/2022.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "ge3",
+    "year": 2021,
+    "url": "/sem3/ge3/2021.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "ge3",
+    "year": 2020,
+    "url": "/sem3/ge3/2020.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc5",
+    "year": 2021,
+    "url": "/sem3/cc5/2021.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc5",
+    "year": 2020,
+    "url": "/sem3/cc5/2020.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "ge3",
+    "year": 2024,
+    "url": "/sem3/ge3/2024.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "ge3",
+    "year": 2023,
+    "url": "/sem3/ge3/2023.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "ge3",
+    "year": 2022,
+    "url": "/sem3/ge3/2022.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "sec1",
+    "year": 2021,
+    "url": "/sem3/sec1/2021.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "sec1",
+    "year": 2020,
+    "url": "/sem3/sec1/2020.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc5",
+    "year": 2023,
+    "url": "/sem3/cc5/2023.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc6",
+    "year": 2024,
+    "url": "/sem3/cc6/2024.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc6",
+    "year": 2023,
+    "url": "/sem3/cc6/2023.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc6",
+    "year": 2022,
+    "url": "/sem3/cc6/2022.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc5",
+    "year": 2024,
+    "url": "/sem3/cc5/2024.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc5",
+    "year": 2022,
+    "url": "/sem3/cc5/2022.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc6",
+    "year": 2021,
+    "url": "/sem3/cc6/2021.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc6",
+    "year": 2020,
+    "url": "/sem3/cc6/2020.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc7",
+    "year": 2020,
+    "url": "/sem3/cc7/2020.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc7",
+    "year": 2021,
+    "url": "/sem3/cc7/2021.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc7",
+    "year": 2022,
+    "url": "/sem3/cc7/2022.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc7",
+    "year": 2023,
+    "url": "/sem3/cc7/2023.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "cc7",
+    "year": 2024,
+    "url": "/sem3/cc7/2024.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "sec1",
+    "year": 2024,
+    "url": "/sem3/sec1/2024.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "sec1",
+    "year": 2023,
+    "url": "/sem3/sec1/2023.pdf"
+  },
+  {
+    "file": "SemThree.jsx",
+    "semester": "sem3",
+    "subject": "sec1",
+    "year": 2022,
+    "url": "/sem3/sec1/2022.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "ge2",
+    "year": 2021,
+    "url": "/sem2/ge2/2021.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "ge2",
+    "year": 2020,
+    "url": "/sem2/ge2/2020.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc3",
+    "year": 2021,
+    "url": "/sem2/cc3/2021.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc3",
+    "year": 2020,
+    "url": "/sem2/cc3/2020.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "ge2",
+    "year": 2024,
+    "url": "/sem2/ge2/2024.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "ge2",
+    "year": 2023,
+    "url": "/sem2/ge2/2023.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "ge2",
+    "year": 2022,
+    "url": "/sem2/ge2/2022.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "aecc",
+    "year": 2021,
+    "url": "/sem2/aecc/2021.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "aecc",
+    "year": 2020,
+    "url": "/sem2/aecc/2020.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc3",
+    "year": 2023,
+    "url": "/sem2/cc3/2023.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc4",
+    "year": 2024,
+    "url": "/sem2/cc4/2024.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc4",
+    "year": 2023,
+    "url": "/sem2/cc4/2023.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc4",
+    "year": 2022,
+    "url": "/sem2/cc4/2022.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc3",
+    "year": 2024,
+    "url": "/sem2/cc3/2024.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc3",
+    "year": 2022,
+    "url": "/sem2/cc3/2022.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc4",
+    "year": 2021,
+    "url": "/sem2/cc4/2021.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "cc4",
+    "year": 2020,
+    "url": "/sem2/cc4/2020.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "aecc",
+    "year": 2024,
+    "url": "/sem2/aecc/2024.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "aecc",
+    "year": 2023,
+    "url": "/sem2/aecc/2023.pdf"
+  },
+  {
+    "file": "SemTwo.jsx",
+    "semester": "sem2",
+    "subject": "aecc",
+    "year": 2022,
+    "url": "/sem2/aecc/2022.pdf"
+  }
+]
